@@ -1,0 +1,899 @@
+
+=== PAGE 1 ===
+>_
+INSTITUTO SUPERIOR MIGUEL TORGA · LICENCIATURA EM INFORMÁTICA
+Introdução à 
+Programação
+Módulo 4 · Métodos — Aulas 19 a 22
+Luís Simões da Cunha · 1.º semestre
+
+=== PAGE 2 ===
+19
+AULA 19 · MÓDULO 4 — MÉTODOS
+Dividir para conquistar
+Métodos: dar nome a um bloco de código e usá-lo quando quiseres.
+INTRODUÇÃO À PROGRAMAÇÃO · ISMT · LUÍS SIMÕES DA CUNHA
+
+=== PAGE 3 ===
+? LEMBRAS-TE?
+Três perguntas da aula passada
+1
+Que ciclo usas 
+quando sabes 
+quantas voltas 
+queres dar?
+2
+Quais são os três 
+tipos de erro?
+3
+Que tecla avança 
+uma linha no 
+depurador?
+Responde de memória, sem espreitar os apontamentos.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 19 · MÉTODOS ISMT
+
+=== PAGE 4 ===
+? GANCHO
+O teu main já tem mais de 100 linhas.
+Encontrar alguma coisa lá dentro é como procurar as chaves numa casa 
+desarrumada. E se cada tarefa tivesse a sua gaveta?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 19 · MÉTODOS ISMT
+
+=== PAGE 5 ===
+MISSÃO DE HOJE
+No fim desta aula vais conseguir…
+1 Criar e chamar métodos
+2 Passar informação com parâmetros
+3 Devolver resultados com return
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 19 · MÉTODOS ISMT
+
+=== PAGE 6 ===
+A ANALOGIA
+Um método é uma receita com nome
+?
+Definir
+Escreves a receita uma vez.
+?
+Chamar
+Usas a receita sempre que 
+quiseres, pelo nome.
+?
+Reutilizar
+Mudas a receita num sítio e 
+muda em todo o lado.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 19 · MÉTODOS ISMT
+
+=== PAGE 7 ===
+O PRIMEIRO MÉTODO
+Definir uma vez, chamar muitas
+void main() {
+    mostrarTitulo();
+    IO.println("Pronto para jogar?");
+    mostrarTitulo();
+}
+void mostrarTitulo() {
+    IO.println("=== ARCADE DO TERMINAL ===");
+}
+mostrarTitulo();
+Chamar: executa a receita.
+void mostrarTitulo() { … }
+Definir: fica fora do main, ao lado dele.
+void
+Não devolve nada: só faz.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 19 · MÉTODOS ISMT
+
+=== PAGE 8 ===
+PARA ONDE VAI O PROGRAMA?
+Chamar, executar, voltar
+?
+1. Chamar
+O main pára e salta para o 
+método
+⚙ ️
+2. Executar
+Corre o corpo do método
+↩ ️
+3. Voltar
+Continua no main, na linha 
+seguinte
+? No slide anterior, o que aparece no ecrã?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 19 · MÉTODOS ISMT
+
+=== PAGE 9 ===
+PARÂMETROS
+Dar ingredientes à receita
+void saudar(String nome) {
+    IO.println("Olá, " + nome + "!");
+}
+// no main:
+saudar("Rita");
+saudar("Tiago");
+?
+Uma caixa de entrada
+nome recebe o valor entregue em cada 
+chamada: primeiro «Rita», depois 
+«Tiago».
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 19 · MÉTODOS ISMT
+
+=== PAGE 10 ===
+VÁRIOS PARÂMETROS
+A ordem conta
+void linha(String simbolo, int n) {
+    for (int i = 0; i < n; i++) {
+        IO.print(simbolo);
+    }
+    IO.println();
+}
+// linha("*", 10); linha("=", 5);
+TERMINAL
+**********
+=====
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 19 · MÉTODOS ISMT
+
+=== PAGE 11 ===
+RETURN
+A receita devolve um prato
+int dobro(int x) {
+    return x * 2;
+}
+// no main:
+int r = dobro(21);
+IO.println(r);   // 42
+int dobro(…)
+O tipo antes do nome diz o que é devolvido.
+return
+Devolve o valor e sai do método.
+int r = dobro(21);
+A chamada «transforma-se» no valor devolvido.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 19 · MÉTODOS ISMT
+
+=== PAGE 12 ===
+COMPARAR
+Métodos que fazem e métodos que devolvem
+Assinatura Devolve Uso
+void saudar(String nome) nada saudar("Rita");
+int dobro(int x) um int int r = dobro(5);
+boolean ehPar(int n) um boolean if (ehPar(n)) { … }
+String iniciais(String a, String b) uma String IO.println(iniciais(a, b));
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 19 · MÉTODOS ISMT
+
+=== PAGE 13 ===
+? PREVÊ
+O que aparece no ecrã?
+int quadrado(int n) {
+    return n * n;
+}
+// no main:
+IO.println(quadrado(3) + quadrado(4));
+IO.println(quadrado(quadrado(2)));
+✍ ️
+Duas previsões
+Na segunda, resolve de dentro para 
+fora.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 19 · MÉTODOS ISMT
+
+=== PAGE 14 ===
+EXEMPLO RESOLVIDO
+Um método que responde sim ou não
+boolean ehPar(int n) {
+    return n % 2 == 0;
+}
+// no main:
+for (int i = 1; i <= 5; i++) {
+    if (ehPar(i)) {
+        IO.println(i + " é par");
+    }
+}
+?
+Lê-se como português
+«Se i é par…». Bons nomes tornam o código 
+legível.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 19 · MÉTODOS ISMT
+
+=== PAGE 15 ===
+? ERRO DO DIA
+O método nem sempre devolve
+int maior(int a, int b) {
+    if (a > b) {
+        return a;
+    }
+}
+TERMINAL
+error: missing return statement
+Porquê?Se a não for maior, o método chega ao fim sem devolver nada.
+SoluçãoGarante um return em todos os caminhos:return b;
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 19 · MÉTODOS ISMT
+
+=== PAGE 16 ===
+? PUZZLE
+Um método que calcula a média
+A     return (a + b) / 2.0;
+B double media(int a, int b) {
+C }
+D IO.println(media(14, 17));   // no main
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 19 · MÉTODOS ISMT
+
+=== PAGE 17 ===
+?️  PEÇA DO ARCADE
+Os primeiros métodos do Arcade
+mostrarTitulo()
+Desenha a moldura da aula 17.
+mostrarMenu()
+Escreve as opções do menu.
+lerOpcao()
+Pede a opção e devolve-a (int).
+Move o código que já tens para estes três métodos. O main fica curto e legível.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 19 · MÉTODOS ISMT
+
+=== PAGE 18 ===
+? COMMIT DO DIA
+Guarda o progresso no GitHub
+Guarda a peça do Arcade com a mensagem:
+TERMINAL
+Organiza o Arcade em métodos
+Lembra-te do ciclo: Stage → Commit → Push.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 19 · MÉTODOS ISMT
+
+=== PAGE 19 ===
+?️  BILHETE DE SAÍDA
+Qual é a diferença entre um método void e um 
+método que devolve int? Dá um exemplo de cada.
+E responde também: o que ficou mais confuso hoje?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 19 · MÉTODOS ISMT
+
+=== PAGE 20 ===
+20
+AULA 20 · MÓDULO 4 — MÉTODOS
+Onde vive cada variável
+Âmbito, variáveis locais e cópias: o que cada método vê — e o que não 
+vê.
+INTRODUÇÃO À PROGRAMAÇÃO · ISMT · LUÍS SIMÕES DA CUNHA
+
+=== PAGE 21 ===
+? LEMBRAS-TE?
+Três perguntas da aula passada
+1
+O que faz o return?
+2
+Um método void 
+devolve o quê?
+3
+Com int dobro(int x), 
+quanto dá 
+dobro(dobro(3))?
+Responde de memória, sem espreitar os apontamentos.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 20 · ÂMBITO ISMT
+
+=== PAGE 22 ===
+? GANCHO
+O que acontece em Vegas, fica em 
+Vegas.
+As variáveis criadas dentro de um método também: ninguém lá fora as vê.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 20 · ÂMBITO ISMT
+
+=== PAGE 23 ===
+MISSÃO DE HOJE
+No fim desta aula vais conseguir…
+1 Saber onde cada variável existe
+2 Perceber que os parâmetros recebem cópias
+3 Arrumar código sem mudar o que faz
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 20 · ÂMBITO ISMT
+
+=== PAGE 24 ===
+A METÁFORA
+Cada método é uma sala fechada
+?
+A sala do main
+Tem as suas caixas: pontos, 
+vidas…
+?
+A sala do dobro
+Tem as suas caixas: x.
+?
+As portas
+Entra-se pelos parâmetros. Sai-
+se pelo return.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 20 · ÂMBITO ISMT
+
+=== PAGE 25 ===
+ÂMBITO
+As chavetas marcam o território
+for (int i = 0; i < 3; i++) {
+    int dobro = i * 2;
+}
+IO.println(i);       // ❌ i já não existe
+IO.println(dobro);   // ❌ dobro também não
+?
+A regra
+Uma variável existe desde a 
+declaração até à } que fecha o 
+seu bloco.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 20 · ÂMBITO ISMT
+
+=== PAGE 26 ===
+? ERRO DO DIA
+Um método não vê as caixas do main
+void main() {
+    int pontos = 10;
+    bonus();
+}
+void bonus() {
+    pontos += 5;
+}
+O errocannot find symbol: pontos
+Porquê?pontos vive na sala do main. A sala do bonus não tem essa caixa.
+SoluçãoEntrega pelo parâmetro e devolve pelo return:pontos = bonus(pontos);
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 20 · ÂMBITO ISMT
+
+=== PAGE 27 ===
+? PREVÊ
+As vidas diminuem?
+void main() {
+    int vidas = 3;
+    perderVida(vidas);
+    IO.println(vidas);   // ?
+}
+void perderVida(int v) {
+    v--;
+}
+✍ ️
+3 ou 2?
+Discute com o colega antes de correr.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 20 · ÂMBITO ISMT
+
+=== PAGE 28 ===
+A EXPLICAÇÃO
+O parâmetro recebe uma cópia
+Momento vidas (main) v (perderVida)
+Antes da chamada 3 —
+Entra em perderVida 3 3 (cópia)
+Depois de v-- 3 2
+Volta ao main 3 — (desapareceu)
+É como dar uma fotocópia: o que escreves na cópia não muda o original.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 20 · ÂMBITO ISMT
+
+=== PAGE 29 ===
+A SOLUÇÃO
+Devolver o novo valor
+void main() {
+    int vidas = 3;
+    vidas = perderVida(vidas);
+    IO.println(vidas);   // 2
+}
+int perderVida(int v) {
+    return v - 1;
+}
+?
+Entra e sai
+Entra pelo parâmetro, sai pelo return, e o 
+main decide guardar.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 20 · ÂMBITO ISMT
+
+=== PAGE 30 ===
+? PREVÊ
+O mesmo nome, caixas diferentes
+void main() {
+    int x = 5;
+    mudar(x);
+    IO.println(x);
+}
+void mudar(int x) {
+    x = 100;
+}
+?
+Dois x
+Estão em salas diferentes. O nome igual não 
+os liga.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 20 · ÂMBITO ISMT
+
+=== PAGE 31 ===
+BOAS PRÁTICAS
+Três regras para métodos arrumados
+?
+Uma tarefa
+Se precisas de «e» para 
+descrever o método, divide-o.
+?️
+Nome com verbo
+mostrarMenu, lerOpcao, 
+calcularBonus.
+?
+Curto
+Se não cabe no ecrã, é grande 
+demais.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 20 · ÂMBITO ISMT
+
+=== PAGE 32 ===
+REFATORAR
+O main como índice de um livro
+void main() {
+    mostrarTitulo();
+    int dificuldade = escolherDificuldade();
+    int vidas = vidasPara(dificuldade);
+    IO.println("Tens " + vidas + " vidas.");
+}
+?
+O quê vs. como
+O main diz O QUÊ acontece. Os 
+métodos dizem COMO.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 20 · ÂMBITO ISMT
+
+=== PAGE 33 ===
+? PUZZLE
+Completa o método maior(a, b)
+A     return b;
+B int maior(int a, int b) {
+C     if (a > b) {
+D         return a;
+E     }
+A chaveta final } já está no lugar.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 20 · ÂMBITO ISMT
+
+=== PAGE 34 ===
+?️  PEÇA DO ARCADE
+Refatorar o Arcade
+escolherDificuldade()
+Mostra as opções e devolve 1, 2 
+ou 3.
+vidasPara(int dif)
+Devolve 5, 3 ou 1 (usa switch).
+jogarPPT()
+O Pedra, Papel, Tesoura inteiro.
+O programa tem de continuar a fazer exatamente o mesmo!
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 20 · ÂMBITO ISMT
+
+=== PAGE 35 ===
+? COMMIT DO DIA
+Guarda o progresso no GitHub
+Guarda a peça do Arcade com a mensagem:
+TERMINAL
+Refatora o Arcade em métodos
+Lembra-te do ciclo: Stage → Commit → Push.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 20 · ÂMBITO ISMT
+
+=== PAGE 36 ===
+?️  BILHETE DE SAÍDA
+Porque é que perderVida(vidas) não altera as 
+vidas no main? Como resolves?
+E responde também: o que ficou mais confuso hoje?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 20 · ÂMBITO ISMT
+
+=== PAGE 37 ===
+21
+AULA 21 · MÓDULO 4 — MÉTODOS
+Métodos reutilizáveis
+Escreve uma vez, usa em todo o lado — e testa antes de confiar.
+INTRODUÇÃO À PROGRAMAÇÃO · ISMT · LUÍS SIMÕES DA CUNHA
+
+=== PAGE 38 ===
+? LEMBRAS-TE?
+Três perguntas da aula passada
+1
+Uma variável 
+declarada dentro de 
+um for existe depois 
+dele?
+2
+Um método pode 
+alterar um int do 
+main que recebeu 
+como parâmetro?
+3
+Como é que um 
+método entrega um 
+resultado ao main?
+Responde de memória, sem espreitar os apontamentos.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 21 · REUTILIZAR E TESTAR ISMT
+
+=== PAGE 39 ===
+? GANCHO
+Quantas vezes já escreveste 
+Integer.parseInt(IO.readln(…))?
+E quantas vezes o programa aceitou um número fora do intervalo? Hoje 
+resolvemos as duas coisas de uma vez.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 21 · REUTILIZAR E TESTAR ISMT
+
+=== PAGE 40 ===
+MISSÃO DE HOJE
+No fim desta aula vais conseguir…
+1 Desenhar programas de cima para baixo
+2 Escrever métodos de validação reutilizáveis
+3 Testar métodos de forma sistemática
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 21 · REUTILIZAR E TESTAR ISMT
+
+=== PAGE 41 ===
+DE CIMA PARA BAIXO
+Primeiro o plano, depois os detalhes
+main()
+O plano geral.
+mostrarMenu()
+Mostra as opções.
+lerOpcao()
+Pede e valida.
+executar(op)
+Chama o jogo escolhido.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 21 · REUTILIZAR E TESTAR ISMT
+
+=== PAGE 42 ===
+ESQUELETO
+Começa com métodos vazios
+void main() {
+    mostrarMenu();
+    int op = lerOpcao();
+    executar(op);
+}
+void mostrarMenu() { }
+int lerOpcao() { return 1; }
+void executar(int op) { }
+?
+Stubs
+Métodos-esqueleto: o programa compila e 
+corre desde o primeiro minuto. Depois 
+preenches um de cada vez.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 21 · REUTILIZAR E TESTAR ISMT
+
+=== PAGE 43 ===
+EXEMPLO RESOLVIDO
+Um método para ler números válidos
+Arcade.java
+int lerInteiroEntre(String pergunta, int min, int max) {
+    int n;
+    do {
+        n = Integer.parseInt(IO.readln(pergunta));
+        if (n < min || n > max) {
+            IO.println("Escolhe entre " + min + " e " + max + ".");
+        }
+    } while (n < min || n > max);
+    return n;
+}
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 21 · REUTILIZAR E TESTAR ISMT
+
+=== PAGE 44 ===
+REUTILIZAR
+Um método, muitos usos
+int op = lerInteiroEntre("Opção (1-3): ", 1, 3);
+int dif = lerInteiroEntre("Dificuldade (1-3): ", 1, 3);
+int palpite = lerInteiroEntre("Palpite (1-100): ", 1, 100);
+int jogada = lerInteiroEntre("0-Pedra 1-Papel 2-Tesoura: ", 0, 2);
+Não te repitas: um bug corrigido no método fica corrigido nos quatro sítios.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 21 · REUTILIZAR E TESTAR ISMT
+
+=== PAGE 45 ===
+TESTAR
+Um mini-sistema de testes
+Testes.java
+void main() {
+    testar("ehPar(4)", ehPar(4), true);
+    testar("ehPar(7)", ehPar(7), false);
+    testar("ehPar(0)", ehPar(0), true);
+}
+void testar(String nome, boolean obtido, boolean esperado) {
+    if (obtido == esperado) {
+        IO.println("✅ " + nome);
+    } else {
+        IO.println("❌ " + nome + ": esperava " + esperado);
+    }
+}
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 21 · REUTILIZAR E TESTAR ISMT
+
+=== PAGE 46 ===
+QUE CASOS TESTAR?
+Três tipos de caso de teste
+✅
+Normal
+Um valor típico.
+ehPar(4)
+?
+Fronteira
+Os limites: 0, 1, o mínimo, o 
+máximo.
+ehPar(0)
+?
+Estranho
+Negativos, vazios, enormes.
+ehPar(-3)
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 21 · REUTILIZAR E TESTAR ISMT
+
+=== PAGE 47 ===
+? ERRO DO DIA
+O teste que apanhou um bug
+boolean ehImpar(int n) {
+    return n % 2 == 1;
+}
+TERMINAL
+✅ ehImpar(3)
+✅ ehImpar(4)
+❌ ehImpar(-3): esperava true
+Porquê?Em Java, -3 % 2 dá -1, não 1.
+SoluçãoCompara com zero:return n % 2 != 0;
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 21 · REUTILIZAR E TESTAR ISMT
+
+=== PAGE 48 ===
+? PREVÊ
+O que aparece no ecrã?
+String repetir(String s, int n) {
+    String r = "";
+    for (int i = 0; i < n; i++) {
+        r += s;
+    }
+    return r;
+}
+IO.println(repetir("ab", 3));
+IO.println(repetir("*", 0).length());
+✍ ️
+Duas previsões
+A segunda é um caso de fronteira.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 21 · REUTILIZAR E TESTAR ISMT
+
+=== PAGE 49 ===
+? PUZZLE
+Conta quantas vezes aparece uma letra
+A     return conta;
+B int contarLetra(String s, char c) {
+C     for (int i = 0; i < s.length(); i++) {
+D         if (s.charAt(i) == c) { conta++; }
+E     }
+F     int conta = 0;
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 21 · REUTILIZAR E TESTAR ISMT
+
+=== PAGE 50 ===
+?️  PEÇA DO ARCADE
+Leituras seguras em todo o Arcade
+1
+Substitui
+Todas as leituras de números passam a usar 
+lerInteiroEntre.
+2
+Testa
+Escreve testes para vidasPara(1), (2), (3) e (9).
+Nota: se o jogador escrever uma letra, o programa ainda rebenta. Isso resolve-se na aula 27.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 21 · REUTILIZAR E TESTAR ISMT
+
+=== PAGE 51 ===
+? COMMIT DO DIA
+Guarda o progresso no GitHub
+Guarda a peça do Arcade com a mensagem:
+TERMINAL
+Adiciona lerInteiroEntre e testes
+Lembra-te do ciclo: Stage → Commit → Push.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 21 · REUTILIZAR E TESTAR ISMT
+
+=== PAGE 52 ===
+?️  BILHETE DE SAÍDA
+Que três tipos de casos deves testar num 
+método? Dá um exemplo de cada para ehPar.
+E responde também: o que ficou mais confuso hoje?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 21 · REUTILIZAR E TESTAR ISMT
+
+=== PAGE 53 ===
+22
+AULA 22 · MÓDULO 4 — MÉTODOS
+Arcade #3: Forca
+Strings, ciclos e métodos juntos num clássico.
+INTRODUÇÃO À PROGRAMAÇÃO · ISMT · LUÍS SIMÕES DA CUNHA
+
+=== PAGE 54 ===
+? LEMBRAS-TE?
+Três perguntas da aula passada
+1
+O que é um método-
+esqueleto (stub)?
+2
+Além do caso normal, 
+que casos deves 
+testar?
+3
+Qual é o resultado de 
+"ab".charAt(1)?
+Responde de memória, sem espreitar os apontamentos.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 22 · FORCA ISMT
+
+=== PAGE 55 ===
+? GANCHO
+Forca humana no quadro
+TERMINAL
+_ _ _ _ _ _    ❤️  6
+Seis letras, seis vidas. Quem arrisca a primeira letra?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 22 · FORCA ISMT
+
+=== PAGE 56 ===
+MISSÃO DE HOJE
+No fim desta aula vais conseguir…
+1 Decompor um jogo maior em métodos
+2 Trabalhar texto letra a letra
+3 Integrar tudo o que aprendeste até agora
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 22 · FORCA ISMT
+
+=== PAGE 57 ===
+AS REGRAS
+Como se joga
+?
+Palavra secreta
+Aparece como _ _ _ _.
+?
+Adivinhas letras
+Se existir, aparece em todas as 
+posições.
+❤️
+Seis vidas
+Cada letra errada custa uma 
+vida.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 22 · FORCA ISMT
+
+=== PAGE 58 ===
+O ESTADO DO JOGO
+Três caixas chegam
+Variável Tipo Exemplo
+secreta String "JAVA"
+tentadas String "AE"
+vidas int 5
+A máscara _ A _ A calcula-se a partir de secreta e tentadas: não é preciso guardá-
+la.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 22 · FORCA ISMT
+
+=== PAGE 59 ===
+DE CIMA PARA BAIXO
+Os métodos da Forca
+Método Faz Devolve
+mascara(secreta, tentadas) Constrói «_ A _ A» String
+ganhou(secreta, tentadas) Todas as letras descobertas? boolean
+mostrarFim(secreta, vidas) Mensagem final nada (void)
+Novidade: texto.contains(x) dá true se x aparecer dentro de texto.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 22 · FORCA ISMT
+
+=== PAGE 60 ===
+EXEMPLO RESOLVIDO
+O método mascara
+Forca.java
+String mascara(String secreta, String tentadas) {
+    String r = "";
+    for (int i = 0; i < secreta.length(); i++) {
+        String letra = secreta.substring(i, i + 1);
+        if (tentadas.contains(letra)) {
+            r += letra + " ";
+        } else {
+            r += "_ ";
+        }
+    }
+    return r;
+}
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 22 · FORCA ISMT
+
+=== PAGE 61 ===
+✍ ️  TESTAR ANTES DE JUNTAR
+Casos de teste para mascara
+secreta tentadas Esperado
+"JAVA" "" _ _ _ _
+"JAVA" "A" _ A _ A
+"JAVA" "AJV" J A V A
+"JAVA" "XYZ" _ _ _ _
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 22 · FORCA ISMT
+
+=== PAGE 62 ===
+EXEMPLO RESOLVIDO
+O método ganhou
+boolean ganhou(String secreta, String tentadas) {
+    for (int i = 0; i < secreta.length(); i++) {
+        if (!tentadas.contains(secreta.substring(i, i + 1))) {
+            return false;
+        }
+    }
+    return true;
+}
+?
+Contraexemplo
+Basta uma letra por 
+descobrir para devolver 
+false.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 22 · FORCA ISMT
+
+=== PAGE 63 ===
+? PREVÊ
+true ou false?
+Chamada Resultado?
+ganhou("JAVA", "AVJ") ?
+ganhou("JAVA", "AV") ?
+ganhou("", "") ?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 22 · FORCA ISMT
+
+=== PAGE 64 ===
+JUNTAR TUDO
+O main da Forca
+Forca.java
+void main() {
+    String secreta = "JAVA";
+    String tentadas = "";
+    int vidas = 6;
+    while (vidas > 0 && !ganhou(secreta, tentadas)) {
+        IO.println(mascara(secreta, tentadas) + " | Vidas: " + vidas);
+        String letra = IO.readln("Letra: ").toUpperCase().substring(0, 1);
+        tentadas += letra;
+        if (!secreta.contains(letra)) { vidas--; }
+    }
+    mostrarFim(secreta, vidas);
+}
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 22 · FORCA ISMT
+
+=== PAGE 65 ===
+? ERRO DO DIA
+O jogador carregou só em Enter
+TERMINAL
+Letra: 
+Exception in thread "main"
+java.lang.StringIndexOutOfBoundsException:
+  begin 0, end 1, length 0
+Porquê?Só Enter dá texto vazio: não há nenhuma letra na posição 0.
+SoluçãoCria um método lerLetra() com do-while que repete enquanto o 
+texto estiver vazio:
+texto.isEmpty()
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 22 · FORCA ISMT
+
+=== PAGE 66 ===
+VARIEDADE
+Uma palavra diferente em cada jogo
+String palavraSecreta() {
+    int n = (int) (Math.random() * 4);
+    return switch (n) {
+        case 0 -> "JAVA";
+        case 1 -> "ARCADE";
+        case 2 -> "CICLO";
+        default -> "METODO";
+    };
+}
+?
+E se fossem 100?
+Com arrays (aula 23) vai ser muito mais fácil.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 22 · FORCA ISMT
+
+=== PAGE 67 ===
+?️  PEÇA DO ARCADE
+Termina a tua Forca
+1
+Implementa
+mascara, ganhou, mostrarFim e 
+lerLetra.
+2
+Testa
+Cada método isolado, antes de 
+juntar.
+3
+Liga
+Opção 3 do menu do Arcade.
+Bónus: recusar letras repetidas e desenhar o boneco com desenharForca(vidas).
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 22 · FORCA ISMT
+
+=== PAGE 68 ===
+MÓDULO 4 CONCLUÍDO
+O que já sabes fazer
+?
+Definir e chamar
+void e métodos com 
+tipo
+?
+Parâmetros
+Entradas e return
+?
+Âmbito
+Salas e cópias
+?
+Testar
+Normal, fronteira, 
+estranho
+Próximo módulo: Coleções. Como guardar 100 palavras sem 100 variáveis?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 22 · FORCA ISMT
+
+=== PAGE 69 ===
+? COMMIT DO DIA
+Guarda o progresso no GitHub
+Guarda o terceiro jogo do Arcade com a mensagem:
+TERMINAL
+Adiciona jogo da Forca
+Lembra-te do ciclo: Stage → Commit → Push.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 22 · FORCA ISMT
+
+=== PAGE 70 ===
+?️  BILHETE DE SAÍDA
+Que método da Forca foi mais fácil de testar 
+isoladamente? Porquê?
+E responde também: o que ficou mais confuso hoje?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 22 · FORCA ISMT

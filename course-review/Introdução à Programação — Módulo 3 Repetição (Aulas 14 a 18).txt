@@ -1,0 +1,1088 @@
+
+=== PAGE 1 ===
+>_
+INSTITUTO SUPERIOR MIGUEL TORGA · LICENCIATURA EM INFORMÁTICA
+Introdução à 
+Programação
+Módulo 3 · Repetição — Aulas 14 a 18
+Luís Simões da Cunha · 1.º semestre
+
+=== PAGE 2 ===
+14
+AULA 14 · MÓDULO 3 — REPETIÇÃO
+Fazer de novo… e de novo
+O ciclo while: repetir enquanto uma condição for verdadeira.
+INTRODUÇÃO À PROGRAMAÇÃO · ISMT · LUÍS SIMÕES DA CUNHA
+
+=== PAGE 3 ===
+? LEMBRAS-TE?
+Três perguntas da aula passada
+1
+Que valores dá (int) 
+(Math.random() * 6) + 
+1?
+2
+Num if / else if, 
+quantos blocos 
+correm?
+3
+O que acontece se 
+faltar o default num 
+switch que devolve 
+valor?
+Responde de memória, sem espreitar os apontamentos.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 14 · WHILE ISMT
+
+=== PAGE 4 ===
+? GANCHO
+Escreve «Olá» mil vezes.
+À mão, com mil linhas de IO.println? Há uma forma melhor — e cabe em 
+cinco linhas.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 14 · WHILE ISMT
+
+=== PAGE 5 ===
+MISSÃO DE HOJE
+No fim desta aula vais conseguir…
+1 Repetir código com while
+2 Garantir que um ciclo termina
+3 Parar um ciclo com um valor sentinela
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 14 · WHILE ISMT
+
+=== PAGE 6 ===
+A INSTRUÇÃO WHILE
+while: enquanto for verdade, repete
+int n = 1;
+while (n <= 3) {
+    IO.println("Volta " + n);
+    n++;
+}
+while (…)
+A pergunta, feita antes de cada volta.
+{ … }
+O corpo: o que se repete.
+n++
+Aproxima o fim. Sem isto, o ciclo nunca pára!
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 14 · WHILE ISMT
+
+=== PAGE 7 ===
+COMO FUNCIONA
+Um if que volta atrás
+❓
+1. Perguntar
+n <= 3 ?
+✅
+2. Se sim
+executa o corpo
+↩ ️
+3. Voltar
+e perguntar outra vez
+Quando a resposta for false, o programa salta o corpo e continua depois do ciclo.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 14 · WHILE ISMT
+
+=== PAGE 8 ===
+TABELA DE TRAÇO
+Segue o ciclo, volta a volta
+int n = 1;
+while (n <= 3) {
+    IO.println("Volta " + n);
+    n++;
+}
+Volta n n <= 3 ? Escreve
+1 1 true Volta 1
+2 2 true Volta 2
+3 3 true Volta 3
+— 4 false (sai)
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 14 · WHILE ISMT
+
+=== PAGE 9 ===
+OS TRÊS INGREDIENTES
+Todo o ciclo precisa de três coisas
+?
+Início
+A variável começa com um 
+valor.
+int n = 1;
+❓
+Condição
+A pergunta que decide se 
+continua.
+n <= 3
+?
+Passo
+O que aproxima o fim.
+n++;
+Falta um dos três? O ciclo avaria.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 14 · WHILE ISMT
+
+=== PAGE 10 ===
+? PREVÊ
+O que aparece no ecrã?
+int x = 10;
+while (x > 0) {
+    IO.print(x + " ");
+    x -= 3;
+}
+✍ ️
+Faz a tabela de traço
+Quantas voltas dá o ciclo? Qual é o valor final 
+de x?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 14 · WHILE ISMT
+
+=== PAGE 11 ===
+? PREVÊ
+E se a condição for falsa logo à partida?
+int vidas = 0;
+while (vidas > 0) {
+    IO.println("A jogar...");
+    vidas--;
+}
+IO.println("Fim.");
+0️ ⃣
+Zero voltas
+O corpo nunca corre. Só aparece «Fim.».
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 14 · WHILE ISMT
+
+=== PAGE 12 ===
+? ERRO DO DIA
+O ciclo que nunca acaba
+int n = 1;
+while (n <= 3) {
+    IO.println("Volta " + n);
+}
+TERMINAL
+Volta 1
+Volta 1
+Volta 1
+...
+Porquê?Falta o passo n++: o n fica sempre 1 e a condição é sempre true.
+Como parar?No terminal, carrega em Ctrl+C. No VS Code, também há o botão ⏹ .
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 14 · WHILE ISMT
+
+=== PAGE 13 ===
+PARAR QUANDO QUISERES
+O valor sentinela
+String resp = "s";
+while (resp.equals("s")) {
+    IO.println("A jogar uma ronda...");
+    resp = IO.readln("Jogar outra vez? (s/n) ");
+}
+IO.println("Obrigado por jogares!");
+?
+A sentinela
+Um valor combinado que 
+significa «pára». Aqui é qualquer 
+coisa diferente de «s».
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 14 · WHILE ISMT
+
+=== PAGE 14 ===
+EXEMPLO RESOLVIDO
+Somar pontos até aparecer o zero
+int total = 0;
+int valor = Integer.parseInt(IO.readln("Pontos (0 para terminar): "));
+while (valor != 0) {
+    total += valor;
+    valor = Integer.parseInt(IO.readln("Pontos (0 para terminar): "));
+}
+IO.println("Total: " + total);
+Padrão «ler antes»: lê-se uma vez antes do ciclo e outra no fim de cada volta.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 14 · WHILE ISMT
+
+=== PAGE 15 ===
+? PUZZLE
+Contagem decrescente de 5 a 1
+A     n--;
+B int n = 5;
+C }
+D while (n >= 1) {
+E     IO.println(n);
+F IO.println("Descolar!");
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 14 · WHILE ISMT
+
+=== PAGE 16 ===
+?️  PEÇA DO ARCADE
+Jogar outra vez?
+TERMINAL
+Ganhaste! ?
+Jogar outra vez? (s/n) s
+Perdeste...
+Jogar outra vez? (s/n) n
+Obrigado por jogares!
+Envolve o teu Pedra, Papel, Tesoura num while. Bónus: conta as vitórias.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 14 · WHILE ISMT
+
+=== PAGE 17 ===
+? COMMIT DO DIA
+Guarda o progresso no GitHub
+Guarda a peça do Arcade com a mensagem:
+TERMINAL
+Adiciona opção de jogar outra vez
+Lembra-te do ciclo: Stage → Commit → Push.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 14 · WHILE ISMT
+
+=== PAGE 18 ===
+?️  BILHETE DE SAÍDA
+Quais são os três ingredientes de um ciclo? O 
+que acontece se faltar o passo?
+E responde também: o que ficou mais confuso hoje?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 14 · WHILE ISMT
+
+=== PAGE 19 ===
+15AULA 15 · MÓDULO 3 — REPETIÇÃO
+Arcade #2: Adivinha o 
+Número
+do-while, validação e contadores — num jogo clássico.
+INTRODUÇÃO À PROGRAMAÇÃO · ISMT · LUÍS SIMÕES DA CUNHA
+
+=== PAGE 20 ===
+? LEMBRAS-TE?
+Três perguntas da aula passada
+1
+Quantas voltas dá 
+while (x > 0) se x 
+começar em 0?
+2
+Como paras um 
+programa preso num 
+ciclo infinito?
+3
+O que é um valor 
+sentinela?
+Responde de memória, sem espreitar os apontamentos.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 15 · ADIVINHA O NÚMERO ISMT
+
+=== PAGE 21 ===
+? GANCHO
+Estou a pensar num número entre 1 e 
+100.
+Consegues adivinhar em 7 tentativas? Há uma estratégia que nunca falha.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 15 · ADIVINHA O NÚMERO ISMT
+
+=== PAGE 22 ===
+MISSÃO DE HOJE
+No fim desta aula vais conseguir…
+1 Usar do-while para repetir pelo menos uma vez
+2 Validar o que o utilizador escreve
+3 Contar tentativas
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 15 · ADIVINHA O NÚMERO ISMT
+
+=== PAGE 23 ===
+A INSTRUÇÃO DO-WHILE
+Primeiro faz, depois pergunta
+String resp;
+do {
+    IO.println("A jogar...");
+    resp = IO.readln("Outra vez? (s/n) ");
+} while (resp.equals("s"));
+1️ ⃣
+Pelo menos uma vez
+A pergunta só é feita no fim. Repara no ; 
+depois do while.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 15 · ADIVINHA O NÚMERO ISMT
+
+=== PAGE 24 ===
+DECIDIR
+while ou do-while?
+while do-while
+Quando pergunta Antes de cada volta Depois de cada volta
+Voltas mínimas 0 1
+Ideal para Repetir enquanto… Menus e validação
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 15 · ADIVINHA O NÚMERO ISMT
+
+=== PAGE 25 ===
+EXEMPLO RESOLVIDO
+Pedir até a resposta ser válida
+int n;
+do {
+    n = Integer.parseInt(IO.readln("Número (1-100): "));
+    if (n < 1 || n > 100) {
+        IO.println("Fora do intervalo!");
+    }
+} while (n < 1 || n > 100);
+?
+Promessa 
+cumprida
+Na aula 12 só avisávamos. 
+Agora pedimos outra vez.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 15 · ADIVINHA O NÚMERO ISMT
+
+=== PAGE 26 ===
+CONTAR E SOMAR
+Contadores e acumuladores
+?
+Contador
+Começa em 0 e soma 1 a cada acontecimento.
+tentativas++;
+➕
+Acumulador
+Começa em 0 e soma um valor de cada vez.
+total += valor;
+Ambos se declaram antes do ciclo. Se fossem declarados dentro, voltavam a 0 em cada volta.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 15 · ADIVINHA O NÚMERO ISMT
+
+=== PAGE 27 ===
+ANTES DE PROGRAMAR
+Decompor o jogo
+?
+1. Sortear
+o número secreto
+?
+2. Ler
+um palpite
+⚖️
+3. Comparar
+maior, menor ou 
+igual?
+?
+4. Repetir
+até acertar
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 15 · ADIVINHA O NÚMERO ISMT
+
+=== PAGE 28 ===
+EXEMPLO RESOLVIDO · PARTE 1
+Sortear e preparar
+// 1. Sortear e preparar
+int secreto = (int) (Math.random() * 100) + 1;
+int palpite;
+int tentativas = 0;
+?
+Porquê aqui?
+palpite é declarado fora do ciclo 
+porque a condição do while precisa 
+dele.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 15 · ADIVINHA O NÚMERO ISMT
+
+=== PAGE 29 ===
+EXEMPLO RESOLVIDO · PARTE 2
+O ciclo do jogo
+Adivinha.java
+do {
+    palpite = Integer.parseInt(IO.readln("Palpite: "));
+    tentativas++;
+    if (palpite < secreto) {
+        IO.println("É maior! ⬆ ️ ");
+    } else if (palpite > secreto) {
+        IO.println("É menor! ⬇ ️ ");
+    }
+} while (palpite != secreto);
+IO.println("Acertaste em " + tentativas + " tentativas!");
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 15 · ADIVINHA O NÚMERO ISMT
+
+=== PAGE 30 ===
+? ERRO DO DIA
+A variável desaparece fora das chavetas
+do {
+    int palpite = Integer.parseInt(IO.readln("Palpite: "));
+} while (palpite != secreto);
+TERMINAL
+error: cannot find symbol
+  symbol:   variable palpite
+Porquê?Uma variável criada dentro das chavetas 
+só existe lá dentro. A condição fica fora.
+SoluçãoDeclara-a antes do do:int palpite;
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 15 · ADIVINHA O NÚMERO ISMT
+
+=== PAGE 31 ===
+? A ESTRATÉGIA
+Corta sempre o intervalo a meio
+Palpite Resposta Intervalo que sobra
+50 É menor 1 – 49
+25 É maior 26 – 49
+37 É maior 38 – 49
+43 É menor 38 – 42
+Com esta estratégia, quantas tentativas precisas, no máximo, entre 1 e 100?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 15 · ADIVINHA O NÚMERO ISMT
+
+=== PAGE 32 ===
+✍ ️  TESTAR
+Testar sem depender da sorte
+Enquanto testas, fixa o número secreto:
+int secreto = 42;  // TESTE: tirar depois!
+Palpite Esperado
+50 É menor!
+25 É maior!
+42 Acertaste em 3 tentativas!
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 15 · ADIVINHA O NÚMERO ISMT
+
+=== PAGE 33 ===
+? PUZZLE
+Valida a opção do menu
+A } while (op < 1 || op > 3);
+B do {
+C     op = Integer.parseInt(IO.readln("Opção: "));
+D int op;
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 15 · ADIVINHA O NÚMERO ISMT
+
+=== PAGE 34 ===
+?️  PEÇA DO ARCADE
+Adivinha o Número
+TERMINAL
+Estou a pensar num número entre 1 e 100.
+Palpite: 50
+É menor! ⬇ ️
+Palpite: 25
+É maior! ⬆ ️
+Acertaste em 6 tentativas!
+Bónus: limite de 7 tentativas. Bónus 2: liga o jogo ao menu do Arcade.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 15 · ADIVINHA O NÚMERO ISMT
+
+=== PAGE 35 ===
+? COMMIT DO DIA
+Guarda o progresso no GitHub
+Guarda o segundo jogo do Arcade com a mensagem:
+TERMINAL
+Adiciona jogo Adivinha o Número
+Lembra-te do ciclo: Stage → Commit → Push.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 15 · ADIVINHA O NÚMERO ISMT
+
+=== PAGE 36 ===
+?️  BILHETE DE SAÍDA
+Porque é que um menu é um bom caso para do-
+while, e não para while?
+E responde também: o que ficou mais confuso hoje?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 15 · ADIVINHA O NÚMERO ISMT
+
+=== PAGE 37 ===
+16
+AULA 16 · MÓDULO 3 — REPETIÇÃO
+O ciclo for
+Quando sabes quantas voltas queres dar.
+INTRODUÇÃO À PROGRAMAÇÃO · ISMT · LUÍS SIMÕES DA CUNHA
+
+=== PAGE 38 ===
+? LEMBRAS-TE?
+Três perguntas da aula passada
+1
+Quantas voltas dá, no 
+mínimo, um do-while?
+2
+Qual a diferença 
+entre um contador e 
+um acumulador?
+3
+Porque é que palpite 
+tem de ser declarado 
+antes do do?
+Responde de memória, sem espreitar os apontamentos.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 16 · FOR ISMT
+
+=== PAGE 39 ===
+? GANCHO
+3… 2… 1… Descolar! ?
+Uma contagem decrescente sabe exatamente quantas voltas vai dar. Para 
+isso, há um ciclo feito à medida.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 16 · FOR ISMT
+
+=== PAGE 40 ===
+MISSÃO DE HOJE
+No fim desta aula vais conseguir…
+1 Escrever ciclos for
+2 Usar acumuladores e contadores
+3 Reconhecer padrões de ciclo
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 16 · FOR ISMT
+
+=== PAGE 41 ===
+A INSTRUÇÃO FOR
+Os três ingredientes numa só linha
+for (int i = 1; i <= 5; i++) {
+    IO.println("Volta " + i);
+}
+int i = 1
+Início: corre uma vez, antes de 
+tudo.
+i <= 5
+Condição: testada antes de 
+cada volta.
+i++
+Passo: executado no fim de 
+cada volta.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 16 · FOR ISMT
+
+=== PAGE 42 ===
+COMPARAR
+O for é um while arrumado
+com while
+int i = 1;
+while (i <= 5) {
+    IO.println(i);
+    i++;
+}
+com for
+for (int i = 1; i <= 5; i++) {
+    IO.println(i);
+}
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 16 · FOR ISMT
+
+=== PAGE 43 ===
+VARIAÇÕES
+Contar de muitas maneiras
+Queres Escreves Dá
+De 0 a 4 for (int i = 0; i < 5; i++) 0 1 2 3 4
+De 10 a 1 for (int i = 10; i >= 1; i--) 10 9 … 1
+Pares até 10 for (int i = 0; i <= 10; i += 2) 0 2 4 … 10
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 16 · FOR ISMT
+
+=== PAGE 44 ===
+? PREVÊ
+O que aparece no ecrã?
+for (int i = 1; i <= 10; i += 3) {
+    IO.print(i + " ");
+}
+✍ ️
+E com i < 10?
+Faz as duas previsões.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 16 · FOR ISMT
+
+=== PAGE 45 ===
+EXEMPLO RESOLVIDO
+Somar de 1 a 100
+int soma = 0;
+for (int i = 1; i <= 100; i++) {
+    soma += i;
+}
+IO.println("Soma: " + soma);
+i soma
+1 1
+2 3
+3 6
+4 10
+… …
+100 5050
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 16 · FOR ISMT
+
+=== PAGE 46 ===
+PADRÕES
+Quatro padrões para reconhecer
+➕
+Acumular
+soma += x;
+?
+Contar
+if (…) conta++;
+?
+Máximo
+if (x > max) max = x;
+?
+Construir texto
+linha += "*";
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 16 · FOR ISMT
+
+=== PAGE 47 ===
+? PREVÊ
+Quantos múltiplos de 7 há entre 1 e 100?
+int conta = 0;
+for (int i = 1; i <= 100; i++) {
+    if (i % 7 == 0) {
+        conta++;
+    }
+}
+IO.println(conta);
+?
+Tudo junto
+Um for, um if e o operador % da aula 6.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 16 · FOR ISMT
+
+=== PAGE 48 ===
+PERCORRER TEXTO
+Uma String, letra a letra
+String nome = "Arcade";
+for (int i = 0; i < nome.length(); i++) {
+    IO.println(i + ": " + nome.charAt(i));
+}
+⚠️
+i < length()
+Nunca <=. As posições vão de 0 a 
+length() - 1.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 16 · FOR ISMT
+
+=== PAGE 49 ===
+? ERRO DO DIA
+Uma volta a mais
+String nome = "Arcade";
+for (int i = 0; i <= nome.length(); i++) {
+    IO.print(nome.charAt(i));
+}
+TERMINAL
+Arcade
+StringIndexOutOfBoundsException:
+  Index 6 out of bounds for length 6
+Porquê?O <= dá uma volta a mais: a posição 6 não existe.
+NomeErro «por um» (off-by-one): dos mais famosos da programação.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 16 · FOR ISMT
+
+=== PAGE 50 ===
+? PUZZLE
+Mostra o nome ao contrário
+A for (int i = nome.length() - 1; i >= 0; i--) {
+B     inv += nome.charAt(i);
+C String inv = "";
+D }
+E IO.println(inv);
+F String nome = IO.readln("Nome: ");
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 16 · FOR ISMT
+
+=== PAGE 51 ===
+DECIDIR
+while, do-while ou for?
+Situação Ciclo
+Sei quantas voltas (ou percorro uma String) for
+Repito até algo acontecer while
+Tenho de fazer pelo menos uma vez do-while
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 16 · FOR ISMT
+
+=== PAGE 52 ===
+?️  PEÇA DO ARCADE
+Estatísticas do Pedra, Papel, Tesoura
+TERMINAL
+Quantas rondas? 5
+Ronda 1: Ganhaste!
+Ronda 2: Empate!
+...
+Vitórias: 3 | Derrotas: 1 | Empates: 1
+Usa um for para as rondas e três contadores.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 16 · FOR ISMT
+
+=== PAGE 53 ===
+? COMMIT DO DIA
+Guarda o progresso no GitHub
+Guarda a peça do Arcade com a mensagem:
+TERMINAL
+Adiciona estatísticas de jogo
+Lembra-te do ciclo: Stage → Commit → Push.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 16 · FOR ISMT
+
+=== PAGE 54 ===
+?️  BILHETE DE SAÍDA
+Escreve um for que mostre os números de 20 a 0, 
+de 5 em 5.
+E responde também: o que ficou mais confuso hoje?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 16 · FOR ISMT
+
+=== PAGE 55 ===
+17
+AULA 17 · MÓDULO 3 — REPETIÇÃO
+Ciclos dentro de ciclos
+Linhas e colunas: desenhar com texto.
+INTRODUÇÃO À PROGRAMAÇÃO · ISMT · LUÍS SIMÕES DA CUNHA
+
+=== PAGE 56 ===
+? LEMBRAS-TE?
+Três perguntas da aula passada
+1
+Que valores dá for 
+(int i = 0; i < 5; i++)?
+2
+Qual é o erro «por 
+um» mais comum 
+com Strings?
+3
+Que padrão usas para 
+contar quantas 
+vezes algo acontece?
+Responde de memória, sem espreitar os apontamentos.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 17 · CICLOS ANINHADOS ISMT
+
+=== PAGE 57 ===
+? GANCHO
+Consegues desenhar isto só com asteriscos?
+TERMINAL
+   *
+  ***
+ *****
+*******
+No fim da aula, vais conseguir — com dez linhas de código.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 17 · CICLOS ANINHADOS ISMT
+
+=== PAGE 58 ===
+MISSÃO DE HOJE
+No fim desta aula vais conseguir…
+1 Colocar um ciclo dentro de outro
+2 Pensar em linhas e colunas
+3 Desenhar padrões com texto
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 17 · CICLOS ANINHADOS ISMT
+
+=== PAGE 59 ===
+A ANALOGIA
+Como os ponteiros de um relógio
+?
+Ciclo de fora
+As horas: avançam devagar.
+⏱️
+Ciclo de dentro
+Os minutos: dão uma volta completa por cada hora.
+Por cada volta do ciclo de fora, o ciclo de dentro dá todas as suas voltas.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 17 · CICLOS ANINHADOS ISMT
+
+=== PAGE 60 ===
+EXEMPLO RESOLVIDO
+Um retângulo de 3 × 4
+for (int linha = 1; linha <= 3; linha++) {
+    for (int col = 1; col <= 4; col++) {
+        IO.print("* ");
+    }
+    IO.println();
+}
+TERMINAL
+* * * *
+* * * *
+* * * *
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 17 · CICLOS ANINHADOS ISMT
+
+=== PAGE 61 ===
+? PREVÊ
+Quantas vezes se escreve «* »?
+3️ ⃣
+3 linhas × 4 colunas
+No exemplo anterior.
+❓
+5 linhas × 10 colunas
+E se mudássemos os limites?
+Regra: as voltas do ciclo de dentro multiplicam-se pelas do ciclo de fora.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 17 · CICLOS ANINHADOS ISMT
+
+=== PAGE 62 ===
+DEPENDÊNCIA
+O ciclo de dentro depende do de fora
+for (int linha = 1; linha <= 4; linha++) {
+    for (int col = 1; col <= linha; col++) {
+        IO.print("*");
+    }
+    IO.println();
+}
+TERMINAL
+*
+**
+***
+****
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 17 · CICLOS ANINHADOS ISMT
+
+=== PAGE 63 ===
+PENSAR ANTES DE PROGRAMAR
+Encontra o padrão numa tabela
+TERMINAL
+   *
+  ***
+ *****
+*******
+Linha Espaços Estrelas
+1 3 1
+2 2 3
+3 1 5
+4 0 7
+Espaços = 4 − linha · Estrelas = 2 × linha − 1
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 17 · CICLOS ANINHADOS ISMT
+
+=== PAGE 64 ===
+EXEMPLO RESOLVIDO
+A pirâmide
+int n = 4;
+for (int linha = 1; linha <= n; linha++) {
+    for (int e = 1; e <= n - linha; e++) {
+        IO.print(" ");
+    }
+    for (int s = 1; s <= 2 * linha - 1; s++) {
+        IO.print("*");
+    }
+    IO.println();
+}
+TERMINAL
+   *
+  ***
+ *****
+*******
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 17 · CICLOS ANINHADOS ISMT
+
+=== PAGE 65 ===
+? PREVÊ
+O que aparece no ecrã?
+for (int i = 1; i <= 3; i++) {
+    for (int j = 1; j <= 3; j++) {
+        IO.print(i * j + "\t");
+    }
+    IO.println();
+}
+↔️
+O que é \t?
+Uma tabulação: alinha o texto em 
+colunas.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 17 · CICLOS ANINHADOS ISMT
+
+=== PAGE 66 ===
+? ERRO DO DIA
+A mesma variável nos dois ciclos
+for (int i = 1; i <= 3; i++) {
+    for (int i = 1; i <= 4; i++) {
+        IO.print("*");
+    }
+}
+TERMINAL
+error: variable i is already defined
+  in method main()
+Porquê?O i de fora ainda existe dentro do ciclo de dentro.
+SoluçãoUsa nomes diferentes: linha e col, ou i e j.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 17 · CICLOS ANINHADOS ISMT
+
+=== PAGE 67 ===
+? PUZZLE
+Duas linhas de cinco cardinais
+A     IO.println();
+B for (int l = 1; l <= 2; l++) {
+C     for (int c = 1; c <= 5; c++) {
+D         IO.print("#");
+E     }
+F }
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 17 · CICLOS ANINHADOS ISMT
+
+=== PAGE 68 ===
+?️  PEÇA DO ARCADE
+O título do Arcade com moldura
+TERMINAL
+**************************
+*   ARCADE DO TERMINAL   *
+**************************
+Bónus: a largura adapta-se ao tamanho do título (usa length()).
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 17 · CICLOS ANINHADOS ISMT
+
+=== PAGE 69 ===
+? COMMIT DO DIA
+Guarda o progresso no GitHub
+Guarda a peça do Arcade com a mensagem:
+TERMINAL
+Adiciona título em ASCII
+Lembra-te do ciclo: Stage → Commit → Push.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 17 · CICLOS ANINHADOS ISMT
+
+=== PAGE 70 ===
+?️  BILHETE DE SAÍDA
+Num ciclo aninhado de 5 × 8, quantas vezes 
+corre o corpo do ciclo de dentro? Porquê?
+E responde também: o que ficou mais confuso hoje?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 17 · CICLOS ANINHADOS ISMT
+
+=== PAGE 71 ===
+18
+AULA 18 · MÓDULO 3 — REPETIÇÃO
+Caçar bugs
+Usar o depurador do VS Code para ver o programa por dentro.
+INTRODUÇÃO À PROGRAMAÇÃO · ISMT · LUÍS SIMÕES DA CUNHA
+
+=== PAGE 72 ===
+? LEMBRAS-TE?
+Três perguntas da aula passada
+1
+Num ciclo aninhado 
+de 3 × 4, quantas 
+vezes corre o corpo 
+de dentro?
+2
+Quantas estrelas tem 
+a linha n da pirâmide?
+3
+Que erro dá usar i nos 
+dois ciclos?
+Responde de memória, sem espreitar os apontamentos.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 18 · DEPURAÇÃO ISMT
+
+=== PAGE 73 ===
+? GANCHO
+Este programa tem três erros 
+escondidos.
+Compila, corre… e dá resultados errados. Hoje vais apanhá-los — sem 
+adivinhar.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 18 · DEPURAÇÃO ISMT
+
+=== PAGE 74 ===
+MISSÃO DE HOJE
+No fim desta aula vais conseguir…
+1 Distinguir erros de compilação, de execução e de lógica
+2 Usar breakpoints e execução passo a passo
+3 Observar variáveis enquanto o programa corre
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 18 · DEPURAÇÃO ISMT
+
+=== PAGE 75 ===
+TRÊS TIPOS DE ERRO
+Nem todos os erros se anunciam
+?
+Compilação
+O Java recusa-se a correr.
+';' expected
+?
+Execução
+Corre e rebenta a meio.
+NumberFormatException
+?
+Lógica
+Corre sem queixas, mas o 
+resultado está errado. Os mais 
+perigosos!
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 18 · DEPURAÇÃO ISMT
+
+=== PAGE 76 ===
+? CLASSIFICA
+Que tipo de erro é?
+Situação Tipo?
+cannot find symbol ?
+A média de 10 e 15 dá 12.0 ?
+Index 6 out of bounds for length 6 ?
+O ciclo nunca termina ?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 18 · DEPURAÇÃO ISMT
+
+=== PAGE 77 ===
+LER A MENSAGEM
+Onde rebentou?
+TERMINAL
+Exception in thread "main"
+java.lang.StringIndexOutOfBoundsException:
+  Index 6 out of bounds for length 6
+  at java.base/...
+  at Nick.main(Nick.java:7)
+O quê?O nome da exceção diz o tipo de problema.
+Onde?Procura a linha com o nome do TEU ficheiro: Nick.java:7.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 18 · DEPURAÇÃO ISMT
+
+=== PAGE 78 ===
+A FERRAMENTA
+O depurador: câmara lenta para o código
+?
+Breakpoint
+Um ponto de paragem. O 
+programa pára ali e espera.
+⏭ ️
+Passo a passo
+Avança uma linha de cada vez 
+(F10).
+?
+Variables
+Mostra o valor de cada caixa, 
+em direto.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 18 · DEPURAÇÃO ISMT
+
+=== PAGE 79 ===
+COMO USAR
+Depurar em cinco passos
+1 Clica à esquerda do número da linha: aparece um ●
+2 Corre com Debug em vez de Run
+3 Carrega em F10 para avançar uma linha
+4 Observa o painel Variables
+5 F5 continua até ao próximo breakpoint
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 18 · DEPURAÇÃO ISMT
+
+=== PAGE 80 ===
+? BUG N.º 1
+A média errada
+int a = 10;
+int b = 15;
+double media = (a + b) / 2;
+IO.println(media);   // 12.0 ?!
+?
+Pista
+Põe um breakpoint na linha 3 e observa 
+o valor de media depois de F10.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 18 · DEPURAÇÃO ISMT
+
+=== PAGE 81 ===
+? BUG N.º 2
+A soma que não soma
+int soma = 0;
+for (int i = 1; i <= 5; i++) {
+    soma = i;
+}
+IO.println(soma);   // devia dar 15
+?
+Pista
+Observa soma em cada volta. Está a 
+acumular… ou a substituir?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 18 · DEPURAÇÃO ISMT
+
+=== PAGE 82 ===
+? BUG N.º 3
+Falta um número
+// Devia mostrar de 1 a 10
+for (int i = 1; i < 10; i++) {
+    IO.print(i + " ");
+}
+?
+Pista
+Qual é o valor de i quando o ciclo 
+termina? Testa a fronteira.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 18 · DEPURAÇÃO ISMT
+
+=== PAGE 83 ===
+O MÉTODO DO DETETIVE
+Quatro passos para qualquer bug
+?
+Reproduzir
+Consegues repetir 
+o erro?
+?
+Isolar
+Onde começa a 
+correr mal?
+?
+Observar
+Breakpoints e 
+variáveis
+✅
+Corrigir
+E testar de novo, 
+com fronteiras
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 18 · DEPURAÇÃO ISMT
+
+=== PAGE 84 ===
+UMA TÉCNICA A SÉRIO
+Explica o teu código a um patinho de 
+borracha.
+Ao explicares linha a linha, em voz alta, muitas vezes encontras o erro 
+sozinho. O Codex também pode ser o patinho — se lhe pedires perguntas, 
+não a solução.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 18 · DEPURAÇÃO ISMT
+
+=== PAGE 85 ===
+?️  CAÇA AO BUG
+Encontra, documenta e reporta
+1
+Recebe o código
+[Repositório com bugs 
+preparado pelo docente]
+2
+Caça
+Usa o depurador. Anota a linha, 
+o sintoma e a causa.
+3
+Reporta
+Abre uma Issue no GitHub a 
+descrever cada bug.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 18 · DEPURAÇÃO ISMT
+
+=== PAGE 86 ===
+MÓDULO 3 CONCLUÍDO
+O que já sabes fazer
+?
+while
+Repetir enquanto…
+?
+do-while
+Pelo menos uma vez
+?
+for
+Voltas conhecidas
+?
+Depurar
+Breakpoints e F10
+Próximo módulo: Métodos — dividir para conquistar.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 18 · DEPURAÇÃO ISMT
+
+=== PAGE 87 ===
+? COMMIT DO DIA
+Guarda o progresso no GitHub
+Guarda as correções com a mensagem:
+TERMINAL
+Corrige bugs encontrados com o depurador
+Lembra-te do ciclo: Stage → Commit → Push.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 18 · DEPURAÇÃO ISMT
+
+=== PAGE 88 ===
+?️  BILHETE DE SAÍDA
+Qual é a diferença entre um erro de execução e 
+um erro de lógica? Dá um exemplo de cada.
+E responde também: o que ficou mais confuso hoje?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 18 · DEPURAÇÃO ISMT

@@ -1,0 +1,1240 @@
+
+=== ppt/slides/slide1.xml ===
+>_
+INSTITUTO SUPERIOR MIGUEL TORGA · LICENCIATURA EM INFORMÁTICA
+Introdução à Programação
+Módulo 1 · Dados — Aulas 5 a 9
+Luís Simões da Cunha · 1.º semestre
+
+=== ppt/slides/slide2.xml ===
+05
+AULA 5 · MÓDULO 1 — DADOS
+Variáveis: caixas com etiqueta
+Como é que um programa se lembra das coisas?
+INTRODUÇÃO À PROGRAMAÇÃO · ISMT · LUÍS SIMÕES DA CUNHA
+
+=== ppt/slides/slide3.xml ===
+🧠 LEMBRAS-TE?
+Três perguntas da aula passada
+1
+Qual é a ordem do ciclo do Git?
+2
+O que faz o IO.readln?
+3
+«Resolve o exercício por mim»: que cor tem no semáforo?
+Responde de memória, sem espreitar os apontamentos.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 5 · VARIÁVEIS
+ISMT
+
+=== ppt/slides/slide4.xml ===
+🎯 GANCHO
+Como é que um jogo se lembra da tua pontuação?
+Mesmo quando perdes uma vida, os pontos continuam lá. Algures, há uma caixa a guardá-los.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 5 · VARIÁVEIS
+ISMT
+
+=== ppt/slides/slide5.xml ===
+MISSÃO DE HOJE
+No fim desta aula vais conseguir…
+1
+Criar variáveis e dar-lhes valores
+2
+Escolher o tipo certo: int, double, boolean, String
+3
+Seguir o valor de uma variável com uma tabela de traço
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 5 · VARIÁVEIS
+ISMT
+
+=== ppt/slides/slide6.xml ===
+CONCEITO-CHAVE
+Uma variável é uma caixa com etiqueta
+🏷️
+pontos
+Etiqueta
+O nome, para a encontrares.
+📦
+Caixa
+Um espaço na memória do computador.
+💎
+120
+Conteúdo
+O valor que está lá dentro.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 5 · VARIÁVEIS
+ISMT
+
+=== ppt/slides/slide7.xml ===
+ANATOMIA
+As quatro peças de uma declaração
+int
+ pontos = 120;
+int
+O tipo: que coisa cabe na caixa.
+pontos
+O nome: a etiqueta da caixa.
+=
+Lê-se «recebe», não «é igual».
+120
+O valor inicial.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 5 · VARIÁVEIS
+ISMT
+
+=== ppt/slides/slide8.xml ===
+OS TIPOS
+Quatro tipos para começar
+Tipo
+Guarda
+Exemplo
+int
+Números inteiros
+int vidas = 3;
+double
+Números com décimas
+double tempo = 12.5;
+boolean
+Verdadeiro ou falso
+boolean ganhou = false;
+String
+Texto (entre aspas)
+String nome = "Rita";
+Atenção: as décimas escrevem-se com 
+ponto
+ (12.5), não com vírgula.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 5 · VARIÁVEIS
+ISMT
+
+=== ppt/slides/slide9.xml ===
+🔮 DECIDE
+Que tipo usarias?
+🎂
+A idade de um jogador
+💶
+O preço de um jogo
+⏸️
+Se o jogo está em pausa
+🗺️
+O nome do nível
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 5 · VARIÁVEIS
+ISMT
+
+=== ppt/slides/slide10.xml ===
+MUDAR O CONTEÚDO
+Uma caixa guarda um valor de cada vez
+int
+ pontos = 0;
+pontos = 50;
+pontos = pontos + 10;
+IO.println(pontos);
+🔄
+Escreve 60
+Cada nova atribuição substitui o valor antigo. Na 3.ª linha: pega no 50, soma 10 e guarda.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 5 · VARIÁVEIS
+ISMT
+
+=== ppt/slides/slide11.xml ===
+FERRAMENTA
+Tabela de traço: segue as caixas linha a linha
+int
+ pontos = 0;
+int
+ vidas = 3;
+pontos = pontos + 100;
+vidas = vidas - 1;
+Linha
+pontos
+vidas
+1
+0
+—
+2
+0
+3
+3
+100
+3
+4
+100
+2
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 5 · VARIÁVEIS
+ISMT
+
+=== ppt/slides/slide12.xml ===
+🔮 PREVÊ
+O que aparece no ecrã?
+int
+ a = 5;
+int
+ b = a;
+a = 10;
+IO.println(a + 
+" "
+ + b);
+✍️
+Faz a tabela de traço
+Cuidado com a 2.ª linha: o b fica com uma cópia… ou fica ligado ao a?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 5 · VARIÁVEIS
+ISMT
+
+=== ppt/slides/slide13.xml ===
+BOAS PRÁTICAS
+Bons nomes, maus nomes
+❌ Mau
+✅ Bom
+Porquê
+x
+pontos
+Diz o que guarda
+a1
+vidasRestantes
+Lê-se como uma frase
+NomeJogador
+nomeJogador
+Começa com minúscula
+tempo de jogo
+tempoDeJogo
+Sem espaços (é um erro!)
+Regra 
+camelCase
+: começa com minúscula; cada palavra nova começa com maiúscula.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 5 · VARIÁVEIS
+ISMT
+
+=== ppt/slides/slide14.xml ===
+🐛 ERRO DO DIA
+Usar uma variável que não existe
+Pontos.java
+void
+ main() {
+    
+int
+ pontos = 10;
+    IO.println(ponto);
+}
+TERMINAL
+Pontos.java:3: error: cannot find symbol
+symbol: variable ponto
+Porquê?
+O nome tem de ser exatamente igual — até nas maiúsculas.
+Solução
+Corrige ponto para pontos.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 5 · VARIÁVEIS
+ISMT
+
+=== ppt/slides/slide15.xml ===
+🧩 PUZZLE
+Troca o conteúdo de duas caixas
+Tens 
+int a = 1;
+ e 
+int b = 2;
+. Ordena as linhas para trocar os valores:
+A
+b = temp;
+B
+int
+ temp = a;
+C
+a = b;
+Pista: para trocar o conteúdo de dois copos, precisas de um terceiro copo.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 5 · VARIÁVEIS
+ISMT
+
+=== ppt/slides/slide16.xml ===
+🕹️ PEÇA DO ARCADE
+As variáveis do jogador
+Arcade.java
+String
+ nome = IO.readln(
+"Nome do jogador: "
+);
+int
+ pontos = 0;
+int
+ vidas = 3;
+boolean
+ emJogo = true;
+IO.println(nome + 
+" | Pontos: "
+ + pontos + 
+" | Vidas: "
+ + vidas);
+Bónus: tira uma vida e soma 50 pontos. Mostra outra vez o estado do jogador.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 5 · VARIÁVEIS
+ISMT
+
+=== ppt/slides/slide17.xml ===
+💾 COMMIT DO DIA
+Guarda o progresso no GitHub
+Guarda a peça do Arcade com a mensagem:
+TERMINAL
+Adiciona variáveis do jogador
+Lembra-te do ciclo: Stage → Commit → Push.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 5 · VARIÁVEIS
+ISMT
+
+=== ppt/slides/slide18.xml ===
+🎟️ BILHETE DE SAÍDA
+Com a metáfora da caixa, explica o que faz: vidas = vidas - 1;
+E responde também: o que ficou mais confuso hoje?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 5 · VARIÁVEIS
+ISMT
+
+=== ppt/slides/slide19.xml ===
+06
+AULA 6 · MÓDULO 1 — DADOS
+Contas que o computador faz
+Operadores, prioridades — e uma divisão que te vai surpreender.
+INTRODUÇÃO À PROGRAMAÇÃO · ISMT · LUÍS SIMÕES DA CUNHA
+
+=== ppt/slides/slide20.xml ===
+🧠 LEMBRAS-TE?
+Três perguntas da aula passada
+1
+Que tipo usarias para guardar um preço?
+2
+Como se lê o sinal = em Java?
+3
+Depois de int b = a; a = 10; quanto vale b?
+Responde de memória, sem espreitar os apontamentos.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 6 · OPERADORES
+ISMT
+
+=== ppt/slides/slide21.xml ===
+🎯 GANCHO
+Quanto é 7 / 2 em Java?
+Se respondeste 3,5… o Java discorda. Hoje vais descobrir porquê.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 6 · OPERADORES
+ISMT
+
+=== ppt/slides/slide22.xml ===
+MISSÃO DE HOJE
+No fim desta aula vais conseguir…
+1
+Usar os operadores + − * / %
+2
+Prever a ordem das contas
+3
+Converter entre int e double
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 6 · OPERADORES
+ISMT
+
+=== ppt/slides/slide23.xml ===
+OS OPERADORES
+Cinco operadores aritméticos
+Operador
+Significa
+Exemplo
+Resultado
++
+Soma
+7 + 2
+9
+-
+Subtração
+7 - 2
+5
+*
+Multiplicação
+7 * 2
+14
+/
+Divisão
+7 / 2
+3 (!)
+%
+Resto da divisão
+7 % 2
+1
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 6 · OPERADORES
+ISMT
+
+=== ppt/slides/slide24.xml ===
+A SURPRESA
+Inteiro ÷ inteiro = inteiro
+7 / 2
+→ 3
+A parte decimal é cortada, não arredondada.
+7.0 / 2
+→ 3.5
+Basta um double para a conta ter décimas.
+9 / 10
+→ 0
+Cuidado: dá mesmo zero!
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 6 · OPERADORES
+ISMT
+
+=== ppt/slides/slide25.xml ===
+O OPERADOR %
+O resto é mais útil do que parece
+⚖️
+Par ou ímpar?
+n % 2 dá 0 se n for par e 1 se for ímpar.
+8 % 2 → 0
+⏱️
+Minutos e segundos
+130 segundos são 2 minutos e…
+130 % 60 → 10
+🔄
+Dar a volta
+Alterna entre jogador 0 e jogador 1.
+turno % 2
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 6 · OPERADORES
+ISMT
+
+=== ppt/slides/slide26.xml ===
+QUEM VAI PRIMEIRO?
+A ordem das contas
+Como na matemática: primeiro 
+* / %
+, depois 
++ −
+. Os parênteses mandam em tudo.
+2 + 3 * 4
+→ 14
+A multiplicação vai primeiro.
+(2 + 3) * 4
+→ 20
+Os parênteses vão primeiro.
+10 - 4 - 3
+→ 3
+Com a mesma prioridade: da esquerda para a direita.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 6 · OPERADORES
+ISMT
+
+=== ppt/slides/slide27.xml ===
+🔮 PREVÊ
+Qual é o resultado de cada linha?
+IO.println(10 / 4);
+IO.println(10 % 4);
+IO.println(10.0 / 4);
+IO.println(1 + 2 + 
+"3"
+);
+IO.println(
+"1"
+ + 2 + 3);
+✍️
+Cinco linhas, cinco previsões
+As duas últimas são as mais traiçoeiras.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 6 · OPERADORES
+ISMT
+
+=== ppt/slides/slide28.xml ===
+QUANDO HÁ TEXTO
+Com texto, o + cola em vez de somar
+1 + 2 + "3"
+→ "33"
+Primeiro soma 1 + 2 = 3; depois cola o «3».
+"1" + 2 + 3
+→ "123"
+Começa com texto: a partir daí, tudo é colado.
+Truque: usa parênteses. 
+"Total: " + (a + b)
+ soma primeiro e cola depois.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 6 · OPERADORES
+ISMT
+
+=== ppt/slides/slide29.xml ===
+ATALHOS
+Atalhos que vais ver muitas vezes
+Atalho
+É o mesmo que
+pontos += 10;
+pontos = pontos + 10;
+vidas -= 1;
+vidas = vidas - 1;
+nivel++;
+nivel = nivel + 1;
+vidas--;
+vidas = vidas - 1;
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 6 · OPERADORES
+ISMT
+
+=== ppt/slides/slide30.xml ===
+MUDAR DE CAIXA
+Conversões entre int e double
+⬆️
+int → double
+Automático: cabe sempre.
+double d = 7; // 7.0
+⬇️
+double → int
+Tens de pedir. Corta as décimas.
+int n = (int) 3.9; // 3
+🎯
+Média certa
+Converte antes de dividir.
+(double) soma / n
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 6 · OPERADORES
+ISMT
+
+=== ppt/slides/slide31.xml ===
+✍️ TABELA DE TRAÇO
+Completa a tabela
+int
+ moedas = 17;
+int
+ caixas = moedas / 5;
+int
+ sobram = moedas % 5;
+moedas += 3;
+Linha
+moedas
+caixas
+sobram
+1
+17
+—
+—
+2
+?
+?
+—
+3
+?
+?
+?
+4
+?
+?
+?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 6 · OPERADORES
+ISMT
+
+=== ppt/slides/slide32.xml ===
+🐛 ERRO DO DIA
+Um double não cabe numa caixa int
+double
+ preco = 4.99;
+int
+ euros = preco;
+TERMINAL
+error: incompatible types:
+possible lossy conversion from double to int
+Porquê?
+Perder-se-iam as décimas. O Java não o faz sem pedires.
+Soluções
+Usa double euros, ou pede a conversão: (int) preco.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 6 · OPERADORES
+ISMT
+
+=== ppt/slides/slide33.xml ===
+🧩 PUZZLE
+Converte segundos em minutos e segundos
+A
+IO.println(min + 
+" min "
+ + seg + 
+" s"
+);
+B
+int
+ seg = total % 60;
+C
+int
+ total = 130;
+D
+int
+ min = total / 60;
+Há mais do que uma ordem correta. Consegues encontrar duas?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 6 · OPERADORES
+ISMT
+
+=== ppt/slides/slide34.xml ===
+🕹️ PEÇA DO ARCADE
+Calcular o bónus de pontos
+Arcade.java
+int
+ pontos = 120;
+int
+ nivel = 3;
+int
+ bonus = pontos * nivel / 10;
+pontos += bonus;
+IO.println(
+"Bónus: "
+ + bonus + 
+" | Total: "
+ + pontos);
+Prevê o resultado antes de correr. Depois, experimenta com o nível 7.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 6 · OPERADORES
+ISMT
+
+=== ppt/slides/slide35.xml ===
+💾 COMMIT DO DIA
+Guarda o progresso no GitHub
+Guarda a peça do Arcade com a mensagem:
+TERMINAL
+Adiciona cálculo do bónus
+Lembra-te do ciclo: Stage → Commit → Push.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 6 · OPERADORES
+ISMT
+
+=== ppt/slides/slide36.xml ===
+🎟️ BILHETE DE SAÍDA
+Porque é que 9 / 10 dá 0 em Java? Como obterias 0.9?
+E responde também: o que ficou mais confuso hoje?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 6 · OPERADORES
+ISMT
+
+=== ppt/slides/slide37.xml ===
+07
+AULA 7 · MÓDULO 1 — DADOS
+Conversar com o utilizador
+Ler o que o jogador escreve — e responder com estilo.
+INTRODUÇÃO À PROGRAMAÇÃO · ISMT · LUÍS SIMÕES DA CUNHA
+
+=== ppt/slides/slide38.xml ===
+🧠 LEMBRAS-TE?
+Três perguntas da aula passada
+1
+Quanto é 17 % 5?
+2
+Qual é o resultado de "1" + 2 + 3?
+3
+Como transformas 3.9 num int? Que valor dá?
+Responde de memória, sem espreitar os apontamentos.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 7 · ENTRADA E SAÍDA
+ISMT
+
+=== ppt/slides/slide39.xml ===
+🎯 GANCHO
+Um programa que só fala é um rádio.
+Hoje transformamo-lo num telefone: vai ouvir-te e responder.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 7 · ENTRADA E SAÍDA
+ISMT
+
+=== ppt/slides/slide40.xml ===
+MISSÃO DE HOJE
+No fim desta aula vais conseguir…
+1
+Ler texto com IO.readln
+2
+Converter texto em números
+3
+Formatar resultados com String.format
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 7 · ENTRADA E SAÍDA
+ISMT
+
+=== ppt/slides/slide41.xml ===
+OUVIDOS E BOCA
+Entrada e saída de dados
+👂
+Entrada
+IO.readln faz uma pergunta e devolve o que o utilizador escreveu.
+String r = IO.readln("? ");
+🗣️
+Saída
+IO.println escreve e muda de linha. IO.print escreve sem mudar.
+IO.println("Olá!");
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 7 · ENTRADA E SAÍDA
+ISMT
+
+=== ppt/slides/slide42.xml ===
+🔮 PREVÊ
+O IO.readln devolve sempre texto
+String
+ idade = IO.readln(
+"Idade? "
+);
+IO.println(idade + 1);
+😱
+Escreves 20…
+…e aparece 201! O Java colou o texto «20» com o 1.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 7 · ENTRADA E SAÍDA
+ISMT
+
+=== ppt/slides/slide43.xml ===
+A SOLUÇÃO
+Converter texto em números
+Queres
+Usa
+Exemplo
+int
+Integer.parseInt(texto)
+"20" → 20
+double
+Double.parseDouble(texto)
+"4.5" → 4.5
+int
+ idade = Integer.parseInt(IO.readln(
+"Idade? "
+));
+IO.println(idade + 1);   
+// 21
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 7 · ENTRADA E SAÍDA
+ISMT
+
+=== ppt/slides/slide44.xml ===
+O PADRÃO
+Quase todos os programas fazem isto
+📥
+1. Ler
+Pedir os dados ao utilizador
+⚙️
+2. Calcular
+Processar os dados
+📤
+3. Mostrar
+Apresentar o resultado
+Antes de escrever código, pergunta-te: o que leio? o que calculo? o que mostro?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 7 · ENTRADA E SAÍDA
+ISMT
+
+=== ppt/slides/slide45.xml ===
+EXEMPLO RESOLVIDO
+Média de dois testes
+Media.java
+// 1. Ler
+double
+ t1 = Double.parseDouble(IO.readln(
+"Teste 1: "
+));
+double
+ t2 = Double.parseDouble(IO.readln(
+"Teste 2: "
+));
+// 2. Calcular
+double
+ media = (t1 + t2) / 2;
+// 3. Mostrar
+IO.println(
+"Média: "
+ + media);
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 7 · ENTRADA E SAÍDA
+ISMT
+
+=== ppt/slides/slide46.xml ===
+MOSTRAR COM ESTILO
+String.format: texto com marcadores
+Marcador
+Para
+Exemplo
+Resultado
+%d
+int
+format("%d vidas", 3)
+3 vidas
+%.2f
+double, 2 casas
+format("%.2f €", 4.5)
+4,50 €
+%s
+texto
+format("Olá, %s", nome)
+Olá, Rita
+IO.println(
+String
+.format(
+"%s tem %d pontos"
+, nome, pontos));
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 7 · ENTRADA E SAÍDA
+ISMT
+
+=== ppt/slides/slide47.xml ===
+🔮 PREVÊ
+O utilizador escreve 5 e depois 3. O que aparece?
+String
+ a = IO.readln(
+"Número: "
+);
+String
+ b = IO.readln(
+"Número: "
+);
+IO.println(a + b);
+IO.println(Integer.parseInt(a) + Integer.parseInt(b));
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 7 · ENTRADA E SAÍDA
+ISMT
+
+=== ppt/slides/slide48.xml ===
+🐛 ERRO DO DIA
+O utilizador escreveu uma vírgula
+TERMINAL
+$
+ java Media.java
+Teste 1: 14,5
+Exception in thread "main"
+java.lang.NumberFormatException:
+For input string: "14,5"
+Porquê?
+Em Java, as décimas escrevem-se com ponto: 14.5.
+E agora?
+Avisa na pergunta: «Teste 1 (ex.: 14.5):». Na aula 27 vais aprender a apanhar este erro.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 7 · ENTRADA E SAÍDA
+ISMT
+
+=== ppt/slides/slide49.xml ===
+🧩 PUZZLE
+Pede o nome e o ano de nascimento; mostra a idade
+A
+int
+ idade = 2026 - ano;
+B
+String
+ nome = IO.readln(
+"Nome: "
+);
+C
+IO.println(
+String
+.format(
+"%s tem %d anos"
+, nome, idade));
+D
+int
+ ano = Integer.parseInt(IO.readln(
+"Ano: "
+));
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 7 · ENTRADA E SAÍDA
+ISMT
+
+=== ppt/slides/slide50.xml ===
+🕹️ PEÇA DO ARCADE
+Ecrã de boas-vindas 2.0
+Faz o teu programa comportar-se assim:
+TERMINAL
+=== ARCADE DO TERMINAL ===
+Nome do jogador: Rita
+Idade: 19
+Olá, Rita (19 anos)! Tens 3 vidas e 0 pontos.
+Usa IO.readln, Integer.parseInt e String.format.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 7 · ENTRADA E SAÍDA
+ISMT
+
+=== ppt/slides/slide51.xml ===
+💾 COMMIT DO DIA
+Guarda o progresso no GitHub
+Guarda a peça do Arcade com a mensagem:
+TERMINAL
+Personaliza ecrã de boas-vindas
+Lembra-te do ciclo: Stage → Commit → Push.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 7 · ENTRADA E SAÍDA
+ISMT
+
+=== ppt/slides/slide52.xml ===
+🎟️ BILHETE DE SAÍDA
+Porque é que IO.readln("Idade? ") + 1 não soma? Como corriges?
+E responde também: o que ficou mais confuso hoje?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 7 · ENTRADA E SAÍDA
+ISMT
+
+=== ppt/slides/slide53.xml ===
+08
+AULA 8 · MÓDULO 1 — DADOS
+Brincar com texto
+Strings: medir, cortar, transformar e comparar palavras.
+INTRODUÇÃO À PROGRAMAÇÃO · ISMT · LUÍS SIMÕES DA CUNHA
+
+=== ppt/slides/slide54.xml ===
+🧠 LEMBRAS-TE?
+Três perguntas da aula passada
+1
+O que devolve sempre o IO.readln?
+2
+Que ferramenta transforma "20" em 20?
+3
+Que marcador usas no String.format para um int?
+Responde de memória, sem espreitar os apontamentos.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 8 · TEXTO (STRINGS)
+ISMT
+
+=== ppt/slides/slide55.xml ===
+🎯 GANCHO
+E se o computador te inventasse um nome de jogador?
+RITA + SOUSA → RITSA. Hoje vais ensiná-lo a fazer isto com qualquer nome.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 8 · TEXTO (STRINGS)
+ISMT
+
+=== ppt/slides/slide56.xml ===
+MISSÃO DE HOJE
+No fim desta aula vais conseguir…
+1
+Medir e percorrer texto por posições
+2
+Cortar e transformar texto
+3
+Comparar texto da forma certa
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 8 · TEXTO (STRINGS)
+ISMT
+
+=== ppt/slides/slide57.xml ===
+CONCEITO-CHAVE
+Uma String é um colar de contas
+R
+0
+I
+1
+T
+2
+A
+3
+Cada letra tem uma posição. 
+As posições começam em 0
+, não em 1.
+Uma letra sozinha é um 
+char
+ e escreve-se entre plicas: 'R'.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 8 · TEXTO (STRINGS)
+ISMT
+
+=== ppt/slides/slide58.xml ===
+PERGUNTAR À STRING
+Com nome = "Rita"
+Escreves
+Pergunta
+Resultado
+nome.length()
+Quantas letras?
+4
+nome.charAt(0)
+Que letra está na posição 0?
+'R'
+nome.toUpperCase()
+Em maiúsculas?
+"RITA"
+nome.toLowerCase()
+Em minúsculas?
+"rita"
+nome.substring(1, 3)
+Pedaço da 1 até antes da 3
+"it"
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 8 · TEXTO (STRINGS)
+ISMT
+
+=== ppt/slides/slide59.xml ===
+CORTAR
+substring(início, fim)
+R
+0
+I
+1
+T
+2
+A
+3
+substring(0, 3)
+→ "Rit"
+substring(1, 3)
+→ "it"
+substring(2)
+→ "ta"
+Começa em 
+início
+ e pára 
+antes
+ de 
+fim
+. Sem fim, vai até ao fim.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 8 · TEXTO (STRINGS)
+ISMT
+
+=== ppt/slides/slide60.xml ===
+🔮 PREVÊ
+O que aparece no ecrã?
+String
+ s = 
+"Arcade"
+;
+IO.println(s.length());
+IO.println(s.charAt(2));
+IO.println(s.substring(0, 3).toUpperCase());
+IO.println(s.charAt(s.length() - 1));
+✍️
+Desenha o colar
+Escreve as posições por baixo de cada letra.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 8 · TEXTO (STRINGS)
+ISMT
+
+=== ppt/slides/slide61.xml ===
+🐛 ERRO DO DIA
+Pedir uma posição que não existe
+String
+ s = 
+"Rita"
+;
+IO.println(s.charAt(4));
+TERMINAL
+Exception in thread "main"
+java.lang.StringIndexOutOfBoundsException:
+Index 4 out of bounds for length 4
+Porquê?
+Com 4 letras, as posições vão de 0 a 3.
+Truque
+A última letra está sempre em length() - 1.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 8 · TEXTO (STRINGS)
+ISMT
+
+=== ppt/slides/slide62.xml ===
+COMPARAR TEXTO
+Para comparar texto, usa equals
+✅
+Certo
+Compara as letras, uma a uma.
+nome.equals("Rita")
+✅
+Sem maiúsculas
+Ignora maiúsculas e minúsculas.
+nome.equalsIgnoreCase("rita")
+⛔
+Evitar
+Pode falhar com texto lido do teclado.
+nome == "Rita"
+Regra de bolso: números comparam-se com ==; texto compara-se com equals.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 8 · TEXTO (STRINGS)
+ISMT
+
+=== ppt/slides/slide63.xml ===
+EXEMPLO RESOLVIDO
+Gerador de nickname
+Nick.java
+// 1. Ler
+String
+ nome = IO.readln(
+"Nome: "
+);
+String
+ apelido = IO.readln(
+"Apelido: "
+);
+// 2. Cortar e juntar
+String
+ nick = nome.substring(0, 3) + apelido.substring(apelido.length() - 2);
+// 3. Transformar e mostrar
+IO.println(
+"O teu nick: "
+ + nick.toUpperCase());
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 8 · TEXTO (STRINGS)
+ISMT
+
+=== ppt/slides/slide64.xml ===
+🧩 PUZZLE
+Mostra a inicial e o número de letras
+A
+char inicial = nome.charAt(0);
+B
+IO.println(inicial + 
+" tem "
+ + nome.length() + 
+" letras"
+);
+C
+String
+ nome = IO.readln(
+"Nome: "
+);
+D
+nome = nome.toUpperCase();
+Muda alguma coisa se trocares a ordem de A e D? Porquê?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 8 · TEXTO (STRINGS)
+ISMT
+
+=== ppt/slides/slide65.xml ===
+🕹️ PEÇA DO ARCADE
+O gerador de nicks do Arcade
+TERMINAL
+Nome: Rita
+Apelido: Sousa
+O teu nick de jogador: RITSA
+Bónus: mostra também quantas letras tem o nick, com String.format.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 8 · TEXTO (STRINGS)
+ISMT
+
+=== ppt/slides/slide66.xml ===
+💾 COMMIT DO DIA
+Guarda o progresso no GitHub
+Guarda a peça do Arcade com a mensagem:
+TERMINAL
+Adiciona gerador de nickname
+Lembra-te do ciclo: Stage → Commit → Push.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 8 · TEXTO (STRINGS)
+ISMT
+
+=== ppt/slides/slide67.xml ===
+🎟️ BILHETE DE SAÍDA
+Qual é a diferença entre s.length() e a última posição de s? Porquê?
+E responde também: o que ficou mais confuso hoje?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 8 · TEXTO (STRINGS)
+ISMT
+
+=== ppt/slides/slide68.xml ===
+09
+AULA 9 · MÓDULO 1 — DADOS
+O Módulo 1 em jogo
+Quiz em equipas, desafio relâmpago e o mapa de tudo o que já sabes.
+INTRODUÇÃO À PROGRAMAÇÃO · ISMT · LUÍS SIMÕES DA CUNHA
+
+=== ppt/slides/slide69.xml ===
+COMO FUNCIONA
+Quiz em equipas
+👥
+Equipas
+Grupos de 3 ou 4 pessoas.
+✍️
+Em papel
+Sem computador e sem Codex.
+🏆
+Pontos
+1 ponto por resposta certa. Tabela no quadro.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 9 · CONSOLIDAÇÃO
+ISMT
+
+=== ppt/slides/slide70.xml ===
+RONDA 1 · PREVÊ
+Qual é o output?
+int
+ x = 7;
+x += 3;
+IO.println(x / 4 + x % 4);
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 9 · CONSOLIDAÇÃO
+ISMT
+
+=== ppt/slides/slide71.xml ===
+RONDA 2 · PREVÊ
+Qual é o output?
+String
+ s = 
+"Java"
+;
+IO.println(s.length() + s.substring(1, 3));
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 9 · CONSOLIDAÇÃO
+ISMT
+
+=== ppt/slides/slide72.xml ===
+RONDA 3 · ENCONTRA O ERRO
+Porque é que isto não compila?
+int
+ pontos = IO.readln(
+"Pontos: "
+);
+IO.println(pontos * 2);
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 9 · CONSOLIDAÇÃO
+ISMT
+
+=== ppt/slides/slide73.xml ===
+RONDA 4 · TABELA DE TRAÇO
+Quais são os valores finais?
+int
+ a = 4;
+int
+ b = a * 2;
+a = b - a;
+b = b % 3;
+Linha
+a
+b
+1
+?
+—
+2
+?
+?
+3
+?
+?
+4
+?
+?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 9 · CONSOLIDAÇÃO
+ISMT
+
+=== ppt/slides/slide74.xml ===
+RONDA 5 · ESCOLHE O TIPO
+int, double, boolean ou String?
+🪙
+Número de moedas
+🔋
+Bateria a 87.5 %
+🎵
+A música está ligada?
+🛡️
+Nome da equipa
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 9 · CONSOLIDAÇÃO
+ISMT
+
+=== ppt/slides/slide75.xml ===
+RONDA 6 · VERDADEIRO OU FALSO
+V ou F?
+Afirmação
+V / F
+Em Java, 7 / 2 dá 3.5.
+?
+A primeira letra de uma String está na posição 0.
+?
+Para comparar texto usa-se ==.
+?
+O IO.readln devolve sempre texto.
+?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 9 · CONSOLIDAÇÃO
+ISMT
+
+=== ppt/slides/slide76.xml ===
+O MAPA DO MÓDULO 1
+Tudo o que já sabes
+📦
+Variáveis
+Tipo, nome e valor. Tabela de traço.
+➗
+Operadores
+Divisão inteira, %, prioridades, conversões.
+💬
+Entrada e saída
+IO.readln, parseInt, String.format.
+🔤
+Strings
+length, charAt, substring, equals.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 9 · CONSOLIDAÇÃO
+ISMT
+
+=== ppt/slides/slide77.xml ===
+⚡ DESAFIO RELÂMPAGO · 20 MIN
+A Loja do Arcade
+1 · Ler
+Pergunta o nome e quantas moedas tens.
+2 · Calcular
+Cada ficha custa 3 moedas. Quantas compras? Quantas sobram?
+3 · Mostrar
+Mostra tudo com String.format.
+TERMINAL
+Nome: Rita
+Moedas: 17
+Rita, compras 5 fichas e sobram-te 2 moedas.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 9 · CONSOLIDAÇÃO
+ISMT
+
+=== ppt/slides/slide78.xml ===
+🚦 AUTOAVALIAÇÃO
+Onde estás em cada tema?
+Tema
+🟢 Domino
+🟡 Mais ou menos
+🔴 Preciso de ajuda
+Variáveis e tipos
+Operadores e divisão inteira
+Ler e converter dados
+Strings
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 9 · CONSOLIDAÇÃO
+ISMT
+
+=== ppt/slides/slide79.xml ===
+💾 COMMIT DO DIA
+Guarda o progresso no GitHub
+Guarda o desafio relâmpago com a mensagem:
+TERMINAL
+Adiciona Loja do Arcade
+Lembra-te do ciclo: Stage → Commit → Push.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 9 · CONSOLIDAÇÃO
+ISMT
+
+=== ppt/slides/slide80.xml ===
+PRÓXIMO MÓDULO
+Até agora, o programa faz sempre o mesmo.
+No Módulo 2 vai aprender a decidir: e se o jogador ganhar? E se perder?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 9 · CONSOLIDAÇÃO
+ISMT
+
+=== ppt/slides/slide81.xml ===
+🎟️ BILHETE DE SAÍDA
+Qual foi a pergunta do quiz que mais te enganou? Porquê?
+E responde também: o que ficou mais confuso hoje?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 9 · CONSOLIDAÇÃO
+ISMT

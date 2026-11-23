@@ -1,0 +1,845 @@
+
+=== PAGE 1 ===
+>_
+INSTITUTO SUPERIOR MIGUEL TORGA · LICENCIATURA EM INFORMÁTICA
+Introdução à 
+Programação
+Módulo 2 · Decisões — Aulas 10 a 13
+Luís Simões da Cunha · 1.º semestre
+
+=== PAGE 2 ===
+10
+AULA 10 · MÓDULO 2 — DECISÕES
+Verdadeiro ou falso?
+O programa começa a fazer perguntas — e o Java responde com true 
+ou false.
+INTRODUÇÃO À PROGRAMAÇÃO · ISMT · LUÍS SIMÕES DA CUNHA
+
+=== PAGE 3 ===
+? LEMBRAS-TE?
+Três perguntas da aula passada
+1
+Quanto dão 17 / 5 e 17 
+% 5?
+2
+Em que posição está 
+a última letra de uma 
+String s?
+3
+Como se comparam 
+dois textos em Java?
+Responde de memória, sem espreitar os apontamentos.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 10 · VERDADEIRO OU FALSO ISMT
+
+=== PAGE 4 ===
+? GANCHO
+Podes entrar na discoteca?
+Tens de ter 18 anos E estar na lista — ou então ser o dono. O porteiro está a 
+fazer lógica booleana.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 10 · VERDADEIRO OU FALSO ISMT
+
+=== PAGE 5 ===
+MISSÃO DE HOJE
+No fim desta aula vais conseguir…
+1 Comparar valores com operadores relacionais
+2 Combinar condições com &&, || e !
+3 Prever resultados com tabelas de verdade
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 10 · VERDADEIRO OU FALSO ISMT
+
+=== PAGE 6 ===
+CONCEITO-CHAVE
+Uma pergunta, só duas respostas
+✅
+true
+Verdadeiro.
+❌
+false
+Falso.
+boolean ganhou = pontos >= 100;
+O resultado de uma comparação é um boolean — e pode guardar-se numa caixa.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 10 · VERDADEIRO OU FALSO ISMT
+
+=== PAGE 7 ===
+OPERADORES RELACIONAIS
+Seis formas de comparar
+Operador Pergunta Com vidas = 3 Resultado
+== É igual? vidas == 3 true
+!= É diferente? vidas != 3 false
+> É maior? vidas > 5 false
+É menor? vidas < 5 true
+>= É maior ou igual? vidas >= 3 true
+<= É menor ou igual? vidas <= 2 false
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 10 · VERDADEIRO OU FALSO ISMT
+
+=== PAGE 8 ===
+NÃO CONFUNDIR
+Um = guarda. Dois == perguntam.
+vidas = 3
+Atribuição
+Guarda 3 na caixa. Lê-se «recebe».
+vidas == 3
+Comparação
+Pergunta se vale 3. Responde true ou false.
+Para texto, continua a usar equals: nome.equals("Rita").
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 10 · VERDADEIRO OU FALSO ISMT
+
+=== PAGE 9 ===
+? PREVÊ
+true ou false?
+int pontos = 80;
+int vidas = 0;
+IO.println(pontos > 50);
+IO.println(vidas == 0);
+IO.println(pontos + 20 >= 100);
+IO.println("sim".equals("Sim"));
+✍ ️
+Quatro previsões
+A última é sobre maiúsculas.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 10 · VERDADEIRO OU FALSO ISMT
+
+=== PAGE 10 ===
+OPERADOR &&
+E: as duas têm de ser verdade
+A B A && B
+true true true
+true false false
+false true false
+false false false
+?O porteiroEntra quem tem 18 anos e está na lista.idade >= 18 && naLista
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 10 · VERDADEIRO OU FALSO ISMT
+
+=== PAGE 11 ===
+OPERADOR ||
+OU: basta uma ser verdade
+A B A || B
+true true true
+true false true
+false true true
+false false false
+?O donoEntra quem é o dono ou está na lista.ehDono || naLista
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 10 · VERDADEIRO OU FALSO ISMT
+
+=== PAGE 12 ===
+OPERADOR !
+NÃO: troca a resposta
+!true
+→ false
+Vira ao contrário.
+!false
+→ true
+Vira ao contrário.
+!emJogo
+«não está em jogo»
+Lê-se como uma frase.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 10 · VERDADEIRO OU FALSO ISMT
+
+=== PAGE 13 ===
+EXEMPLO RESOLVIDO
+O jogador pode passar de nível?
+Regra: pelo menos 100 pontos e ainda com vidas — ou modo batota ligado.
+int pontos = 120;
+int vidas = 1;
+boolean batota = false;
+boolean passa = (pontos >= 100 && vidas > 0) || batota;
+IO.println("Passa de nível? " + passa);
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 10 · VERDADEIRO OU FALSO ISMT
+
+=== PAGE 14 ===
+? TRADUZ
+Da frase para o Java
+Frase Condição em Java
+A idade está entre 13 e 17 ?
+O nome não é «admin» ?
+Tem 0 vidas ou o tempo acabou ?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 10 · VERDADEIRO OU FALSO ISMT
+
+=== PAGE 15 ===
+? ERRO DO DIA
+Não se escreve 13 <= idade <= 17
+boolean jovem = 13 <= idade <= 17;
+TERMINAL
+error: bad operand types
+for binary operator '<='
+Porquê?O Java compara uma coisa de cada vez: 13 <= idade dá um boolean, e um 
+boolean não se compara com 17.
+SoluçãoDivide em duas perguntas:13 <= idade && idade <= 17
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 10 · VERDADEIRO OU FALSO ISMT
+
+=== PAGE 16 ===
+? PUZZLE
+Verifica se o jogador ganhou
+A boolean ganhou = pontos >= 100 && vidas > 0;
+B int vidas = Integer.parseInt(IO.readln("Vidas: "));
+C IO.println("Ganhou? " + ganhou);
+D int pontos = Integer.parseInt(IO.readln("Pontos: "));
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 10 · VERDADEIRO OU FALSO ISMT
+
+=== PAGE 17 ===
+?️  PEÇA DO ARCADE
+Ganhou ou perdeu?
+Arcade.java
+int pontos = 150;
+int vidas = 2;
+boolean ganhou = pontos >= 100 && vidas > 0;
+boolean perdeu = vidas == 0;
+IO.println("Ganhou: " + ganhou + " | Perdeu: " + perdeu);
+Bónus: acrescenta um boolean recorde, verdadeiro se houver mais de 500 pontos.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 10 · VERDADEIRO OU FALSO ISMT
+
+=== PAGE 18 ===
+? COMMIT DO DIA
+Guarda o progresso no GitHub
+Guarda a peça do Arcade com a mensagem:
+TERMINAL
+Adiciona verificação de vitória
+Lembra-te do ciclo: Stage → Commit → Push.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 10 · VERDADEIRO OU FALSO ISMT
+
+=== PAGE 19 ===
+?️  BILHETE DE SAÍDA
+Explica a diferença entre = e ==, com um 
+exemplo de cada.
+E responde também: o que ficou mais confuso hoje?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 10 · VERDADEIRO OU FALSO ISMT
+
+=== PAGE 20 ===
+11AULA 11 · MÓDULO 2 — DECISÕES
+O programa escolhe 
+caminhos
+if, else if e else: dar ao programa a capacidade de decidir.
+INTRODUÇÃO À PROGRAMAÇÃO · ISMT · LUÍS SIMÕES DA CUNHA
+
+=== PAGE 21 ===
+? LEMBRAS-TE?
+Três perguntas da aula passada
+1
+Quanto vale true && 
+false?
+2
+Quanto vale true || 
+false?
+3
+Como escreves 
+«idade entre 13 e 17» 
+em Java?
+Responde de memória, sem espreitar os apontamentos.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 11 · IF E ELSE ISMT
+
+=== PAGE 22 ===
+? GANCHO
+Chegas a uma bifurcação.
+À esquerda, um dragão. À direita, um tesouro. Os programas também 
+precisam de escolher caminhos.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 11 · IF E ELSE ISMT
+
+=== PAGE 23 ===
+MISSÃO DE HOJE
+No fim desta aula vais conseguir…
+1 Executar código só quando uma condição é verdadeira
+2 Escolher entre caminhos com else e else if
+3 Desenhar decisões num fluxograma
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 11 · IF E ELSE ISMT
+
+=== PAGE 24 ===
+FLUXOGRAMA
+Uma decisão, dois caminhos
+?
+Ler
+os pontos do jogador
+?
+Decidir
+pontos >= 100 ?
+✅Sim«Ganhaste!»
+❌Não«Tenta outra vez.»
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 11 · IF E ELSE ISMT
+
+=== PAGE 25 ===
+A INSTRUÇÃO IF
+if: faz só se for verdade
+if (pontos >= 100) {
+    IO.println("Ganhaste!");
+}
+IO.println("Fim do jogo.");
+if (…)
+A pergunta. Tem de dar true ou false.
+{ … }
+O que acontece só se for true.
+a última linha
+Fica fora das chavetas: acontece sempre.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 11 · IF E ELSE ISMT
+
+=== PAGE 26 ===
+A INSTRUÇÃO ELSE
+else: o outro caminho
+if (pontos >= 100) {
+    IO.println("Ganhaste!");
+} else {
+    IO.println("Tenta outra vez.");
+}
+?
+Um ou outro
+Acontece sempre um dos dois caminhos — 
+nunca os dois, nunca nenhum.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 11 · IF E ELSE ISMT
+
+=== PAGE 27 ===
+? PREVÊ
+O que aparece no ecrã?
+int vidas = 0;
+if (vidas > 0) {
+    IO.println("Continua!");
+} else {
+    IO.println("Game over");
+}
+IO.println("Obrigado por jogares.");
+✍ ️
+E se vidas fosse 2?
+Faz as duas previsões antes de correr.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 11 · IF E ELSE ISMT
+
+=== PAGE 28 ===
+A INSTRUÇÃO ELSE IF
+Mais de dois caminhos
+if (pontos >= 1000) {
+    IO.println("Ouro");
+} else if (pontos >= 500) {
+    IO.println("Prata");
+} else if (pontos >= 100) {
+    IO.println("Bronze");
+} else {
+    IO.println("Continua a treinar!");
+}
+⬇ ️
+De cima para baixo
+O Java testa as condições por ordem e pára na 
+primeira que for verdadeira.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 11 · IF E ELSE ISMT
+
+=== PAGE 29 ===
+? PREVÊ
+E se trocarmos a ordem?
+if (pontos >= 100) {
+    IO.println("Bronze");
+} else if (pontos >= 500) {
+    IO.println("Prata");
+}
+?
+Com 800 pontos…
+…o que aparece? E porquê?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 11 · IF E ELSE ISMT
+
+=== PAGE 30 ===
+✍ ️  TESTAR
+Testa os valores-fronteira
+Com o programa Ouro / Prata / Bronze, o que aparece para cada valor?
+Pontos Resultado esperado
+1200 ?
+500 ?
+499 ?
+100 ?
+42 ?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 11 · IF E ELSE ISMT
+
+=== PAGE 31 ===
+? ERRO DO DIA
+O ponto e vírgula traiçoeiro
+int vidas = 3;
+if (vidas == 0); {
+    IO.println("Game over");
+}
+TERMINAL
+Game over
+Não há erro!O programa compila… e escreve «Game over» com 3 vidas.
+Porquê?O ; termina o if logo ali, e o bloco { } corre sempre. Nunca ponhas ; depois de 
+if (…).
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 11 · IF E ELSE ISMT
+
+=== PAGE 32 ===
+? PUZZLE
+A palavra-passe do Arcade
+A } else {
+B     IO.println("Acesso negado.");
+C if (senha.equals("arcade123")) {
+D     IO.println("Acesso autorizado.");
+E }
+F String senha = IO.readln("Palavra-passe: ");
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 11 · IF E ELSE ISMT
+
+=== PAGE 33 ===
+?️  PEÇA DO ARCADE
+Níveis de dificuldade
+TERMINAL
+Escolhe a dificuldade (1-3): 2
+Modo Normal: tens 3 vidas.
+1 → Fácil
+5 vidas
+2 → Normal
+3 vidas
+3 → Difícil
+1 vida
+Qualquer outro número: «Opção inválida». Usa if / else if / else.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 11 · IF E ELSE ISMT
+
+=== PAGE 34 ===
+? COMMIT DO DIA
+Guarda o progresso no GitHub
+Guarda a peça do Arcade com a mensagem:
+TERMINAL
+Adiciona níveis de dificuldade
+Lembra-te do ciclo: Stage → Commit → Push.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 11 · IF E ELSE ISMT
+
+=== PAGE 35 ===
+?️  BILHETE DE SAÍDA
+Porque é que a ordem das condições num else if 
+importa? Dá um exemplo.
+E responde também: o que ficou mais confuso hoje?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 11 · IF E ELSE ISMT
+
+=== PAGE 36 ===
+12
+AULA 12 · MÓDULO 2 — DECISÕES
+Menus com switch
+Quando há muitas opções, há uma forma mais arrumada de decidir.
+INTRODUÇÃO À PROGRAMAÇÃO · ISMT · LUÍS SIMÕES DA CUNHA
+
+=== PAGE 37 ===
+? LEMBRAS-TE?
+Três perguntas da aula passada
+1
+Num if / else, 
+quantos caminhos 
+são executados?
+2
+Com 800 pontos e a 
+condição >= 100 em 
+primeiro lugar, o que 
+acontece?
+3
+O que faz um ; logo a 
+seguir a if (…)?
+Responde de memória, sem espreitar os apontamentos.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 12 · SWITCH ISMT
+
+=== PAGE 38 ===
+? GANCHO
+Carrega 1 para jogar, 2 para ver 
+recordes, 3 para sair…
+Todos os jogos têm um menu. Hoje vais construir o do Arcade.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 12 · SWITCH ISMT
+
+=== PAGE 39 ===
+MISSÃO DE HOJE
+No fim desta aula vais conseguir…
+1 Escrever um switch com setas (->)
+2 Usar um switch para devolver um valor
+3 Validar as opções do utilizador
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 12 · SWITCH ISMT
+
+=== PAGE 40 ===
+O PROBLEMA
+Muitos else if… cansam
+if (op == 1) {
+    IO.println("A jogar...");
+} else if (op == 2) {
+    IO.println("Recordes");
+} else if (op == 3) {
+    IO.println("Adeus!");
+} else {
+    IO.println("Opção inválida");
+}
+?
+Funciona, mas…
+…repete op == muitas vezes e custa a ler.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 12 · SWITCH ISMT
+
+=== PAGE 41 ===
+A INSTRUÇÃO SWITCH
+O mesmo, com switch
+switch (op) {
+    case 1 -> IO.println("A jogar...");
+    case 2 -> IO.println("Recordes");
+    case 3 -> IO.println("Adeus!");
+    default -> IO.println("Opção inválida");
+}
+switch (op)
+O valor a observar.
+case 1 ->
+Se for 1, faz isto.
+default ->
+Se não for nenhum dos anteriores.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 12 · SWITCH ISMT
+
+=== PAGE 42 ===
+AS REGRAS
+Três regras do switch
+?
+Valores exatos
+Compara com valores 
+concretos. Não serve para 
+intervalos como >= 100.
+?
+Vários valores
+Um só caminho para vários 
+valores, separados por vírgulas.
+case 6, 7 -> ...
+?
+default
+É a rede de segurança: apanha 
+tudo o resto.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 12 · SWITCH ISMT
+
+=== PAGE 43 ===
+MAIS DO QUE UMA INSTRUÇÃO
+Usa chavetas depois da seta
+case 1 -> {
+    IO.println("A jogar...");
+    vidas = 3;
+}
+?
+Um bloco
+Tudo o que está entre as chavetas acontece 
+nesse caso.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 12 · SWITCH ISMT
+
+=== PAGE 44 ===
+SWITCH COM TEXTO
+Também funciona com Strings
+String cmd = IO.readln("Comando: ");
+switch (cmd) {
+    case "jogar" -> IO.println("A começar!");
+    case "sair" -> IO.println("Até breve!");
+    default -> IO.println("Comando desconhecido");
+}
+?
+Sem equals
+O switch compara o texto por 
+ti — com as maiúsculas exatas.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 12 · SWITCH ISMT
+
+=== PAGE 45 ===
+SWITCH QUE DEVOLVE UM VALOR
+Traduzir um número numa palavra
+int n = 2;
+String jogada = switch (n) {
+    case 0 -> "Pedra";
+    case 1 -> "Papel";
+    case 2 -> "Tesoura";
+    default -> "?";
+};
+IO.println(jogada);
+?
+A peça-chave
+Repara no ; depois da última chaveta. Vais usar 
+isto no Pedra, Papel, Tesoura!
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 12 · SWITCH ISMT
+
+=== PAGE 46 ===
+? PREVÊ
+O que aparece no ecrã?
+int dia = 6;
+String tipo = switch (dia) {
+    case 6, 7 -> "Fim de semana";
+    default -> "Dia útil";
+};
+IO.println(tipo);
+✍ ️
+E com dia = 3?
+Faz as duas previsões.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 12 · SWITCH ISMT
+
+=== PAGE 47 ===
+DECIDIR
+if ou switch?
+Situação Usa
+Intervalos (pontos >= 100) if
+Valores exatos (1, 2, 3) switch
+Condições combinadas (&&, ||) if
+Menu de opções switch
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 12 · SWITCH ISMT
+
+=== PAGE 48 ===
+? ERRO DO DIA
+Faltou o default
+String nome = switch (n) {
+    case 0 -> "Pedra";
+    case 1 -> "Papel";
+};
+TERMINAL
+error: the switch expression does not
+cover all possible input values
+Porquê?Se n for 7, que texto ficava guardado? O Java exige uma resposta para 
+todos os casos.
+SoluçãoAcrescenta um caso final:default -> "?";
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 12 · SWITCH ISMT
+
+=== PAGE 49 ===
+VALIDAR
+E se o utilizador escrever 9?
+int op = Integer.parseInt(IO.readln("Opção (1-3): "));
+if (op < 1 || op > 3) {
+    IO.println("Opção inválida. Escolhe entre 1 e 3.");
+} else {
+    IO.println("Escolheste a opção " + op);
+}
+Por agora, só avisamos. Na aula 15 vais pedir outra vez até a resposta ser válida.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 12 · SWITCH ISMT
+
+=== PAGE 50 ===
+? PUZZLE
+Monta o switch do menu
+A     case 2 -> IO.println("Recordes");
+B switch (op) {
+C     default -> IO.println("Opção inválida");
+D }
+E     case 1 -> IO.println("A jogar...");
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 12 · SWITCH ISMT
+
+=== PAGE 51 ===
+?️  PEÇA DO ARCADE
+O menu do Arcade
+TERMINAL
+=== ARCADE DO TERMINAL ===
+1. Pedra, Papel, Tesoura
+2. Recordes
+3. Sair
+Opção: 1
+A carregar Pedra, Papel, Tesoura...
+Usa switch com default. Bónus: refaz os níveis de dificuldade da aula 11 com switch.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 12 · SWITCH ISMT
+
+=== PAGE 52 ===
+? COMMIT DO DIA
+Guarda o progresso no GitHub
+Guarda a peça do Arcade com a mensagem:
+TERMINAL
+Adiciona menu do Arcade
+Lembra-te do ciclo: Stage → Commit → Push.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 12 · SWITCH ISMT
+
+=== PAGE 53 ===
+?️  BILHETE DE SAÍDA
+Quando escolherias if em vez de switch? Dá um 
+exemplo.
+E responde também: o que ficou mais confuso hoje?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 12 · SWITCH ISMT
+
+=== PAGE 54 ===
+13AULA 13 · MÓDULO 2 — DECISÕES
+Arcade #1: Pedra, Papel, 
+Tesoura
+O primeiro jogo completo — e um torneio para o testar.
+INTRODUÇÃO À PROGRAMAÇÃO · ISMT · LUÍS SIMÕES DA CUNHA
+
+=== PAGE 55 ===
+? LEMBRAS-TE?
+Três perguntas da aula passada
+1
+Que operador exige 
+que as duas 
+condições sejam 
+verdade?
+2
+Para que serve o 
+default num switch?
+3
+Para comparar texto 
+num if, usas…?
+Responde de memória, sem espreitar os apontamentos.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 13 · PEDRA, PAPEL, TESOURA ISMT
+
+=== PAGE 56 ===
+? GANCHO
+Consegues vencer o computador?
+Hoje ensinas-lhe a jogar. No fim da aula, há torneio.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 13 · PEDRA, PAPEL, TESOURA ISMT
+
+=== PAGE 57 ===
+MISSÃO DE HOJE
+No fim desta aula vais conseguir…
+1 Gerar números aleatórios
+2 Decompor um problema em passos
+3 Construir e testar um jogo completo
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 13 · PEDRA, PAPEL, TESOURA ISMT
+
+=== PAGE 58 ===
+SORTE
+O computador também lança dados
+double r = Math.random();            // entre 0.0 e 0.999...
+int n = (int) (Math.random() * 3);   // 0, 1 ou 2
+?
+Math.random()
+Dá um número entre 0 
+(incluído) e 1 (excluído).
+✖ ️
+Multiplica
+Por 3, fica entre 0 e 2.999…
+✂️
+Converte
+O (int) corta as décimas: 0, 1 ou 
+2.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 13 · PEDRA, PAPEL, TESOURA ISMT
+
+=== PAGE 59 ===
+? PREVÊ
+Que valores pode dar cada expressão?
+Expressão Valores possíveis
+(int) (Math.random() * 3) ?
+(int) (Math.random() * 6) + 1 ?
+(int) (Math.random() * 10) ?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 13 · PEDRA, PAPEL, TESOURA ISMT
+
+=== PAGE 60 ===
+ANTES DE PROGRAMAR
+Decompor o problema em quatro passos
+?
+1. Ler
+a jogada do 
+jogador
+?
+2. Sortear
+a jogada do 
+computador
+⚖️
+3. Comparar
+quem ganha?
+?
+4. Mostrar
+o resultado
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 13 · PEDRA, PAPEL, TESOURA ISMT
+
+=== PAGE 61 ===
+AS REGRAS COMO TABELA
+Todas as combinações possíveis
+Jogador ↓ · Computador → Pedra (0) Papel (1) Tesoura (2)
+Pedra (0) Empate Perde Ganha
+Papel (1) Ganha Empate Perde
+Tesoura (2) Perde Ganha Empate
+0 = Pedra · 1 = Papel · 2 = Tesoura
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 13 · PEDRA, PAPEL, TESOURA ISMT
+
+=== PAGE 62 ===
+QUANDO É QUE GANHAS?
+Só há três vitórias
+✊ ✌ ️
+Pedra ganha a Tesoura
+j == 0 && c == 2
+✋ ✊
+Papel ganha a Pedra
+j == 1 && c == 0
+✌ ️  ✋
+Tesoura ganha a Papel
+j == 2 && c == 1
+boolean ganha = (j == 0 && c == 2) || (j == 1 && c == 0) || (j == 2 && c == 1);
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 13 · PEDRA, PAPEL, TESOURA ISMT
+
+=== PAGE 63 ===
+EXEMPLO RESOLVIDO · PARTE 1
+Ler e sortear
+PedraPapelTesoura.java
+// 1. Ler
+int j = Integer.parseInt(IO.readln("0-Pedra 1-Papel 2-Tesoura: "));
+// 2. Sortear
+int c = (int) (Math.random() * 3);
+String nomeC = switch (c) {
+    case 0 -> "Pedra";
+    case 1 -> "Papel";
+    default -> "Tesoura";
+};
+IO.println("O computador jogou " + nomeC);
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 13 · PEDRA, PAPEL, TESOURA ISMT
+
+=== PAGE 64 ===
+EXEMPLO RESOLVIDO · PARTE 2
+Comparar e mostrar
+PedraPapelTesoura.java
+// 3. Comparar e 4. Mostrar
+if (j == c) {
+    IO.println("Empate!");
+} else if ((j == 0 && c == 2) || (j == 1 && c == 0) || (j == 2 && c == 1)) {
+    IO.println("Ganhaste! ?");
+} else {
+    IO.println("Perdeste...");
+}
+Porque é que o empate é testado primeiro?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 13 · PEDRA, PAPEL, TESOURA ISMT
+
+=== PAGE 65 ===
+✍ ️  TESTAR
+Como sabes que o jogo está certo?
+Enquanto testas, fixa a jogada do computador:
+int c = 2;  // TESTE: tirar depois!
+Jogador Computador Esperado
+0 2 Ganhaste
+0 1 Perdeste
+1 1 Empate
+2 1 Ganhaste
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 13 · PEDRA, PAPEL, TESOURA ISMT
+
+=== PAGE 66 ===
+? ERRO DO DIA
+O computador joga sempre Pedra
+int c = (int) Math.random() * 3;
+TERMINAL
+O computador jogou Pedra
+O computador jogou Pedra
+O computador jogou Pedra
+Porquê?O (int) converte primeiro o Math.random() — que dá sempre 0 — e só depois 
+multiplica.
+SoluçãoParênteses à volta da multiplicação:(int) (Math.random() * 3)
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 13 · PEDRA, PAPEL, TESOURA ISMT
+
+=== PAGE 67 ===
+? TORNEIO DA TURMA
+Termina, testa e compete
+1
+Termina o jogo
+Com validação: só aceita 0, 1 ou 
+2.
+2
+Caça ao bug
+Troca de computador com um 
+colega e tenta encontrar um 
+erro no jogo dele.
+3
+Cinco rondas
+Joga 5 vezes contra o 
+computador e regista as vitórias.
+Bónus: mostra emojis ✊ ✋ ✌ ️  ou aceita texto («pedra», «papel», «tesoura») com switch.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 13 · PEDRA, PAPEL, TESOURA ISMT
+
+=== PAGE 68 ===
+MÓDULO 2 CONCLUÍDO
+O que já sabes fazer
+⚖️
+Comparar
+==, !=, >, <, >=, <=
+?
+Combinar
+&&, || e !
+?
+if / else
+Caminhos e intervalos
+?️
+switch
+Menus e valores 
+exatos
+Próximo módulo: Repetição. E se quiseres jogar outra vez… sem voltar a 
+carregar no ▶?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 13 · PEDRA, PAPEL, TESOURA ISMT
+
+=== PAGE 69 ===
+? COMMIT DO DIA
+Guarda o progresso no GitHub
+Guarda o primeiro jogo do Arcade com a mensagem:
+TERMINAL
+Adiciona jogo Pedra, Papel, Tesoura
+Lembra-te do ciclo: Stage → Commit → Push.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 13 · PEDRA, PAPEL, TESOURA ISMT
+
+=== PAGE 70 ===
+?️  BILHETE DE SAÍDA
+Que parte do jogo foi mais difícil de programar? 
+Como a resolveste?
+E responde também: o que ficou mais confuso hoje?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 13 · PEDRA, PAPEL, TESOURA ISMT

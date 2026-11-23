@@ -1,0 +1,1148 @@
+
+=== PAGE 1 ===
+>_
+INSTITUTO SUPERIOR MIGUEL TORGA · LICENCIATURA EM INFORMÁTICA
+Introdução à 
+Programação
+Módulo 5 · Coleções — Aulas 23 a 27
+Luís Simões da Cunha · 1.º semestre
+
+=== PAGE 2 ===
+23AULA 23 · MÓDULO 5 — COLEÇÕES
+Arrays: um cacifo com 
+gavetas
+Guardar muitos valores numa só variável.
+INTRODUÇÃO À PROGRAMAÇÃO · ISMT · LUÍS SIMÕES DA CUNHA
+
+=== PAGE 3 ===
+? LEMBRAS-TE?
+Três perguntas da aula passada
+1
+O que devolve 
+mascara("JAVA", 
+"A")?
+2
+Um método recebe o 
+original ou uma cópia 
+de um int?
+3
+Que três tipos de 
+casos de teste 
+existem?
+Responde de memória, sem espreitar os apontamentos.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 23 · ARRAYS ISMT
+
+=== PAGE 4 ===
+? GANCHO
+Como guardarias 100 pontuações?
+int p1, p2, p3, …, p100? Há uma forma melhor: uma só variável, com 100 
+gavetas numeradas.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 23 · ARRAYS ISMT
+
+=== PAGE 5 ===
+MISSÃO DE HOJE
+No fim desta aula vais conseguir…
+1 Criar arrays e aceder às posições
+2 Percorrer arrays com for e for-each
+3 Não sair dos limites
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 23 · ARRAYS ISMT
+
+=== PAGE 6 ===
+CONCEITO-CHAVE
+Um array é um cacifo com gavetas
+120
+[0]
+85
+[1]
+300
+[2]
+42
+[3]
+Um array tem um nome, um tamanho fixo e posições a partir de 0.
+Todas as gavetas guardam o mesmo tipo de valor.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 23 · ARRAYS ISMT
+
+=== PAGE 7 ===
+CRIAR
+Duas formas de criar um array
+int[] pontos = new int[4];
+Quatro gavetas, todas a 0.
+int[] pontos = {120, 85, 300, 42};
+Já com os valores lá dentro.
+new reserva espaço na memória. Depois de criado, o tamanho não muda.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 23 · ARRAYS ISMT
+
+=== PAGE 8 ===
+LER E ESCREVER
+Cada gaveta tem um número
+int[] pontos = {120, 85, 300, 42};
+IO.println(pontos[0]);       // 120
+pontos[1] = 90;
+IO.println(pontos.length);   // 4
+pontos[0]
+Lê a gaveta 0.
+pontos[1] = 90;
+Escreve na gaveta 1.
+pontos.length
+Quantas gavetas. Sem parênteses!
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 23 · ARRAYS ISMT
+
+=== PAGE 9 ===
+? PREVÊ
+O que aparece no ecrã?
+int[] v = {5, 10, 20};
+v[2] = v[0] + v[1];
+v[0]++;
+IO.println(v[0] + " " + v[1] + " " + v[2]);
+✍ ️
+Desenha as gavetas
+Atualiza-as linha a linha.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 23 · ARRAYS ISMT
+
+=== PAGE 10 ===
+PERCORRER
+Percorrer com for
+for (int i = 0; i < pontos.length; i++) {
+    IO.println("Jogador " + i + ": " + pontos[i]);
+}
+?
+Padrão conhecido
+O mesmo das Strings (aula 16): i < 
+length.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 23 · ARRAYS ISMT
+
+=== PAGE 11 ===
+PERCORRER
+for-each: para cada valor
+for (int p : pontos) {
+    IO.println(p);
+}
+Preciso de… Uso
+Saber a posição for
+Alterar valores for
+Só ler todos for-each
+Lê-se «para cada p em pontos». Mais simples — mas não sabes a posição e não podes alterar o array.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 23 · ARRAYS ISMT
+
+=== PAGE 12 ===
+ARRAYS DE TEXTO
+A promessa da aula 22
+String[] palavras = {"JAVA", "ARCADE", "CICLO", "METODO", "ARRAY"};
+int n = (int) (Math.random() * palavras.length);
+String secreta = palavras[n];
+Acrescentar uma palavra à Forca é só juntá-la à lista. Com 100 palavras, o código 
+não cresce.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 23 · ARRAYS ISMT
+
+=== PAGE 13 ===
+? PREVÊ
+O que tem um array acabado de criar?
+Criação Cada gaveta começa com
+new int[3] ?
+new double[3] ?
+new boolean[3] ?
+new String[3] ?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 23 · ARRAYS ISMT
+
+=== PAGE 14 ===
+? ERRO DO DIA
+A gaveta que não existe
+int[] v = new int[3];
+v[3] = 7;
+TERMINAL
+java.lang.ArrayIndexOutOfBoundsException:
+  Index 3 out of bounds for length 3
+Porquê?Com 3 gavetas, as posições vão de 0 a 2.
+TruqueA última posição é sempre length - 1.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 23 · ARRAYS ISMT
+
+=== PAGE 15 ===
+EXEMPLO RESOLVIDO
+Ler cinco pontuações
+int[] pontos = new int[5];
+for (int i = 0; i < pontos.length; i++) {
+    pontos[i] = lerInteiroEntre("Pontuação " + (i + 1) + ": ", 0, 1000);
+}
+IO.println(Arrays.toString(pontos));
+TERMINAL
+[120, 85, 300, 42, 190]
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 23 · ARRAYS ISMT
+
+=== PAGE 16 ===
+? PUZZLE
+Mostra o array ao contrário
+A     IO.print(v[i] + " ");
+B for (int i = v.length - 1; i >= 0; i--) {
+C }
+D int[] v = {1, 2, 3, 4};
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 23 · ARRAYS ISMT
+
+=== PAGE 17 ===
+?️  PEÇA DO ARCADE
+Muitas palavras para a Forca
+String palavraSecreta(String[] palavras) {
+    return palavras[(int) (Math.random() * palavras.length)];
+}
+Substitui o switch da aula 22. Bónus: acrescenta 20 palavras de informática.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 23 · ARRAYS ISMT
+
+=== PAGE 18 ===
+? COMMIT DO DIA
+Guarda o progresso no GitHub
+Guarda a peça do Arcade com a mensagem:
+TERMINAL
+Forca com lista de palavras
+Lembra-te do ciclo: Stage → Commit → Push.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 23 · ARRAYS ISMT
+
+=== PAGE 19 ===
+?️  BILHETE DE SAÍDA
+Num array com 10 elementos, qual é o primeiro 
+índice? E o último?
+E responde também: o que ficou mais confuso hoje?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 23 · ARRAYS ISMT
+
+=== PAGE 20 ===
+24
+AULA 24 · MÓDULO 5 — COLEÇÕES
+Algoritmos com arrays
+Somar, contar, encontrar o maior e procurar.
+INTRODUÇÃO À PROGRAMAÇÃO · ISMT · LUÍS SIMÕES DA CUNHA
+
+=== PAGE 21 ===
+? LEMBRAS-TE?
+Três perguntas da aula passada
+1
+Qual a diferença 
+entre pontos.length 
+e nome.length()?
+2
+Quando não podes 
+usar for-each?
+3
+Que exceção aparece 
+com v[v.length]?
+Responde de memória, sem espreitar os apontamentos.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 24 · ALGORITMOS COM ARRAYS ISMT
+
+=== PAGE 22 ===
+? GANCHO
+Quem teve a melhor pontuação?
+Tu descobres de relance. O computador tem de fazer o que os teus olhos 
+fazem: percorrer e comparar.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 24 · ALGORITMOS COM ARRAYS ISMT
+
+=== PAGE 23 ===
+MISSÃO DE HOJE
+No fim desta aula vais conseguir…
+1 Calcular a soma e a média
+2 Encontrar o máximo e o mínimo
+3 Procurar um valor (pesquisa linear)
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 24 · ALGORITMOS COM ARRAYS ISMT
+
+=== PAGE 24 ===
+REVISÃO
+Os padrões da aula 16, agora com arrays
+Padrão Começa com Em cada gaveta
+Acumular soma = 0 soma += v[i];
+Contar conta = 0 if (…) conta++;
+Máximo max = v[0] if (v[i] > max) max = v[i];
+Procurar pos = -1 if (v[i] == alvo) pos = i;
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 24 · ALGORITMOS COM ARRAYS ISMT
+
+=== PAGE 25 ===
+EXEMPLO RESOLVIDO
+A média de um array
+double media(int[] v) {
+    int soma = 0;
+    for (int x : v) {
+        soma += x;
+    }
+    return (double) soma / v.length;
+}
+?Array como parâmetroEscreve-se int[] v.
+➗(double)Evita a divisão inteira (aula 6).
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 24 · ALGORITMOS COM ARRAYS ISMT
+
+=== PAGE 26 ===
+EXEMPLO RESOLVIDO
+O maior valor
+int maximo(int[] v) {
+    int max = v[0];
+    for (int i = 1; i < v.length; i++) {
+        if (v[i] > max) {
+            max = v[i];
+        }
+    }
+    return max;
+}
+?
+Porquê v[0]?
+E se começasse em 0 e todas as 
+pontuações fossem negativas?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 24 · ALGORITMOS COM ARRAYS ISMT
+
+=== PAGE 27 ===
+? TABELA DE TRAÇO
+maximo({40, 90, 15, 90, 60})
+i v[i] v[i] > max ? max
+— — — 40
+1 90 ? ?
+2 15 ? ?
+3 90 ? ?
+4 60 ? ?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 24 · ALGORITMOS COM ARRAYS ISMT
+
+=== PAGE 28 ===
+? PREVÊ
+O que aparece no ecrã?
+int[] v = {3, 8, 1, 9, 4};
+int conta = 0;
+for (int x : v) {
+    if (x % 2 == 0) {
+        conta++;
+    }
+}
+IO.println(conta);
+✍ ️
+Que padrão é?
+E o que está a contar?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 24 · ALGORITMOS COM ARRAYS ISMT
+
+=== PAGE 29 ===
+PESQUISA LINEAR
+Procurar gaveta a gaveta
+int procurar(int[] v, int alvo) {
+    for (int i = 0; i < v.length; i++) {
+        if (v[i] == alvo) {
+            return i;
+        }
+    }
+    return -1;
+}
+?
+-1 = não está
+Nenhuma posição é negativa, por isso -1 
+é um sinal seguro de «não encontrei».
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 24 · ALGORITMOS COM ARRAYS ISMT
+
+=== PAGE 30 ===
+✍ ️  TESTAR
+Casos de teste para procurar
+Chamada Esperado Tipo de caso
+procurar({4, 7, 9}, 7) 1 Normal
+procurar({4, 7, 9}, 4) 0 Fronteira (início)
+procurar({4, 7, 9}, 9) 2 Fronteira (fim)
+procurar({4, 7, 9}, 5) -1 Não existe
+procurar(new int[0], 5) -1 Estranho (vazio)
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 24 · ALGORITMOS COM ARRAYS ISMT
+
+=== PAGE 31 ===
+? ERRO DO DIA
+O máximo de um array vazio
+int[] v = new int[0];
+IO.println(maximo(v));
+TERMINAL
+java.lang.ArrayIndexOutOfBoundsException:
+  Index 0 out of bounds for length 0
+Porquê?Um array vazio não tem gaveta 0, e maximo começa por v[0].
+SoluçãoVerifica antes e decide o que fazer:if (v.length == 0) { … }
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 24 · ALGORITMOS COM ARRAYS ISMT
+
+=== PAGE 32 ===
+? PREVÊ
+O array fica igual?
+void main() {
+    int[] v = {1, 2, 3};
+    zerar(v);
+    IO.println(v[0]);   // ?
+}
+void zerar(int[] a) {
+    a[0] = 0;
+}
+?
+Lembras-te da aula 20?
+Com int, o main não mudava. E agora?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 24 · ALGORITMOS COM ARRAYS ISMT
+
+=== PAGE 33 ===
+A EXPLICAÇÃO
+O método recebe a morada do cacifo
+?
+Um int
+O método recebe uma fotocópia do valor. O original 
+não muda (aula 20).
+?
+Um array
+O método recebe uma cópia da morada. As duas 
+moradas levam às mesmas gavetas: o original 
+muda!
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 24 · ALGORITMOS COM ARRAYS ISMT
+
+=== PAGE 34 ===
+? PUZZLE
+Conta as notas positivas
+A         conta++;
+B for (int n : notas) {
+C     if (n >= 10) {
+D     }
+E }
+F int conta = 0;
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 24 · ALGORITMOS COM ARRAYS ISMT
+
+=== PAGE 35 ===
+?️  PEÇA DO ARCADE
+Estatísticas das pontuações
+TERMINAL
+Pontuações: [120, 85, 300, 42, 190]
+Melhor: 300 (jogador 3)
+Média: 147.4
+Acima da média: 2
+Usa os métodos media, maximo e procurar.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 24 · ALGORITMOS COM ARRAYS ISMT
+
+=== PAGE 36 ===
+? COMMIT DO DIA
+Guarda o progresso no GitHub
+Guarda a peça do Arcade com a mensagem:
+TERMINAL
+Adiciona estatísticas de pontuações
+Lembra-te do ciclo: Stage → Commit → Push.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 24 · ALGORITMOS COM ARRAYS ISMT
+
+=== PAGE 37 ===
+?️  BILHETE DE SAÍDA
+Porque é que o máximo deve começar em v[0] e 
+não em 0?
+E responde também: o que ficou mais confuso hoje?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 24 · ALGORITMOS COM ARRAYS ISMT
+
+=== PAGE 38 ===
+25
+AULA 25 · MÓDULO 5 — COLEÇÕES
+Ordenar e procurar
+Dois algoritmos clássicos: ordenação por seleção e pesquisa binária.
+INTRODUÇÃO À PROGRAMAÇÃO · ISMT · LUÍS SIMÕES DA CUNHA
+
+=== PAGE 39 ===
+? LEMBRAS-TE?
+Três perguntas da aula passada
+1
+Que valor devolve 
+procurar quando não 
+encontra?
+2
+Um método que muda 
+a[0] altera o array do 
+main?
+3
+Com que valor 
+começa o cálculo do 
+máximo?
+Responde de memória, sem espreitar os apontamentos.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 25 · ORDENAR E PROCURAR ISMT
+
+=== PAGE 40 ===
+? GANCHO
+Cinco voluntários, cinco cartas.
+Só podem trocar duas pessoas de cada vez. Qual é a estratégia para 
+ficarem por ordem?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 25 · ORDENAR E PROCURAR ISMT
+
+=== PAGE 41 ===
+MISSÃO DE HOJE
+No fim desta aula vais conseguir…
+1 Trocar dois elementos de um array
+2 Ordenar por seleção
+3 Procurar depressa num array ordenado
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 25 · ORDENAR E PROCURAR ISMT
+
+=== PAGE 42 ===
+A IDEIA
+Escolher o menor e pô-lo à frente
+Passagem Array O que aconteceu
+início [5, 2, 8, 1, 9] —
+1 [1, 2, 8, 5, 9] o 1 troca com o 5
+2 [1, 2, 8, 5, 9] o 2 já está no sítio
+3 [1, 2, 5, 8, 9] o 5 troca com o 8
+4 [1, 2, 5, 8, 9] o 8 já está no sítio
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 25 · ORDENAR E PROCURAR ISMT
+
+=== PAGE 43 ===
+TROCAR
+O puzzle dos copos, outra vez
+void trocar(int[] v, int i, int j) {
+    int temp = v[i];
+    v[i] = v[j];
+    v[j] = temp;
+}
+?
+Aula 5!
+Três copos. E como o método recebe a 
+morada, a troca fica no array do main.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 25 · ORDENAR E PROCURAR ISMT
+
+=== PAGE 44 ===
+EXEMPLO RESOLVIDO
+Ordenação por seleção
+Ordenar.java
+void ordenar(int[] v) {
+    for (int i = 0; i < v.length - 1; i++) {
+        int menor = i;   // procura o menor a partir de i
+        for (int j = i + 1; j < v.length; j++) {
+            if (v[j] < v[menor]) {
+                menor = j;
+            }
+        }
+        trocar(v, i, menor);   // põe-no na posição i
+    }
+}
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 25 · ORDENAR E PROCURAR ISMT
+
+=== PAGE 45 ===
+? QUANTO TRABALHO?
+Quantas comparações faz a seleção?
+Elementos Comparações
+5 4 + 3 + 2 + 1 = 10
+100 ?
+1 000 ?
+Duplicar o tamanho ≈ quadruplicar o trabalho.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 25 · ORDENAR E PROCURAR ISMT
+
+=== PAGE 46 ===
+NA VIDA REAL
+O Java já traz uma ordenação
+int[] v = {5, 2, 8, 1, 9};
+Arrays.sort(v);
+IO.println(Arrays.toString(v));   // [1, 2, 5, 8, 9]
+Muito mais rápida do que a seleção. Então porquê aprender à mão? Para perceberes o que ela faz — e porque é o 
+tema central de EDA, no 2.º ano.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 25 · ORDENAR E PROCURAR ISMT
+
+=== PAGE 47 ===
+PESQUISA BINÁRIA
+A estratégia do Adivinha o Número
+3
+[0]
+8
+[1]
+15
+[2]
+23
+[3]
+42
+[4]
+57
+[5]
+61
+[6]
+77
+[7]
+90
+[8]
+Procurar o 57: olha para o meio (42). É maior, por isso descarta a metade esquerda 
+inteira.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 25 · ORDENAR E PROCURAR ISMT
+
+=== PAGE 48 ===
+TABELA DE TRAÇO
+Procurar o 57
+ini fim meio v[meio] Decisão
+0 8 4 42 57 > 42 → direita
+5 8 6 61 57 < 61 → esquerda
+5 5 5 57 Encontrado na posição 5!
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 25 · ORDENAR E PROCURAR ISMT
+
+=== PAGE 49 ===
+EXEMPLO RESOLVIDO
+O código da pesquisa binária
+int binaria(int[] v, int alvo) {
+    int ini = 0;
+    int fim = v.length - 1;
+    while (ini <= fim) {
+        int meio = (ini + fim) / 2;
+        if (v[meio] == alvo) { return meio; }
+        if (v[meio] < alvo) { ini = meio + 1; }
+        else { fim = meio - 1; }
+    }
+    return -1;
+}
+⚠️
+Condição essencial
+Só funciona se o array estiver 
+ordenado!
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 25 · ORDENAR E PROCURAR ISMT
+
+=== PAGE 50 ===
+COMPARAR
+Linear ou binária?
+Elementos Linear (pior caso) Binária (pior caso)
+100 100 passos 7 passos
+1 000 1 000 passos 10 passos
+1 000 000 1 000 000 passos 20 passos
+Mas a binária exige ordenar primeiro — e ordenar tem custo.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 25 · ORDENAR E PROCURAR ISMT
+
+=== PAGE 51 ===
+? ERRO DO DIA
+Pesquisa binária num array desordenado
+int[] v = {42, 3, 90, 15};
+IO.println(binaria(v, 15));
+TERMINAL
+-1
+Não há erro… mas está errado!O 15 está no array, e o método devolve -1.
+Porquê?A binária assume ordem e descarta a metade onde o 15 estava. Ordena 
+primeiro.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 25 · ORDENAR E PROCURAR ISMT
+
+=== PAGE 52 ===
+? PUZZLE
+Monta o método trocar
+A     v[j] = temp;
+B void trocar(int[] v, int i, int j) {
+C     int temp = v[i];
+D }
+E     v[i] = v[j];
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 25 · ORDENAR E PROCURAR ISMT
+
+=== PAGE 53 ===
+?️  PEÇA DO ARCADE
+Ranking ordenado
+TERMINAL
+=== RANKING ===
+1.º  300
+2.º  190
+3.º  120
+4.º   85
+5.º   42
+Ordena por ordem decrescente (muda um só símbolo na seleção).
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 25 · ORDENAR E PROCURAR ISMT
+
+=== PAGE 54 ===
+? COMMIT DO DIA
+Guarda o progresso no GitHub
+Guarda a peça do Arcade com a mensagem:
+TERMINAL
+Adiciona ranking ordenado
+Lembra-te do ciclo: Stage → Commit → Push.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 25 · ORDENAR E PROCURAR ISMT
+
+=== PAGE 55 ===
+?️  BILHETE DE SAÍDA
+Porque é que a pesquisa binária precisa de um 
+array ordenado?
+E responde também: o que ficou mais confuso hoje?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 25 · ORDENAR E PROCURAR ISMT
+
+=== PAGE 56 ===
+26
+AULA 26 · MÓDULO 5 — COLEÇÕES
+Arcade #4: Jogo do Galo
+Arrays com linhas e colunas.
+INTRODUÇÃO À PROGRAMAÇÃO · ISMT · LUÍS SIMÕES DA CUNHA
+
+=== PAGE 57 ===
+? LEMBRAS-TE?
+Três perguntas da aula passada
+1
+Quantas 
+comparações faz a 
+seleção com 5 
+elementos?
+2
+No pior caso, quantos 
+passos dá a binária 
+em 1 000 elementos?
+3
+Como trocas v[i] com 
+v[j]?
+Responde de memória, sem espreitar os apontamentos.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 26 · JOGO DO GALO ISMT
+
+=== PAGE 58 ===
+? GANCHO
+Desafio: a turma contra o professor.
+Jogo do Galo no quadro. Depois ensinamos o computador a ser o árbitro.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 26 · JOGO DO GALO ISMT
+
+=== PAGE 59 ===
+MISSÃO DE HOJE
+No fim desta aula vais conseguir…
+1 Criar e percorrer arrays 2D
+2 Representar um tabuleiro
+3 Verificar linhas, colunas e diagonais
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 26 · JOGO DO GALO ISMT
+
+=== PAGE 60 ===
+CONCEITO-CHAVE
+Um array com linhas e colunas
+[0][0] [0][1] [0][2]
+[1][0] [1][1] [1][2]
+[2][0] [2][1] [2][2]
+?Duas coordenadastab[linha][coluna]. Primeiro a linha, depois a coluna.
+?️Array de arraysCada linha é, ela própria, um array.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 26 · JOGO DO GALO ISMT
+
+=== PAGE 61 ===
+CRIAR
+O tabuleiro em Java
+char[][] tab = {
+    {' ', ' ', ' '},
+    {' ', ' ', ' '},
+    {' ', ' ', ' '}
+};
+tab[1][1] = 'X';
+IO.println(tab.length);      // 3 linhas
+IO.println(tab[0].length);   // 3 colunas
+?
+char
+Um só carácter, entre plicas: 'X', 'O' ou 
+' '.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 26 · JOGO DO GALO ISMT
+
+=== PAGE 62 ===
+? PREVÊ
+O que aparece no ecrã?
+int[][] m = {
+    {1, 2, 3},
+    {4, 5, 6}
+};
+IO.println(m[1][0] + m[0][2]);
+IO.println(m.length + " x " + m[0].length);
+✍ ️
+Linha primeiro
+m[1][0]: linha 1, coluna 0.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 26 · JOGO DO GALO ISMT
+
+=== PAGE 63 ===
+PERCORRER
+Os ciclos aninhados da aula 17
+void mostrar(char[][] tab) {
+    for (int l = 0; l < 3; l++) {
+        for (int c = 0; c < 3; c++) {
+            IO.print(" " + tab[l][c] + " ");
+        }
+        IO.println();
+    }
+}
+TERMINAL
+ X  O   
+    X   
+ O     X
+Bónus: desenha as linhas | e ---+---+--- entre as 
+casas.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 26 · JOGO DO GALO ISMT
+
+=== PAGE 64 ===
+UMA JOGADA
+Escolher uma casa livre
+int l = lerInteiroEntre("Linha (0-2): ", 0, 2);
+int c = lerInteiroEntre("Coluna (0-2): ", 0, 2);
+if (tab[l][c] == ' ') {
+    tab[l][c] = jogador;
+} else {
+    IO.println("Casa ocupada!");
+}
+E para alternar: se o jogador é 'X', passa a 'O'; senão, passa a 'X'.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 26 · JOGO DO GALO ISMT
+
+=== PAGE 65 ===
+QUANDO SE GANHA?
+Oito maneiras de ganhar
+➖
+3 linhas
+⏸️
+3 colunas
+↘ ️
+Diagonal
+↙ ️
+Antidiagonal
+Uma linha i ganha se tab[i][0], tab[i][1] e tab[i][2] forem todos do mesmo jogador.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 26 · JOGO DO GALO ISMT
+
+=== PAGE 66 ===
+EXEMPLO RESOLVIDO
+O método ganhou
+Galo.java
+boolean ganhou(char[][] t, char j) {
+    for (int i = 0; i < 3; i++) {
+        if (t[i][0] == j && t[i][1] == j && t[i][2] == j) { return true; }
+        if (t[0][i] == j && t[1][i] == j && t[2][i] == j) { return true; }
+    }
+    if (t[0][0] == j && t[1][1] == j && t[2][2] == j) { return true; }
+    return t[0][2] == j && t[1][1] == j && t[2][0] == j;
+}
+No mesmo ciclo verifica-se a linha i e a coluna i.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 26 · JOGO DO GALO ISMT
+
+=== PAGE 67 ===
+? TESTA
+ganhou(tab, 'O') dá true ou false?
+X O X
+O O O
+X X
+O X X
+O X
+X O
+✍ ️
+Dois tabuleiros
+Que verificação do 
+método dá true em cada 
+um?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 26 · JOGO DO GALO ISMT
+
+=== PAGE 68 ===
+E O EMPATE?
+Tabuleiro cheio e ninguém ganhou
+boolean cheio(char[][] t) {
+    for (int l = 0; l < 3; l++) {
+        for (int c = 0; c < 3; c++) {
+            if (t[l][c] == ' ') { return false; }
+        }
+    }
+    return true;
+}
+?
+Contraexemplo
+Basta uma casa vazia para não estar 
+cheio.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 26 · JOGO DO GALO ISMT
+
+=== PAGE 69 ===
+O JOGO COMPLETO
+O ciclo do jogo
+?️
+Mostrar
+o tabuleiro
+?
+Jogada
+numa casa livre
+?
+Verificar
+ganhou ou cheio?
+?
+Trocar
+de jogador
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 26 · JOGO DO GALO ISMT
+
+=== PAGE 70 ===
+? ERRO DO DIA
+Aspas em vez de plicas
+if (tab[l][c] == " ") {
+TERMINAL
+error: bad operand types
+  for binary operator '=='
+Porquê?' ' (plicas) é um char; " " (aspas) é uma String. Não se comparam.
+SoluçãoUsa plicas:tab[l][c] == ' '
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 26 · JOGO DO GALO ISMT
+
+=== PAGE 71 ===
+?️  PEÇA DO ARCADE
+Termina o Jogo do Galo
+1
+Métodos
+mostrar, ganhou e cheio.
+2
+Ciclo do jogo
+Até alguém ganhar ou empatar.
+3
+Menu
+Opção 4 do Arcade.
+Bónus: jogar contra o computador, que escolhe uma casa livre ao acaso.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 26 · JOGO DO GALO ISMT
+
+=== PAGE 72 ===
+? COMMIT DO DIA
+Guarda o progresso no GitHub
+Guarda o quarto jogo do Arcade com a mensagem:
+TERMINAL
+Adiciona Jogo do Galo
+Lembra-te do ciclo: Stage → Commit → Push.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 26 · JOGO DO GALO ISMT
+
+=== PAGE 73 ===
+?️  BILHETE DE SAÍDA
+Num array int[4][6], quantas linhas e colunas há? 
+Qual é a última posição?
+E responde também: o que ficou mais confuso hoje?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 26 · JOGO DO GALO ISMT
+
+=== PAGE 74 ===
+27AULA 27 · MÓDULO 5 — COLEÇÕES
+Listas elásticas e erros 
+elegantes
+ArrayList e try/catch: um Arcade flexível e à prova de erros.
+INTRODUÇÃO À PROGRAMAÇÃO · ISMT · LUÍS SIMÕES DA CUNHA
+
+=== PAGE 75 ===
+? LEMBRAS-TE?
+Três perguntas da aula passada
+1
+Como acedes à linha 
+2, coluna 0 de tab?
+2
+Qual é a diferença 
+entre 'X' e "X"?
+3
+Quantas maneiras há 
+de ganhar no Jogo do 
+Galo?
+Responde de memória, sem espreitar os apontamentos.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 27 · LISTAS E ERROS ISMT
+
+=== PAGE 76 ===
+? GANCHO
+Quantos jogadores vão aparecer hoje?
+Um array tem tamanho fixo. Mas a lista de jogadores do Arcade cresce a 
+cada pessoa nova.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 27 · LISTAS E ERROS ISMT
+
+=== PAGE 77 ===
+MISSÃO DE HOJE
+No fim desta aula vais conseguir…
+1 Usar listas que crescem (ArrayList)
+2 Percorrer e procurar em listas
+3 Apanhar erros com try/catch
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 27 · LISTAS E ERROS ISMT
+
+=== PAGE 78 ===
+O PROBLEMA
+Os arrays não esticam
+?
+Tamanho fixo
+Decides o tamanho quando crias o array.
+➕
+Acrescentar?
+Não dá: terias de criar um array maior e copiar tudo.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 27 · LISTAS E ERROS ISMT
+
+=== PAGE 79 ===
+A SOLUÇÃO
+ArrayList: um array elástico
+ArrayList<String> nomes = new ArrayList<>();
+nomes.add("Rita");
+nomes.add("Tiago");
+IO.println(nomes.size());   // 2
+IO.println(nomes.get(0));   // Rita
+<String>
+O tipo do que a lista guarda.
+add(x)
+Acrescenta no fim.
+size()
+Quantos elementos.
+get(i)
+Lê a posição i.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 27 · LISTAS E ERROS ISMT
+
+=== PAGE 80 ===
+COMPARAR
+Array e ArrayList lado a lado
+Operação Array ArrayList
+Ler v[i] lista.get(i)
+Mudar v[i] = x lista.set(i, x)
+Tamanho v.length lista.size()
+Acrescentar — lista.add(x)
+Remover — lista.remove(i)
+Procurar (ciclo) lista.contains(x)
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 27 · LISTAS E ERROS ISMT
+
+=== PAGE 81 ===
+NÚMEROS NUMA LISTA
+Integer em vez de int
+ArrayList<Integer> pontos = new ArrayList<>();
+pontos.add(120);
+pontos.add(85);
+int primeiro = pontos.get(0);
+Dentro de <…> escreve-se Integer, Double, Boolean. É só o nome «comprido» do 
+tipo; o resto funciona igual.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 27 · LISTAS E ERROS ISMT
+
+=== PAGE 82 ===
+PERCORRER E PROCURAR
+for-each e contains
+for (String n : nomes) {
+    IO.println("- " + n);
+}
+if (nomes.contains("Rita")) {
+    IO.println("A Rita já jogou!");
+}
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 27 · LISTAS E ERROS ISMT
+
+=== PAGE 83 ===
+? PREVÊ
+O que aparece no ecrã?
+ArrayList<Integer> v = new ArrayList<>();
+v.add(5);
+v.add(8);
+v.add(0, 1);
+v.remove(1);
+IO.println(v);
+?
+Pistas
+add(0, x) insere na posição 0. 
+remove(1) apaga a posição 1.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 27 · LISTAS E ERROS ISMT
+
+=== PAGE 84 ===
+LEMBRAS-TE DISTO?
+O erro que ficou por resolver
+TERMINAL
+Idade: vinte
+Exception in thread "main"
+java.lang.NumberFormatException:
+  For input string: "vinte"
+Desde a aula 7 que o Arcade rebenta com uma letra. Hoje isso acaba.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 27 · LISTAS E ERROS ISMT
+
+=== PAGE 85 ===
+TRY / CATCH
+Tentar e, se correr mal, recuperar
+try {
+    int idade = Integer.parseInt(IO.readln("Idade: "));
+    IO.println("Tens " + idade + " anos.");
+} catch (NumberFormatException e) {
+    IO.println("Isso não é um número!");
+}
+try { … }
+Tenta executar este bloco.
+catch (…)
+Se rebentar com este erro, faz isto 
+em vez de parar.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 27 · LISTAS E ERROS ISMT
+
+=== PAGE 86 ===
+COMO FUNCIONA
+Dois caminhos possíveis
+▶️
+1. Tentar
+Corre o bloco try
+✅
+Correu bem?
+Salta o catch e continua
+?
+Rebentou?
+Salta para o catch e continua
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 27 · LISTAS E ERROS ISMT
+
+=== PAGE 87 ===
+? PREVÊ
+O que aparece no ecrã?
+try {
+    IO.println("A");
+    int n = Integer.parseInt("12a");
+    IO.println("B");
+} catch (NumberFormatException e) {
+    IO.println("C");
+}
+IO.println("D");
+✍ ️
+Letra a letra
+Quais das quatro letras aparecem?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 27 · LISTAS E ERROS ISMT
+
+=== PAGE 88 ===
+EXEMPLO RESOLVIDO
+lerInteiroEntre, versão blindada
+Arcade.java
+int lerInteiroEntre(String pergunta, int min, int max) {
+    while (true) {
+        try {
+            int n = Integer.parseInt(IO.readln(pergunta));
+            if (n >= min && n <= max) { return n; }
+            IO.println("Escolhe entre " + min + " e " + max + ".");
+        } catch (NumberFormatException e) {
+            IO.println("Isso não é um número!");
+        }
+    }
+}
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 27 · LISTAS E ERROS ISMT
+
+=== PAGE 89 ===
+? ERRO DO DIA
+A variável ficou presa no try
+try {
+    int idade = Integer.parseInt(IO.readln("Idade: "));
+} catch (NumberFormatException e) {
+    IO.println("Inválido");
+}
+IO.println(idade);
+TERMINAL
+error: cannot find symbol
+Porquê?idade vive dentro das chavetas do try (aula 20).
+SoluçãoUsa-a dentro do try, ou declara-a antes.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 27 · LISTAS E ERROS ISMT
+
+=== PAGE 90 ===
+BOAS PRÁTICAS
+Quando usar try/catch?
+✅
+Dados vindos de fora
+Teclado, ficheiros, rede: não controlas o que chega.
+⛔
+Erros do teu código
+Um índice fora dos limites corrige-se no código. 
+Não se esconde.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 27 · LISTAS E ERROS ISMT
+
+=== PAGE 91 ===
+? PUZZLE
+Junta nomes até escreveres «fim»
+A     if (!n.equals("fim")) { nomes.add(n); }
+B ArrayList<String> nomes = new ArrayList<>();
+C } while (!n.equals("fim"));
+D do {
+E     n = IO.readln("Nome (fim para terminar): ");
+F String n;
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 27 · LISTAS E ERROS ISMT
+
+=== PAGE 92 ===
+?️  PEÇA DO ARCADE
+Um Arcade flexível e à prova de erros
+1
+Jogadores
+Um ArrayList com quem já 
+jogou, mostrado no menu.
+2
+Leitura blindada
+lerInteiroEntre com try/catch 
+em todo o Arcade.
+3
+Teste de stress
+Pede a um colega que tente 
+rebentar o teu Arcade.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 27 · LISTAS E ERROS ISMT
+
+=== PAGE 93 ===
+MÓDULO 5 CONCLUÍDO
+O que já sabes fazer
+?
+Arrays
+?
+Algoritmos
+?
+Ordenar e procurar
+?️
+Arrays 2D
+?
+ArrayList
+?️
+try/catch
+Próximo módulo: guardar os recordes para sempre, em ficheiros.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 27 · LISTAS E ERROS ISMT
+
+=== PAGE 94 ===
+? COMMIT DO DIA
+Guarda o progresso no GitHub
+Guarda a peça do Arcade com a mensagem:
+TERMINAL
+Adiciona lista de jogadores e leitura segura
+Lembra-te do ciclo: Stage → Commit → Push.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 27 · LISTAS E ERROS ISMT
+
+=== PAGE 95 ===
+?️  BILHETE DE SAÍDA
+Porque usamos try/catch na leitura do teclado, 
+mas não para esconder um índice fora dos 
+limites?
+E responde também: o que ficou mais confuso hoje?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 27 · LISTAS E ERROS ISMT

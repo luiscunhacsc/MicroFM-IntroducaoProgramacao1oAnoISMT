@@ -1,0 +1,464 @@
+void main() {
+    String[] clubes = {"Mondego", "Lisboa", "Invicta", "Minho", "Algarve", "Costa", "Centro", "Alentejo"};
+    int[] forcas = {70,70,70,70,70,70,70,70};
+    int[] carreira = new int[13]; carreira[4]=1;carreira[6]=70;carreira[8]=4;carreira[9]=0;carreira[10]=20;carreira[12]=1;
+    int[][] jogadores = new int[32][7]; String[] nomes = new String[32];int[] onze = new int[11];
+    for(int i=0;i<20;i++){jogadores[i][0]=posicaoEsperadaJogo(i % 11,0);jogadores[i][2]=70;jogadores[i][3]=90;nomes[i]="Jogador "+i;}
+    for(int i=0;i<11;i++){onze[i]=i;}
+    String[] info={"Teste",""};
+    int golos=0;int jogos=0;
+    for(int partida=0;partida<200;partida++) {
+        for(int i=0;i<20;i++){jogadores[i][3]=90;}
+        int[] r;
+        if(partida%2==0){r=jogarPartida(0,1,clubes,forcas,carreira,info,jogadores,nomes,onze);golos+=r[0];}
+        else{r=jogarPartida(1,0,clubes,forcas,carreira,info,jogadores,nomes,onze);golos+=r[1];}
+        if(r[0]<0||r[1]<0||r[2]<r[0]||r[3]<r[1]||r[4]+r[5]!=100){throw new RuntimeException("Resultado invalido");}
+        for(int i=0;i<11;i++){if(jogadores[i][3]!=75||jogadores[i][5]!=partida+1){throw new RuntimeException("Condicao ou jogos errados");}}
+        jogos++;
+    }
+    int total=0;for(int i=0;i<20;i++){total+=jogadores[i][4];}
+    if(total!=golos){throw new RuntimeException("Marcadores errados");}
+    IO.println("INVARIANTES OK: "+jogos+" partidas, "+total+" golos user");
+}
+int limitar(int n,int min,int max){if(n<min){return min;}if(n>max){return max;}return n;}
+void titulo(String s){IO.println(s);}
+void intervalo(int[] a,String[] b,int[][] c,String[] d,int[] e,boolean[] f,int[] g){}
+// MOTOR DE JOGO — módulos 1 a 5: decisões, ciclos, métodos e matrizes.
+// O campo é uma representação abstrata dos lances sorteados pelo simulador.
+int[] jogarPartida(int casa, int fora, String[] clubes, int[] forcas,
+        int[] carreira, String[] info, int[][] jogadores, String[] nomes, int[] onze) {
+    int[] resultado = new int[6];
+    boolean[] usados = new boolean[jogadores.length];
+    for (int i = 0; i < onze.length; i++) {
+        usados[onze[i]] = true;
+    }
+    carreira[11] = 0;
+    boolean animar = carreira[9] == 1 && carreira[8] != 4;
+    int posseCasa = 0;
+    double[][] posicoes = new double[22][2];
+    int[][] destinos = posicoesDoLance(3, casa, fora, carreira);
+    for (int i = 0; i < 22; i++) {
+        posicoes[i][0] = destinos[i][0];
+        posicoes[i][1] = destinos[i][1];
+    }
+    double[] bola = {32, 8};
+    String ultimoGolo = "A bola vai rolar. Boa sorte, mister!";
+    if (animar) {
+        IO.print("\033[2J\033[H");
+    } else {
+        titulo("EM DIRETO | " + clubes[casa] + " - " + clubes[fora]);
+    }
+
+    // Um lance representa três minutos: 30 lances, duas partes de 45 minutos.
+    for (int minuto = 3; minuto <= 90; minuto += 3) {
+        double forcaCasa = forcas[casa] + 3;
+        double forcaFora = forcas[fora];
+        if (casa == carreira[0]) {
+            forcaCasa = forcaDoOnze(jogadores, onze, carreira) + 3;
+        } else {
+            forcaFora = forcaDoOnze(jogadores, onze, carreira);
+        }
+        double probabilidadeCasa = 0.5 + (forcaCasa - forcaFora) * 0.006;
+        if (casa == carreira[0]) {
+            probabilidadeCasa += (carreira[4] - 1) * 0.035;
+        } else {
+            probabilidadeCasa -= (carreira[4] - 1) * 0.035;
+        }
+        if (probabilidadeCasa < 0.25) {
+            probabilidadeCasa = 0.25;
+        }
+        if (probabilidadeCasa > 0.75) {
+            probabilidadeCasa = 0.75;
+        }
+        boolean ataqueCasa = Math.random() < probabilidadeCasa;
+        int atacante = fora;
+        int inicio = 11;
+        if (ataqueCasa) {
+            atacante = casa;
+            inicio = 0;
+            posseCasa++;
+        }
+        resultado[4] = posseCasa * 100 / (minuto / 3);
+        resultado[5] = 100 - resultado[4];
+
+        double probabilidadeRemate = 0.48;
+        if (atacante == carreira[0]) {
+            probabilidadeRemate += (carreira[4] - 1) * 0.055;
+        }
+        boolean remate = Math.random() < probabilidadeRemate;
+        destinos = posicoesDoLance(minuto, casa, fora, carreira);
+        int receptor1 = inicio + 5 + (int) (Math.random() * 4);
+        int receptor2 = inicio + 8 + (int) (Math.random() * 3);
+        String lance = String.format("%02d' %s troca a bola no meio-campo.", minuto, clubes[atacante]);
+        if (animar) {
+            animarPasse(bola, destinos[receptor1][0], destinos[receptor1][1],
+                    posicoes, destinos, minuto, casa, fora, clubes, carreira,
+                    resultado, lance, ultimoGolo);
+            animarPasse(bola, destinos[receptor2][0], destinos[receptor2][1],
+                    posicoes, destinos, minuto, casa, fora, clubes, carreira,
+                    resultado, String.format("%02d' Passe a rasgar a defesa...", minuto), ultimoGolo);
+        }
+
+        if (remate) {
+            double diferenca = forcaFora - forcaCasa;
+            if (ataqueCasa) {
+                diferenca = forcaCasa - forcaFora;
+                resultado[2]++;
+            } else {
+                resultado[3]++;
+            }
+            double probabilidadeGolo = 0.18 + diferenca * 0.003;
+            // Atacar dá mais oportunidades, mas deixa espaço ao adversário.
+            if (atacante == carreira[0]) {
+                probabilidadeGolo += (carreira[4] - 1) * 0.015;
+            } else {
+                probabilidadeGolo += (carreira[4] - 1) * 0.035;
+            }
+            if (probabilidadeGolo < 0.07) {
+                probabilidadeGolo = 0.07;
+            }
+            if (probabilidadeGolo > 0.34) {
+                probabilidadeGolo = 0.34;
+            }
+            boolean golo = Math.random() < probabilidadeGolo;
+            boolean paraDireita = ataqueCasa;
+            if (minuto > 45) {
+                paraDireita = !paraDireita;
+            }
+            int balizaX = 0;
+            if (paraDireita) {
+                balizaX = 64;
+            }
+            int balizaY = 7 + (int) (Math.random() * 3);
+            String desfecho = "O guarda-redes segura!";
+            if (!golo) {
+                if (Math.random() < 0.5) {
+                    balizaY = 3;
+                    desfecho = "Remate para fora!";
+                } else {
+                    if (paraDireita) {
+                        balizaX = 60;
+                    } else {
+                        balizaX = 4;
+                    }
+                }
+            }
+            if (animar) {
+                animarPasse(bola, balizaX, balizaY, posicoes, destinos,
+                        minuto, casa, fora, clubes, carreira, resultado,
+                        String.format("%02d' %s remata!", minuto, clubes[atacante]), ultimoGolo);
+            }
+            if (golo) {
+                if (ataqueCasa) {
+                    resultado[0]++;
+                } else {
+                    resultado[1]++;
+                }
+                String marcador = "";
+                if (atacante == carreira[0]) {
+                    int jogador = sortearMarcador(jogadores, onze);
+                    jogadores[jogador][4]++;
+                    marcador = " | " + nomes[jogador];
+                }
+                ultimoGolo = String.format("%02d' GOLO! %s%s", minuto, clubes[atacante], marcador);
+                lance = ultimoGolo;
+                if (animar) {
+                    for (int quadro = 0; quadro < 10; quadro++) {
+                        desenharCampo(posicoes, bola, minuto, casa, fora, clubes,
+                                carreira, resultado, lance, ultimoGolo);
+                        cadenciaDoCampo(carreira[8]);
+                    }
+                }
+                bola[0] = 32;
+                bola[1] = 8;
+            } else {
+                lance = String.format("%02d' %s %s", minuto, clubes[atacante], desfecho);
+            }
+        } else {
+            lance = String.format("%02d' %s procura espaço. A defesa fecha bem.", minuto, clubes[atacante]);
+            if (animar) {
+                int apoio = inicio + 1 + (int) (Math.random() * 7);
+                animarPasse(bola, destinos[apoio][0], destinos[apoio][1],
+                        posicoes, destinos, minuto, casa, fora, clubes, carreira,
+                        resultado, lance, ultimoGolo);
+            }
+        }
+        if (animar) {
+            desenharCampo(posicoes, bola, minuto, casa, fora, clubes,
+                    carreira, resultado, lance, ultimoGolo);
+        } else {
+            IO.println(lance);
+        }
+
+        // Cada seis minutos retira um ponto de condição apenas a quem está em campo.
+        for (int i = 0; i < onze.length; i++) {
+            usados[onze[i]] = true;
+            if (minuto % 6 == 0) {
+                jogadores[onze[i]][3] = limitar(jogadores[onze[i]][3] - 1, 1, 100);
+            }
+        }
+        if (minuto == 30 || minuto == 45 || minuto == 60 || minuto == 75) {
+            if (animar) {
+                IO.print("\033[0m\n");
+            }
+            // Contrato: marcador, minuto, clubes, remates e percentagens de posse.
+            int[] situacao = {resultado[0], resultado[1], minuto, casa, fora,
+                    resultado[2], resultado[3], resultado[4], resultado[5]};
+            intervalo(carreira, info, jogadores, nomes, onze, usados, situacao);
+            // Também marca logo um suplente que entre na pausa dos 75 minutos.
+            for (int i = 0; i < onze.length; i++) {
+                usados[onze[i]] = true;
+            }
+            if (animar) {
+                IO.print("\033[2J\033[H");
+            }
+        }
+    }
+    for (int i = 0; i < usados.length; i++) {
+        if (usados[i]) {
+            jogadores[i][5]++;
+        }
+    }
+    if (animar) {
+        IO.print("\033[0m\n");
+    }
+    IO.println(String.format("FIM DO JOGO | %s %d - %d %s", clubes[casa], resultado[0], resultado[1], clubes[fora]));
+    IO.println(String.format("Remates: %d - %d | Posse: %d%% - %d%%", resultado[2], resultado[3], resultado[4], resultado[5]));
+    return resultado;
+}
+
+double forcaDoOnze(int[][] jogadores, int[] onze, int[] carreira) {
+    double soma = 0;
+    for (int i = 0; i < onze.length; i++) {
+        int jogador = onze[i];
+        double qualidade = jogadores[jogador][2];
+        if (jogadores[jogador][0] != posicaoEsperadaJogo(i, carreira[5])) {
+            qualidade -= 18;
+        }
+        soma += qualidade * (0.80 + jogadores[jogador][3] * 0.002);
+    }
+    return soma / onze.length + (carreira[6] - 50) * 0.07;
+}
+
+int posicaoEsperadaJogo(int lugar, int formacao) {
+    int defesas = 4;
+    int medios = 3;
+    if (formacao == 1) {
+        medios = 4;
+    }
+    if (formacao == 2) {
+        defesas = 3;
+        medios = 5;
+    }
+    if (lugar == 0) {
+        return 0;
+    }
+    if (lugar <= defesas) {
+        return 1;
+    }
+    if (lugar <= defesas + medios) {
+        return 2;
+    }
+    return 3;
+}
+
+int sortearMarcador(int[][] jogadores, int[] onze) {
+    int[] pesos = new int[onze.length];
+    int total = 0;
+    for (int i = 0; i < onze.length; i++) {
+        int posicao = jogadores[onze[i]][0];
+        pesos[i] = switch (posicao) {
+            case 0 -> 0;
+            case 1 -> 1;
+            case 2 -> 3;
+            default -> 7;
+        };
+        total += pesos[i];
+    }
+    int sorteado = (int) (Math.random() * total);
+    int acumulado = 0;
+    int marcador = onze[10];
+    boolean encontrado = false;
+    for (int i = 0; i < onze.length; i++) {
+        acumulado += pesos[i];
+        if (!encontrado && sorteado < acumulado) {
+            marcador = onze[i];
+            encontrado = true;
+        }
+    }
+    return marcador;
+}
+
+int[][] posicoesDoLance(int minuto, int casa, int fora, int[] carreira) {
+    int[][] posicoes = new int[22][2];
+    for (int equipa = 0; equipa < 2; equipa++) {
+        int clube = casa;
+        if (equipa == 1) {
+            clube = fora;
+        }
+        int formacao = 0;
+        if (clube == carreira[0]) {
+            formacao = carreira[5];
+        }
+        for (int lugar = 0; lugar < 11; lugar++) {
+            int linha = posicaoEsperadaJogo(lugar, formacao);
+            int anteriores = 0;
+            int quantidade = 0;
+            for (int outro = 0; outro < 11; outro++) {
+                if (posicaoEsperadaJogo(outro, formacao) == linha) {
+                    quantidade++;
+                    if (outro < lugar) {
+                        anteriores++;
+                    }
+                }
+            }
+            int x = switch (linha) {
+                case 0 -> 3;
+                case 1 -> 17;
+                case 2 -> 30;
+                default -> 45;
+            };
+            int y = 8;
+            if (quantidade > 1) {
+                y = 2 + anteriores * 12 / (quantidade - 1);
+            }
+            if (linha != 0) {
+                x += (int) (Math.random() * 5) - 2;
+                y = limitar(y + (int) (Math.random() * 3) - 1, 1, 15);
+            }
+            boolean inverter = equipa == 1;
+            if (minuto > 45) {
+                inverter = !inverter;
+            }
+            if (inverter) {
+                x = 64 - x;
+            }
+            posicoes[equipa * 11 + lugar][0] = x;
+            posicoes[equipa * 11 + lugar][1] = y;
+        }
+    }
+    return posicoes;
+}
+
+void animarPasse(double[] bola, double destinoX, double destinoY,
+        double[][] posicoes, int[][] destinos, int minuto, int casa, int fora,
+        String[] clubes, int[] carreira, int[] resultado, String lance, String ultimoGolo) {
+    int quadros = 8;
+    if (carreira[8] == 1) {
+        quadros = 10;
+    }
+    if (carreira[8] == 3) {
+        quadros = 4;
+    }
+    double inicioX = bola[0];
+    double inicioY = bola[1];
+    for (int quadro = 1; quadro <= quadros; quadro++) {
+        bola[0] = inicioX + (destinoX - inicioX) * quadro / quadros;
+        bola[1] = inicioY + (destinoY - inicioY) * quadro / quadros;
+        for (int i = 0; i < posicoes.length; i++) {
+            posicoes[i][0] += (destinos[i][0] - posicoes[i][0]) * 0.25;
+            posicoes[i][1] += (destinos[i][1] - posicoes[i][1]) * 0.25;
+        }
+        desenharCampo(posicoes, bola, minuto, casa, fora, clubes,
+                carreira, resultado, lance, ultimoGolo);
+        cadenciaDoCampo(carreira[8]);
+    }
+}
+
+void desenharCampo(double[][] posicoes, double[] bola, int minuto, int casa,
+        int fora, String[] clubes, int[] carreira, int[] resultado,
+        String lance, String ultimoGolo) {
+    char[][] campo = new char[17][65];
+    for (int y = 0; y < campo.length; y++) {
+        for (int x = 0; x < campo[y].length; x++) {
+            char caracter = ' ';
+            if (y == 0 || y == 16) {
+                caracter = '-';
+            }
+            if (x == 0 || x == 64 || x == 32) {
+                caracter = '|';
+            }
+            if ((x == 9 || x == 55) && y >= 4 && y <= 12) {
+                caracter = '|';
+            }
+            if ((y == 4 || y == 12) && (x <= 9 || x >= 55)) {
+                caracter = '-';
+            }
+            if ((x == 0 || x == 64) && y >= 6 && y <= 10) {
+                caracter = '#';
+            }
+            if ((x == 29 || x == 35) && y >= 6 && y <= 10) {
+                caracter = ':';
+            }
+            campo[y][x] = caracter;
+        }
+    }
+    for (int i = 0; i < posicoes.length; i++) {
+        int x = limitar((int) (posicoes[i][0] + 0.5), 1, 63);
+        int y = limitar((int) (posicoes[i][1] + 0.5), 1, 15);
+        char simbolo = 'A';
+        if (i >= 11) {
+            simbolo = 'B';
+        }
+        // Evita que dois jogadores desapareçam na mesma célula do desenho.
+        if (campo[y][x] == 'A' || campo[y][x] == 'B') {
+            y = limitar(y + 1, 1, 15);
+        }
+        campo[y][x] = simbolo;
+    }
+    int bolaX = limitar((int) (bola[0] + 0.5), 0, 64);
+    int bolaY = limitar((int) (bola[1] + 0.5), 0, 16);
+    campo[bolaY][bolaX] = 'o';
+    String texto = "\033[H\033[1;37m  MICRO FM | CENTRAL DE JOGO\033[0m\n";
+    texto += String.format("  %02d:00   %s %d - %d %s\033[K\n", minuto,
+            clubes[casa], resultado[0], resultado[1], clubes[fora]);
+    texto += String.format("  Remates %d - %d   Posse %d%% - %d%%   Tática: %s\033[K\n",
+            resultado[2], resultado[3], resultado[4], resultado[5],
+            switch (carreira[4]) {
+                case 0 -> "Defensiva";
+                case 1 -> "Equilibrada";
+                default -> "Ofensiva";
+            });
+    texto += "\033[32m";
+    for (int y = 0; y < campo.length; y++) {
+        texto += "  ";
+        for (int x = 0; x < campo[y].length; x++) {
+            char c = campo[y][x];
+            if (c == 'A') {
+                texto += "\033[1;36mA\033[0;32m";
+            } else if (c == 'B') {
+                texto += "\033[1;31mB\033[0;32m";
+            } else if (c == 'o') {
+                texto += "\033[1;97mo\033[0;32m";
+            } else {
+                texto += c;
+            }
+        }
+        texto += "\n";
+    }
+    texto += "\033[0m";
+    texto += "  \033[1;36mA\033[0m " + clubes[casa] + "   \033[1;31mB\033[0m " + clubes[fora] + "   o bola\033[K\n";
+    texto += "  " + lance + "\033[K\n";
+    texto += "  " + ultimoGolo + "\033[K\n";
+    texto += "  Pausas táticas: 30 / 45 / 60 / 75 min.\033[K\n\033[J";
+    IO.print(texto);
+}
+
+void cadenciaDoCampo(int velocidade) {
+    // As aulas não incluem relógios nem Thread.sleep. Este ciclo repete uma
+    // operação já ensinada (Math.random) para o desenho ser visível. A duração
+    // depende do computador e usa CPU; o modo instantâneo não executa o ciclo.
+    int repeticoes = 1000000;
+    if (velocidade == 1) {
+        repeticoes = 1800000;
+    }
+    if (velocidade == 3) {
+        repeticoes = 350000;
+    }
+    if (velocidade == 4) {
+        repeticoes = 0;
+    }
+    for (int i = 0; i < repeticoes; i++) {
+        Math.random();
+    }
+}

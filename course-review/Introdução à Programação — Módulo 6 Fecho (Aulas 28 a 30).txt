@@ -1,0 +1,637 @@
+
+=== PAGE 1 ===
+>_
+INSTITUTO SUPERIOR MIGUEL TORGA · LICENCIATURA EM INFORMÁTICA
+Introdução à 
+Programação
+Módulo 6 · Fecho — Aulas 28 a 30
+Luís Simões da Cunha · 1.º semestre
+
+=== PAGE 2 ===
+28
+AULA 28 · MÓDULO 6 — FECHO
+Guardar para sempre
+Ficheiros de texto: os recordes sobrevivem ao fim do programa.
+INTRODUÇÃO À PROGRAMAÇÃO · ISMT · LUÍS SIMÕES DA CUNHA
+
+=== PAGE 3 ===
+? LEMBRAS-TE?
+Três perguntas da aula passada
+1
+Qual a diferença 
+entre um array e um 
+ArrayList?
+2
+Que bloco corre 
+quando o try rebenta?
+3
+Para que tipo de 
+erros deves usar 
+try/catch?
+Responde de memória, sem espreitar os apontamentos.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 28 · FICHEIROS ISMT
+
+=== PAGE 4 ===
+? GANCHO
+Desligas o computador. Os recordes 
+desaparecem.
+Tudo o que está nas variáveis vive na memória — e a memória esquece. Os 
+ficheiros não.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 28 · FICHEIROS ISMT
+
+=== PAGE 5 ===
+MISSÃO DE HOJE
+No fim desta aula vais conseguir…
+1 Escrever texto num ficheiro
+2 Ler um ficheiro linha a linha
+3 Guardar e carregar os recordes do Arcade
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 28 · FICHEIROS ISMT
+
+=== PAGE 6 ===
+CONCEITO-CHAVE
+Memória e disco
+?
+Memória (RAM)
+Rápida, mas esquece tudo quando o programa 
+termina. É onde vivem as variáveis.
+?
+Disco (ficheiros)
+Mais lento, mas guarda para sempre, mesmo com o 
+computador desligado.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 28 · FICHEIROS ISMT
+
+=== PAGE 7 ===
+ESCREVER
+Escrever texto num ficheiro
+Path ficheiro = Path.of("recordes.txt");
+Files.writeString(ficheiro, "Rita;300\nTiago;190\n");
+Path.of(…)
+O caminho do ficheiro.
+writeString
+Escreve o texto — e apaga o que 
+lá estava!
+\n
+Muda de linha dentro do texto.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 28 · FICHEIROS ISMT
+
+=== PAGE 8 ===
+? ERRO DO DIA
+O Java obriga-te a planear o pior
+Files.writeString(ficheiro, "Rita;300\n");
+TERMINAL
+error: unreported exception IOException;
+  must be caught or declared to be thrown
+Porquê?O disco pode estar cheio ou o ficheiro protegido. O Java não te 
+deixa ignorar isso.
+SoluçãoEnvolve o código num try/catch:catch (IOException e)
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 28 · FICHEIROS ISMT
+
+=== PAGE 9 ===
+ESCREVER · VERSÃO CERTA
+Com rede de segurança
+try {
+    Files.writeString(Path.of("recordes.txt"), "Rita;300\n");
+} catch (IOException e) {
+    IO.println("Não consegui gravar: " + e.getMessage());
+}
+e.getMessage() diz o que correu mal, em texto.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 28 · FICHEIROS ISMT
+
+=== PAGE 10 ===
+LER
+Ler um ficheiro linha a linha
+try {
+    ArrayList<String> linhas = new ArrayList<>(Files.readAllLines(Path.of("recordes.txt")));
+    for (String l : linhas) {
+        IO.println(l);
+    }
+} catch (IOException e) {
+    IO.println("Ainda não há recordes.");
+}
+Primeiro jogo? Se o ficheiro ainda não existe, o programa cai no catch.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 28 · FICHEIROS ISMT
+
+=== PAGE 11 ===
+O FORMATO
+Uma linha por recorde: nome;pontos
+TERMINAL
+Rita;300
+Tiago;190
+Ana;120
+?
+Como numa folha de cálculo
+O ; separa os campos. É o formato CSV, que o Excel 
+também abre.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 28 · FICHEIROS ISMT
+
+=== PAGE 12 ===
+PARTIR TEXTO
+split: do texto para um array
+String linha = "Rita;300";
+String[] partes = linha.split(";");
+String nome = partes[0];
+int pontos = Integer.parseInt(partes[1]);
+✂️
+split
+Parte o texto em cada ; e devolve 
+um array (aula 23).
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 28 · FICHEIROS ISMT
+
+=== PAGE 13 ===
+? PREVÊ
+O que aparece no ecrã?
+String[] p = "a;b;;c".split(";");
+IO.println(p.length);
+IO.println(p[2].isEmpty());
+✍ ️
+Cuidado
+Há dois ; seguidos.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 28 · FICHEIROS ISMT
+
+=== PAGE 14 ===
+EXEMPLO RESOLVIDO
+Acrescentar um recorde sem apagar os outros
+Arcade.java
+void guardarRecorde(String nome, int pontos) {
+    try {
+        Files.writeString(Path.of("recordes.txt"), nome + ";" + pontos + "\n",
+                StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+    } catch (IOException e) {
+        IO.println("Erro ao gravar: " + e.getMessage());
+    }
+}
+CREATE cria o ficheiro; APPEND acrescenta no fim em vez de apagar.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 28 · FICHEIROS ISMT
+
+=== PAGE 15 ===
+EXEMPLO RESOLVIDO
+Carregar os recordes
+Arcade.java
+ArrayList<String> carregar() {
+    try {
+        return new ArrayList<>(Files.readAllLines(Path.of("recordes.txt")));
+    } catch (IOException e) {
+        return new ArrayList<>();   // ainda não há recordes
+    }
+}
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 28 · FICHEIROS ISMT
+
+=== PAGE 16 ===
+JUNTAR TUDO
+Mostrar o melhor recorde
+Arcade.java
+void mostrarMelhor(ArrayList<String> linhas) {
+    String melhorNome = "";
+    int melhor = -1;
+    for (String l : linhas) {
+        String[] p = l.split(";");
+        int pts = Integer.parseInt(p[1]);
+        if (pts > melhor) {
+            melhor = pts;
+            melhorNome = p[0];
+        }
+    }
+    IO.println("? Recorde: " + melhorNome + " com " + melhor);
+}
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 28 · FICHEIROS ISMT
+
+=== PAGE 17 ===
+NA PRÁTICA
+Onde fica o ficheiro?
+?
+Na pasta do projeto
+Normalmente, a pasta de onde o programa corre. 
+Abre-o no VS Code: é texto normal!
+?
+E no GitHub?
+Não queres os teus recordes no repositório? 
+Acrescenta recordes.txt ao ficheiro .gitignore.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 28 · FICHEIROS ISMT
+
+=== PAGE 18 ===
+? PUZZLE
+Conta quantos recordes há
+A     IO.println(linhas.size() + " recordes guardados.");
+B try {
+C } catch (IOException e) {
+D     IO.println("Sem recordes.");
+E     ArrayList<String> linhas = new ArrayList<>(Files.readAllLines(f));
+F }
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 28 · FICHEIROS ISMT
+
+=== PAGE 19 ===
+?️  PEÇA DO ARCADE
+Recordes permanentes
+TERMINAL
+=== RECORDES ===
+? Recorde: Rita com 300
+(guardado em recordes.txt)
+No fim de cada jogo, guarda nome;pontos. No menu, a opção 5 mostra os recordes.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 28 · FICHEIROS ISMT
+
+=== PAGE 20 ===
+? COMMIT DO DIA
+Guarda o progresso no GitHub
+Guarda a peça do Arcade com a mensagem:
+TERMINAL
+Adiciona recordes permanentes
+Lembra-te do ciclo: Stage → Commit → Push.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 28 · FICHEIROS ISMT
+
+=== PAGE 21 ===
+?️  BILHETE DE SAÍDA
+Porque é que o Java te obriga a usar try/catch 
+quando escreves ou lês um ficheiro?
+E responde também: o que ficou mais confuso hoje?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 28 · FICHEIROS ISMT
+
+=== PAGE 22 ===
+29
+AULA 29 · MÓDULO 6 — FECHO
+O que estava escondido
+Do ficheiro compacto ao Java tradicional — e um primeiro olhar sobre 
+objetos.
+INTRODUÇÃO À PROGRAMAÇÃO · ISMT · LUÍS SIMÕES DA CUNHA
+
+=== PAGE 23 ===
+? LEMBRAS-TE?
+Três perguntas da aula passada
+1
+Que opção 
+acrescenta a um 
+ficheiro em vez de o 
+apagar?
+2
+O que devolve 
+"a;b".split(";")?
+3
+Onde fica, 
+normalmente, o 
+recordes.txt?
+Responde de memória, sem espreitar os apontamentos.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 29 · O QUE ESTAVA ESCONDIDO ISMT
+
+=== PAGE 24 ===
+? GANCHO
+Durante 28 aulas, o Java guardou-te 
+um segredo.
+O teu void main() tem uma versão «completa». Hoje abrimos a caixa.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 29 · O QUE ESTAVA ESCONDIDO ISMT
+
+=== PAGE 25 ===
+MISSÃO DE HOJE
+No fim desta aula vais conseguir…
+1 Reconhecer o formato tradicional de um programa Java
+2 Ter uma primeira intuição de classe e objeto
+3 Preparar o Arcade para o Demo Day
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 29 · O QUE ESTAVA ESCONDIDO ISMT
+
+=== PAGE 26 ===
+LADO A LADO
+O mesmo programa, duas formas
+compacto (Java 25)
+void main() {
+    IO.println("Olá!");
+}
+tradicional
+public class Ola {
+    public static void main(String[] args) {
+        System.out.println("Olá!");
+    }
+}
+Fazem exatamente o mesmo. O Java 25 deixou-te começar pelo essencial.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 29 · O QUE ESTAVA ESCONDIDO ISMT
+
+=== PAGE 27 ===
+AS PEÇAS
+O que significa cada palavra?
+Peça Por agora, basta saber que…
+public class Ola { … } É a caixa que embrulha o programa: uma classe.
+public Pode ser usado de qualquer sítio.
+static Pertence à classe, não a um objeto (vais perceber em POO).
+String[] args Um array com argumentos da linha de comandos.
+System.out.println O «avô» do IO.println.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 29 · O QUE ESTAVA ESCONDIDO ISMT
+
+=== PAGE 28 ===
+✍ ️  EXERCÍCIO
+Converter um jogo para o formato tradicional
+1 Envolve tudo em public class NomeDoFicheiro { }
+2 Muda void main() para public static void main(String[] args)
+3 Acrescenta static a todos os teus métodos
+4 Acrescenta os import (ex.: import java.util.ArrayList;)
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 29 · O QUE ESTAVA ESCONDIDO ISMT
+
+=== PAGE 29 ===
+? ERRO DO DIA
+Esqueceste o static
+public class Arcade {
+    public static void main(String[] args) {
+        mostrarMenu();
+    }
+    void mostrarMenu() { … }
+}
+TERMINAL
+error: non-static method mostrarMenu()
+  cannot be referenced from a static context
+Porquê?Aqui o main é static, e só pode chamar diretamente métodos 
+static.
+Por agoraAcrescenta static. O porquê é a primeira grande pergunta de 
+POO!
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 29 · O QUE ESTAVA ESCONDIDO ISMT
+
+=== PAGE 30 ===
+E SE…
+E se o Jogo do Galo soubesse 
+desenhar-se a si próprio?
+Até agora, os dados (o tabuleiro) e as ações (mostrar, ganhou) viviam 
+separados. Em POO, juntam-se num só objeto.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 29 · O QUE ESTAVA ESCONDIDO ISMT
+
+=== PAGE 31 ===
+SEPARADOS OU JUNTOS
+Hoje e no 2.º semestre
+hoje: dados e métodos separados
+char[][] tab = …;
+mostrar(tab);
+ganhou(tab, 'X');
+POO: o objeto sabe fazer
+Galo galo = new Galo();
+galo.mostrar();
+galo.ganhou('X');
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 29 · O QUE ESTAVA ESCONDIDO ISMT
+
+=== PAGE 32 ===
+SURPRESA
+Já usaste objetos sem saber
+nome.toUpperCase()
+Uma String sabe transformar-
+se.
+lista.add("Rita")
+Uma lista sabe crescer.
+linha.split(";")
+Uma String sabe partir-se.
+Uma coisa que guarda dados e sabe responder a perguntas sobre si própria: 
+isso é um objeto.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 29 · O QUE ESTAVA ESCONDIDO ISMT
+
+=== PAGE 33 ===
+A ANALOGIA
+Classe e objeto
+?
+Classe
+A planta de uma casa: descreve como as casas são.
+?
+Objeto
+Cada casa construída a partir da planta. Muitas 
+casas, uma planta.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 29 · O QUE ESTAVA ESCONDIDO ISMT
+
+=== PAGE 34 ===
+PREPARAR O DEMO DAY
+A lista de verificação
+?
+Arcade completo
+Menu com 4 jogos e recordes.
+?
+Código arrumado
+Métodos curtos, bons nomes, sem código morto.
+?
+README.md
+O que é, como correr, o que aprendeste.
+?️
+Release
+Uma versão v1.0 no GitHub.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 29 · O QUE ESTAVA ESCONDIDO ISMT
+
+=== PAGE 35 ===
+O README
+A montra do teu repositório
+README.md
+# Arcade do Terminal
+Projeto de Introdução à Programação (ISMT)
+## Como correr
+java Arcade.java
+## Jogos
+Pedra, Papel, Tesoura · Adivinha o Número · Forca · Jogo do Galo
+## O que aprendi
+...
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 29 · O QUE ESTAVA ESCONDIDO ISMT
+
+=== PAGE 36 ===
+A RELEASE
+Publicar a versão 1.0
+1 Abre o repositório no GitHub
+2 Carrega em Releases → Create a new release
+3 Tag: v1.0
+4 Descreve o Arcade e carrega em Publish
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 29 · O QUE ESTAVA ESCONDIDO ISMT
+
+=== PAGE 37 ===
+? COMMIT DO DIA
+Guarda o progresso no GitHub
+Guarda as últimas alterações com a mensagem:
+TERMINAL
+Prepara o Arcade para o Demo Day
+Lembra-te do ciclo: Stage → Commit → Push.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 29 · O QUE ESTAVA ESCONDIDO ISMT
+
+=== PAGE 38 ===
+?️  BILHETE DE SAÍDA
+Que parte do Java tradicional te parece mais 
+estranha? O que achas que quer dizer static?
+E responde também: o que ficou mais confuso hoje?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 29 · O QUE ESTAVA ESCONDIDO ISMT
+
+=== PAGE 39 ===
+30
+AULA 30 · MÓDULO 6 — FECHO
+Demo Day ?
+Mostra o teu Arcade, joga o dos outros e olha para o caminho que 
+fizeste.
+INTRODUÇÃO À PROGRAMAÇÃO · ISMT · LUÍS SIMÕES DA CUNHA
+
+=== PAGE 40 ===
+HÁ 30 AULAS…
+Não sabias escrever uma linha de Java.
+Hoje tens um Arcade com quatro jogos, recordes guardados em ficheiro e 
+centenas de linhas de código teu.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 30 · DEMO DAY ISMT
+
+=== PAGE 41 ===
+PLANO DA AULA
+Três momentos
+1
+Feira do Arcade
+Mostrar, jogar e dar feedback.
+2
+Revisão em jogo
+Seis rondas com o semestre 
+todo.
+3
+Olhar para trás
+O que aprendeste e o que vem a 
+seguir.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 30 · DEMO DAY ISMT
+
+=== PAGE 42 ===
+? A FEIRA DO ARCADE
+Como funciona
+? ?
+Metade expõe
+Deixa o Arcade a correr e 
+explica-o a quem passa.
+?
+Metade visita
+Joga e dá feedback. A meio, 
+trocam.
+?️
+Votação
+Jogo mais divertido, código 
+mais legível, melhor bug 
+encontrado.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 30 · DEMO DAY ISMT
+
+=== PAGE 43 ===
+FEEDBACK ENTRE COLEGAS
+Duas estrelas e um desejo
+⭐
+Gostei de…
+Uma coisa concreta que 
+funcionou bem.
+⭐
+Achei bem feito…
+Um detalhe de código ou de 
+jogo.
+?
+Seria ainda melhor 
+se…
+Uma sugestão concreta e gentil.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 30 · DEMO DAY ISMT
+
+=== PAGE 44 ===
+RONDA 1 · PREVÊ
+Qual é o output?
+int x = 17;
+IO.println(x / 5 + " " + x % 5);
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 30 · DEMO DAY ISMT
+
+=== PAGE 45 ===
+RONDA 2 · PREVÊ
+Qual é o output?
+String s = "Arcade";
+int conta = 0;
+for (int i = 0; i < s.length(); i++) {
+    if (s.charAt(i) == 'a') { conta++; }
+}
+IO.println(conta);
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 30 · DEMO DAY ISMT
+
+=== PAGE 46 ===
+RONDA 3 · ENCONTRA O ERRO
+Onde está o bug?
+int[] v = {3, 1, 2};
+for (int i = 0; i <= v.length; i++) {
+    IO.println(v[i]);
+}
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 30 · DEMO DAY ISMT
+
+=== PAGE 47 ===
+RONDA 4 · PREVÊ
+Qual é o output?
+void main() {
+    int[] a = {1, 2};
+    int b = 5;
+    mudar(a, b);
+    IO.println(a[0] + " " + b);
+}
+void mudar(int[] x, int y) {
+    x[0] = 9;
+    y = 9;
+}
+?
+Morada ou fotocópia?
+Pensa nas aulas 20 e 24.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 30 · DEMO DAY ISMT
+
+=== PAGE 48 ===
+RONDA 5 · ESCOLHE A FERRAMENTA
+O que usarias?
+Situação Ferramenta?
+Um menu que aparece pelo menos uma vez ?
+Percorrer um tabuleiro 3 × 3 ?
+Uma lista de jogadores que cresce ?
+O utilizador pode escrever letras em vez de um número ?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 30 · DEMO DAY ISMT
+
+=== PAGE 49 ===
+RONDA 6 · VERDADEIRO OU FALSO
+V ou F?
+Afirmação V / F
+O switch com setas não precisa de break. ?
+Um método void pode devolver um valor com return. ?
+A pesquisa binária funciona em qualquer array. ?
+Sem APPEND, Files.writeString apaga o conteúdo anterior. ?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 30 · DEMO DAY ISMT
+
+=== PAGE 50 ===
+O CAMINHO QUE FIZESTE
+Seis módulos, um Arcade
+Módulo Aprendeste Peça do Arcade
+0 · Oficina Java, VS Code, Git, Codex O repositório
+1 · Dados Variáveis, operadores, Strings Boas-vindas
+2 · Decisões if, switch, lógica Pedra, Papel, Tesoura
+3 · Repetição while, for, depuração Adivinha o Número
+4 · Métodos Parâmetros, return, testes Forca
+5 · Coleções Arrays, listas, try/catch Jogo do Galo
+6 · Fecho Ficheiros Recordes
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 30 · DEMO DAY ISMT
+
+=== PAGE 51 ===
+? AUTOAVALIAÇÃO FINAL
+Onde estás em cada tema?
+Tema ? Domino ? Mais ou menos ? Preciso de rever
+Variáveis e operadores
+Decisões
+Ciclos
+Métodos
+Arrays e listas
+Ficheiros e erros
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 30 · DEMO DAY ISMT
+
+=== PAGE 52 ===
+OLHAR PARA TRÁS
+Três perguntas para levar
+?
+O que aprendi
+…que não sabia no primeiro dia?
+?
+O erro
+…que mais me ensinou?
+?
+O próximo passo
+…o que quero aprender a seguir?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 30 · DEMO DAY ISMT
+
+=== PAGE 53 ===
+? COMMIT DO DIA
+Guarda o progresso no GitHub
+O último commit do semestre:
+TERMINAL
+Arcade do Terminal v1.0
+Lembra-te do ciclo: Stage → Commit → Push.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 30 · DEMO DAY ISMT
+
+=== PAGE 54 ===
+ATÉ AO 2.º SEMESTRE
+Obrigado — e parabéns!
+Em POO, o teu Arcade vai ganhar objetos: cada jogo vai saber jogar-se a si 
+próprio.
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 30 · DEMO DAY ISMT
+
+=== PAGE 55 ===
+?️  BILHETE DE SAÍDA
+Escreve uma mensagem para ti próprio, a ler no 
+primeiro dia de POO.
+E responde também: o que ficou mais confuso hoje?
+INTRODUÇÃO À PROGRAMAÇÃO · AULA 30 · DEMO DAY ISMT
