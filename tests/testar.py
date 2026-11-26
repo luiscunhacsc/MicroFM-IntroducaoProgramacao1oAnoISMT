@@ -20,7 +20,7 @@ def main():
     if not all(shutil.which(tool) for tool in ("java", "javac")):
         raise SystemExit("Instala um JDK 17 ou superior para executar os testes.")
     tests = [ROOT / "tests" / name for name in (
-        "TestCareer.java", "TestMatch.java", "TestSwing.java", "BenchmarkRender.java")]
+        "TestCareer.java", "TestMatch.java", "microfm/ui/TestSwing.java", "BenchmarkRender.java")]
     with tempfile.TemporaryDirectory(prefix="microfm-tests-") as temporary:
         folder = Path(temporary)
         classes = folder / "classes"

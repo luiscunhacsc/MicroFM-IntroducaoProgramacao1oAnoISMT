@@ -8,7 +8,11 @@ Um jogo de gestão de futebol de secretária, em português, construído com **J
 java -jar MicroFM.jar
 ```
 
-Na entrada, escolhe a liga, o clube e o nome do treinador ou experimenta **Ver demonstração**. O encontro é representado num estádio com 22 jogadores, bola com trajetória e rasto, iluminação, sombras, público, redes e celebrações com partículas. Os controlos permitem pausar, acelerar até 8×, alterar táticas e fazer cinco substituições. O som sintetizado é opcional.
+O jogo arranca em ecrã inteiro. Usa **Esc** para voltar à janela ou **F11** para alternar entre os dois modos.
+
+Na entrada, a **Primeira Liga 2026/27** já vem selecionada. Escolhe o clube e o nome do treinador ou carrega em **Ver demonstração** para assistir a um FC Porto – FC Alverca com jogadores dos dois plantéis. O encontro é representado num estádio com 22 jogadores, bola com trajetória e rasto, iluminação, sombras, público, redes e celebrações com partículas. Os controlos permitem pausar, acelerar até 8×, alterar táticas e fazer cinco substituições. O som das bancadas está ligado por defeito. Usa **Som** para silenciar também os apitos e os festejos.
+
+O árbitro assinala faltas e foras de jogo, e o motor executa livres, penáltis, lançamentos laterais, cantos e pontapés de baliza. O relógio mostra a compensação quando uma jogada perigosa prolonga o período. As bancadas reagem aos lances e os apitos distinguem as decisões do árbitro, o intervalo e o fim do jogo.
 
 Usa **Interromper jogo** para descartar o encontro e voltar à gestão do clube. A mesma jornada fica disponível para jogar de novo. Na demonstração, o botão leva-te de volta ao ecrã inicial.
 

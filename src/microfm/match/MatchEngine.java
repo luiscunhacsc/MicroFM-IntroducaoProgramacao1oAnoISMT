@@ -21,6 +21,10 @@ import microfm.model.Position;
  * Uma mesma semente e os mesmos passos de tempo reproduzem o encontro.
  */
 public final class MatchEngine {
+    private static final double MATCH_MINUTES_PER_SECOND = .6;
+    private static final double MAX_ATTACK_STOPPAGE_SECONDS = 25;
+    private static final double PENALTY_AREA_START = .842;
+
     public static final class Footballer {
         private final boolean home;
         private final int slot;
@@ -48,7 +52,25 @@ public final class MatchEngine {
 
     public record Ball(double x, double y, double height, double spin) { }
 
-    private enum Flight { PASS, SHOT, SAVE, CLEARANCE }
+    private enum Flight { PASS, SHOT, DEFLECTION }
+    private enum RestartType {
+        DIRECT_FREE_KICK("Livre direto", "free_kick"),
+        INDIRECT_FREE_KICK("Livre indireto", "free_kick"),
+        PENALTY("Penálti", "penalty"),
+        THROW_IN("Lançamento lateral", "throw_in"),
+        CORNER("Canto", "corner"),
+        GOAL_KICK("Pontapé de baliza", "goal_kick");
+
+        private final String label;
+        private final String event;
+
+        RestartType(String label, String event) {
+            this.label = label;
+            this.event = event;
+        }
+    }
+    private record Restart(RestartType type, boolean home, double x, double y, Footballer taker) { }
+
     private final Career career;
     private final Club homeClub, awayClub;
     private final boolean userHome;
@@ -62,11 +84,14 @@ public final class MatchEngine {
     private Formation formation;
     private Mentality mentality;
     private double minute, elapsed, actionWait = .6, celebration, homeTime, awayTime;
+    private double stoppage, restartWait, finishingOpportunityUntil;
     private double ballX = .5, ballY = .5, ballHeight, ballSpin;
     private double flightTime, flightDuration, fromX, fromY, toX, toY, flightArc;
     private Footballer owner, receiver, shooter;
     private Flight flight;
-    private boolean shotGoal, shotSaved, halftime, halfResumed, finished, lastGoalHome;
+    private Restart restart;
+    private boolean shotGoal, shotSaved, shotDeflected, flightTouchHome, offsideReception;
+    private boolean halftime, halfResumed, finished, lastGoalHome;
     private int homeGoals, awayGoals, homeShots, awayShots, substitutions, goalSerial;
     private double mood;
 
@@ -116,21 +141,42 @@ public final class MatchEngine {
         if (celebration > 0) {
             celebration = Math.max(0, celebration-dt);
             movePlayers(dt, true);
-            if (celebration == 0) resetKickoff(!lastGoalHome);
+            if (celebration == 0) {
+                if (minute == periodEnd()) endPeriod();
+                else {
+                    resetKickoff(!lastGoalHome);
+                    addEvent("A bola volta ao centro. Recomeça o jogo!", "kickoff");
+                }
+            }
             return;
         }
-        minute = Math.min(90, minute + dt*.6);
-        if (!halfResumed && minute >= 45) {
-            minute = 45; halftime = true;
-            addEvent("Intervalo. Hora de preparar a segunda parte.", "half"); return;
+        minute = Math.min(periodEnd(), minute + dt * MATCH_MINUTES_PER_SECOND);
+        if (minute == periodEnd()) {
+            if (!allowsStoppagePlay()) {
+                endPeriod();
+                return;
+            }
+            if (stoppage == 0) {
+                addEvent("O árbitro dá mais alguns segundos para concluir a jogada.", "stoppage");
+                actionWait = Math.min(actionWait, .30);
+            }
+            stoppage += dt * MATCH_MINUTES_PER_SECOND * 60;
         }
-        if (minute >= 90) {
-            finished = true; ballHeight = 0;
-            addEvent("Apito final! " + homeClub.shortName() + " " + homeGoals + " — " + awayGoals
-                + " " + awayClub.shortName() + ".", "full"); return;
+
+        if (restart != null) {
+            double restartMood = switch (restart.type()) {
+                case PENALTY -> .85;
+                case CORNER -> .60;
+                case DIRECT_FREE_KICK -> shootableFreeKick(restart) ? .70 : .35;
+                default -> .30;
+            };
+            movePlayers(dt, false);
+            restartWait -= dt;
+            if (restartWait <= 0) takeRestart();
+            mood += (restartMood - mood) * dt * 2;
+            return;
         }
-        boolean homePossessing = owner != null ? owner.home : shooter != null ? shooter.home
-            : receiver == null || receiver.home;
+        boolean homePossessing = owner != null ? owner.home : flightTouchHome;
         if (homePossessing) homeTime += dt; else awayTime += dt;
         movePlayers(dt, false);
         if (flight != null) {
@@ -149,7 +195,42 @@ public final class MatchEngine {
             actionWait -= dt;
             if (actionWait <= 0) decideAction();
         }
-        mood += ((flight == Flight.SHOT ? 1 : .2)-mood)*dt*2;
+        double openPlayMood = flight == Flight.SHOT || flight == Flight.DEFLECTION ? 1
+            : goalThreat(owner != null ? owner.home : flightTouchHome, ballX, ballY) ? .60 : .20;
+        mood += (openPlayMood - mood) * dt * 2;
+    }
+
+    private double periodEnd() { return halfResumed ? 90 : 45; }
+
+    private boolean allowsStoppagePlay() {
+        if (restart != null) return restart.type() == RestartType.PENALTY || shootableFreeKick(restart);
+        if (flight == Flight.SHOT || flight == Flight.DEFLECTION) return true;
+        if (flight == Flight.PASS) {
+            return receiver != null && receiver.home == flightTouchHome && !offsideReception
+                && goalThreat(receiver.home, toX, toY);
+        }
+        return stoppage < Math.max(MAX_ATTACK_STOPPAGE_SECONDS, finishingOpportunityUntil)
+            && owner != null && !owner.goalkeeper()
+            && goalThreat(owner.home, owner.x, owner.y);
+    }
+
+    private boolean goalThreat(boolean home, double x, double y) {
+        return attackProgress(home, x) > .75 && Math.abs(y - .5) < .31;
+    }
+
+    private void endPeriod() {
+        ballHeight = 0;
+        restart = null;
+        flight = null;
+        owner = receiver = shooter = null;
+        if (!halfResumed) {
+            halftime = true;
+            addEvent("Intervalo. Hora de preparar a segunda parte.", "half");
+        } else {
+            finished = true;
+            addEvent("Apito final! " + homeClub.shortName() + " " + homeGoals + " — " + awayGoals
+                + " " + awayClub.shortName() + ".", "full");
+        }
     }
 
     private void updateBases() {
@@ -164,7 +245,7 @@ public final class MatchEngine {
     }
 
     private void movePlayers(double dt, boolean celebrating) {
-        boolean possessing = owner != null ? owner.home : receiver != null ? receiver.home : true;
+        boolean possessing = owner != null ? owner.home : restart != null ? restart.home() : flightTouchHome;
         Footballer nearest = null;
         double nearDistance = Double.MAX_VALUE;
         for (Footballer f : footballers) {
@@ -175,6 +256,7 @@ public final class MatchEngine {
         }
         for (Footballer f : footballers) {
             double dir = direction(f.home);
+            boolean keeperOnGoalLine = false;
             double shift = (ballX-.5)*.37;
             double mentalityShift = f.home == userHome
                 ? (mentality == Mentality.ATTACKING ? .055 : mentality == Mentality.DEFENSIVE ? -.055 : 0)*dir : 0;
@@ -190,6 +272,21 @@ public final class MatchEngine {
             if (f == receiver && flight != null && (flight != Flight.SHOT || shotSaved)) { tx = toX; ty = toY; }
             if (f == nearest && owner != null && nearDistance < .33) {
                 tx = ballX-direction(owner.home)*.022; ty = ballY+.018;
+            }
+            if (restart != null) {
+                if (f == restart.taker()) {
+                    tx = restart.x(); ty = restart.y();
+                } else if (restart.type() == RestartType.PENALTY) {
+                    double attackingDirection = direction(restart.home());
+                    if (f.goalkeeper() && f.home != restart.home()) {
+                        keeperOnGoalLine = true;
+                        tx = attackingDirection > 0 ? 1 : 0;
+                        ty = .5;
+                    } else {
+                        // Os outros jogadores aguardam atrás da marca e do arco.
+                        tx = attackingDirection > 0 ? Math.min(.80, tx) : Math.max(.20, tx);
+                    }
+                }
             }
             if (celebrating) {
                 if (f.home == lastGoalHome && f.slot != 0) {
@@ -209,27 +306,37 @@ public final class MatchEngine {
             double smooth = 1-Math.exp(-dt*7);
             f.vx += (wantedX-f.vx)*smooth;
             f.vy += (wantedY-f.vy)*smooth;
-            f.x = clamp(f.x+f.vx*dt,.025,.975);
+            f.x = keeperOnGoalLine ? tx : clamp(f.x+f.vx*dt,.025,.975);
             f.y = clamp(f.y+f.vy*dt,.035,.965);
         }
     }
 
     private void decideAction() {
         Footballer carrier = owner;
-        double progress = direction(carrier.home)>0 ? carrier.x : 1-carrier.x;
+        Footballer defender = nearestOpponent(carrier);
+        boolean underPressure = defender != null && distance(carrier.x, carrier.y, defender.x, defender.y) < .09;
+        if (underPressure && random.nextDouble() < (inPenaltyArea(carrier) ? .012 : .08)) {
+            foul(carrier, defender);
+            return;
+        }
+
+        double progress = attackProgress(carrier.home, carrier.x);
         double attack = carrier.home == userHome && mentality == Mentality.ATTACKING ? .18 : 0;
-        if (progress > .68 && carrier.slot != 0 && random.nextDouble() < .38+attack) {
+        if (progress > .68 && !carrier.goalkeeper()
+                && (stoppage > 0 || random.nextDouble() < .38 + attack)) {
             shoot(carrier); return;
         }
         // Pressão próxima pode provocar uma recuperação de bola visível.
-        Footballer defender = nearestOpponent(carrier);
-        if (defender != null && distance(carrier.x,carrier.y,defender.x,defender.y)<.09
-                && random.nextDouble()<.22) {
+        if (underPressure && random.nextDouble() < .22) {
             receiver = defender;
-            beginFlight(Flight.PASS,defender.x,defender.y,.23,.004);
+            beginFlight(Flight.PASS, carrier.home, defender.x, defender.y, .23, .004);
             actionWait = 1.0;
             addEvent(surname(defender.name)+" recupera a bola.", "pass"); return;
         }
+        pass(carrier, null);
+    }
+
+    private void pass(Footballer carrier, RestartType fromRestart) {
         Footballer best = null;
         double score = -Double.MAX_VALUE;
         for (Footballer f : footballers) {
@@ -239,43 +346,167 @@ public final class MatchEngine {
             double candidate = forward*.9 - Math.abs(d-.25)*.6 + random.nextDouble()*.26;
             if (candidate>score) { score=candidate; best=f; }
         }
-        if (best == null) { actionWait = .8; return; }
         receiver = best;
-        double targetX = clamp(best.x+direction(best.home)*.025,.05,.95);
+        double targetX = clamp(best.x + direction(best.home) * .025, .05, .95);
         double targetY = best.y;
-        if (random.nextDouble()<.14) {
+        if (fromRestart == null && random.nextDouble() < .04 + .14 * Math.abs(ballY - .5)) {
+            // Um passe impreciso sai pela lateral antes de qualquer nova receção.
+            targetY = targetY < .5 ? -.005 : 1.005;
+            receiver = null;
+        } else if (random.nextDouble() < .14) {
             Footballer interception = nearestOpponent(best);
             if (interception != null) {
                 receiver = interception; targetX = interception.x; targetY=interception.y;
                 addEvent(surname(interception.name)+" antecipa o passe.","pass");
             }
         }
-        beginFlight(Flight.PASS,targetX,targetY, Math.max(.35,distance(ballX,ballY,targetX,targetY)/.64),
-            distance(ballX,ballY,targetX,targetY)>.32 ? .065 : .018);
+        double travel = distance(ballX, ballY, targetX, targetY);
+        double arc = fromRestart == RestartType.CORNER || fromRestart == RestartType.THROW_IN || travel > .32
+            ? .065 : .018;
+        beginFlight(Flight.PASS, carrier.home, targetX, targetY, Math.max(.35, travel / .64), arc);
+        boolean exemptFromOffside = fromRestart == RestartType.CORNER || fromRestart == RestartType.THROW_IN
+            || fromRestart == RestartType.GOAL_KICK;
+        offsideReception = receiver == best && !exemptFromOffside && isOffside(best, ballX);
         actionWait = 1.05+random.nextDouble()*.7;
     }
 
+    private boolean isOffside(Footballer player, double ballPositionX) {
+        double position = attackProgress(player.home, player.x);
+        if (position <= .5 || position <= attackProgress(player.home, ballPositionX)) return false;
+        double last = 0, secondLast = 0;
+        for (Footballer opponent : footballers) {
+            if (opponent.home == player.home) continue;
+            double progress = attackProgress(player.home, opponent.x);
+            if (progress > last) {
+                secondLast = last;
+                last = progress;
+            } else if (progress > secondLast) {
+                secondLast = progress;
+            }
+        }
+        return position > secondLast;
+    }
+
+    private void foul(Footballer carrier, Footballer defender) {
+        addEvent(surname(defender.name) + " faz falta sobre " + surname(carrier.name) + ".", "foul");
+        // Os limites coincidem com a área marcada no relvado.
+        if (inPenaltyArea(carrier)) {
+            double markX = direction(carrier.home) > 0 ? .895 : .105;
+            awardRestart(RestartType.PENALTY, carrier.home, markX, .5);
+        } else {
+            awardRestart(RestartType.DIRECT_FREE_KICK, carrier.home, carrier.x, carrier.y);
+        }
+    }
+
+    private boolean inPenaltyArea(Footballer attacker) {
+        return attackProgress(attacker.home, attacker.x) >= PENALTY_AREA_START
+            && attacker.y >= .20 && attacker.y <= .80;
+    }
+
+    private void ballOut() {
+        if (ballY < 0 || ballY > 1) {
+            awardRestart(RestartType.THROW_IN, !flightTouchHome, clamp(ballX, 0, 1), ballY < 0 ? 0 : 1);
+            return;
+        }
+        boolean rightGoal = ballX > 1;
+        boolean attackingHome = (direction(true) > 0) == rightGoal;
+        if (flightTouchHome == attackingHome) {
+            awardRestart(RestartType.GOAL_KICK, !attackingHome, rightGoal ? .948 : .052, .5);
+        } else {
+            awardRestart(RestartType.CORNER, attackingHome, rightGoal ? 1 : 0, ballY < .5 ? 0 : 1);
+        }
+    }
+
+    private void awardRestart(RestartType type, boolean home, double x, double y) {
+        Footballer taker = goalkeeper(home);
+        if (type != RestartType.GOAL_KICK) {
+            double nearest = Double.POSITIVE_INFINITY;
+            for (Footballer f : footballers) {
+                if (f.home != home || f.goalkeeper()) continue;
+                double d = distance(x, y, f.x, f.y);
+                if (d < nearest) { nearest = d; taker = f; }
+            }
+        }
+        restart = new Restart(type, home, x, y, taker);
+        restartWait = type == RestartType.PENALTY ? .9 : .6;
+        ballX = x; ballY = y; ballHeight = 0;
+        owner = receiver = shooter = null;
+        flight = null;
+        if (type == RestartType.PENALTY) lineUpPenalty();
+        addEvent(type.label + " para " + club(home).name() + ".", type.event);
+    }
+
+    private void lineUpPenalty() {
+        double attackDirection = direction(restart.home());
+        Footballer keeper = goalkeeper(!restart.home());
+        keeper.x = attackDirection > 0 ? 1 : 0;
+        keeper.y = .5;
+        keeper.vx = keeper.vy = 0;
+
+        Footballer taker = restart.taker();
+        taker.x = restart.x() - attackDirection * .025;
+        taker.y = restart.y();
+        taker.vx = taker.vy = 0;
+        for (Footballer f : footballers) {
+            if (f == taker || f == keeper) continue;
+            f.x = attackDirection > 0 ? Math.min(.80, f.x) : Math.max(.20, f.x);
+            f.vx = 0;
+        }
+    }
+
+    private boolean shootableFreeKick(Restart deadBall) {
+        return deadBall.type() == RestartType.DIRECT_FREE_KICK
+            && goalThreat(deadBall.home(), deadBall.x(), deadBall.y());
+    }
+
+    private void takeRestart() {
+        Restart deadBall = restart;
+        Footballer taker = deadBall.taker();
+        RestartType type = deadBall.type();
+        restart = null;
+        taker.x = clamp(deadBall.x(), .025, .975);
+        taker.y = clamp(deadBall.y(), .035, .965);
+        taker.vx = 0; taker.vy = 0;
+        if (type == RestartType.PENALTY) {
+            shoot(taker, true);
+            return;
+        }
+        addEvent(surname(taker.name) + " repõe a bola em jogo. " + type.label + ".", "restart");
+        if (shootableFreeKick(deadBall)) shoot(taker);
+        else pass(taker, type);
+    }
+
     private void shoot(Footballer f) {
+        shoot(f, false);
+    }
+
+    private void shoot(Footballer f, boolean penalty) {
         shooter = f;
         if (f.home) homeShots++; else awayShots++;
-        double progress = direction(f.home)>0 ? f.x : 1-f.x;
-        double qualityAdvantage = (effectiveQuality(f)-effectiveQuality(goalkeeper(!f.home)))/220.0;
-        double angle = Math.abs(f.y-.5);
-        double chance = clamp(.15+(progress-.68)*.5-angle*.2+qualityAdvantage,.08,.40);
-        shotGoal = random.nextDouble()<chance;
+        double progress = attackProgress(f.home, f.x);
         receiver = goalkeeper(!f.home);
+        double qualityAdvantage = (effectiveQuality(f) - effectiveQuality(receiver)) / 220.0;
+        double angle = Math.abs(f.y-.5);
+        double chance = penalty ? clamp(.76 + qualityAdvantage * .35, .60, .88)
+            : clamp(.15 + (progress - .68) * .5 - angle * .2 + qualityAdvantage, .08, .40);
+        shotGoal = random.nextDouble()<chance;
         shotSaved = !shotGoal && random.nextBoolean();
+        shotDeflected = shotSaved && !penalty && random.nextDouble() < .38;
         double targetY = shotGoal ? .5+(random.nextDouble()-.5)*.13
             : shotSaved ? clamp(receiver.y+(random.nextDouble()-.5)*.065,.42,.58)
             : .5+(random.nextBoolean()?1:-1)*(.12+random.nextDouble()*.08);
         toX = shotSaved ? receiver.x : direction(f.home)>0 ? 1.005 : -.005;
-        addEvent(surname(f.name)+" remata à baliza!", "shot");
-        beginFlight(Flight.SHOT,toX,targetY, .52+random.nextDouble()*.22, .08+random.nextDouble()*.045);
+        if (penalty) addEvent(surname(f.name) + " bate o penálti!", "penalty_kick");
+        else addEvent(surname(f.name) + " remata à baliza!", "shot");
+        beginFlight(Flight.SHOT, f.home, toX, targetY, .52 + random.nextDouble() * .22,
+            .08 + random.nextDouble() * .045);
     }
 
-    private void beginFlight(Flight type, double tx, double ty, double duration, double arc) {
+    private void beginFlight(Flight type, boolean touchHome, double tx, double ty, double duration, double arc) {
         flight = type; fromX=ballX; fromY=ballY; toX=tx; toY=ty;
         flightTime=0; flightDuration=duration; flightArc=arc; owner=null;
+        flightTouchHome = touchHome;
+        offsideReception = false;
     }
 
     private void completeFlight() {
@@ -292,22 +523,37 @@ public final class MatchEngine {
             } else {
                 if (shotSaved) {
                     addEvent("Grande defesa de "+surname(receiver.name)+"!", "save");
+                    if (shotDeflected) {
+                        beginFlight(Flight.DEFLECTION, receiver.home, direction(shooter.home) > 0 ? 1.005 : -.005,
+                            ballY < .5 ? .33 : .67, .38, .035);
+                        receiver = shooter = null;
+                        return;
+                    }
                     owner=receiver; owner.x=toX;owner.y=toY;
                     ballX=toX;ballY=toY;actionWait=.75;
                 } else {
-                    addEvent("O remate sai ao lado. Reposição do guarda-redes.", "shot");
-                    // Mesmo a reposição tem trajetória: não há um salto de pixels
-                    // da linha de fundo para as mãos do guarda-redes.
-                    beginFlight(Flight.CLEARANCE,receiver.x,receiver.y,.9,.045);
-                    actionWait=.75;shooter=null;return;
+                    addEvent("O remate sai ao lado.", "miss");
+                    ballOut();
+                    return;
                 }
             }
             shooter=null;
+        } else if (ballX < 0 || ballX > 1 || ballY < 0 || ballY > 1) {
+            ballOut();
+            return;
+        } else if (offsideReception) {
+            addEvent(surname(receiver.name) + " recebe em fora de jogo.", "offside");
+            awardRestart(RestartType.INDIRECT_FREE_KICK, !receiver.home, ballX, ballY);
+            return;
         } else {
             owner=receiver;
             // A receção acontece no destino da trajetória, sem saltos da bola.
             owner.x=clamp(toX,.025,.975); owner.y=clamp(toY,.035,.965);
             ballX=owner.x; ballY=owner.y;
+            if (stoppage > 0 && owner.home == flightTouchHome && goalThreat(owner.home, owner.x, owner.y)) {
+                finishingOpportunityUntil = stoppage + 11;
+                actionWait = Math.min(actionWait, .25);
+            }
         }
         receiver=null;
     }
@@ -319,13 +565,13 @@ public final class MatchEngine {
         }
         owner=footballers.get((home?0:11)+8);
         owner.x=.5-direction(home)*.018; owner.y=.5;
-        ballX=.5; ballY=.5; ballHeight=0; flight=null; receiver=null; shooter=null;
+        ballX=.5; ballY=.5; ballHeight=0; flight=null; receiver=null; shooter=null; restart=null;
         actionWait=.65;
     }
 
     public void resumeHalf() {
         if (!halftime || finished) return;
-        halftime=false; halfResumed=true; resetKickoff(false);
+        halftime=false; halfResumed=true; stoppage=0; finishingOpportunityUntil=0; resetKickoff(false);
         addEvent("Recomeça o encontro. As equipas trocam de campo.","kickoff");
     }
 
@@ -368,12 +614,14 @@ public final class MatchEngine {
         return best;
     }
     private Footballer goalkeeper(boolean home) { return footballers.get(home?0:11); }
+    private Club club(boolean home) { return home ? homeClub : awayClub; }
     private double effectiveQuality(Footballer f) {
         double confidence = f.home==userHome ? (career.morale()-70)/10.0 : 0;
         return f.quality*(.72+.28*f.condition/100.0)
             - 8*Math.max(0,minute-f.enteredMinute)/90.0 + confidence;
     }
     private double direction(boolean home) { return home != halfResumed ? 1 : -1; }
+    private double attackProgress(boolean home, double x) { return direction(home) > 0 ? x : 1 - x; }
     private static double distance(double x,double y,double a,double b) { return Math.hypot(x-a,(y-b)*.65); }
     private static double clamp(double value,double low,double high) { return Math.max(low,Math.min(high,value)); }
     private static String surname(String name) { int space=name.lastIndexOf(' '); return name.substring(space+1); }
@@ -388,6 +636,8 @@ public final class MatchEngine {
     public boolean finished() { return finished; }
     public boolean halftime() { return halftime; }
     public double minute() { return minute; }
+    public int stoppageSeconds() { return (int) Math.ceil(stoppage); }
+    public boolean ballInPlay() { return !halftime && !finished && celebration == 0 && restart == null; }
     public int homeGoals() { return homeGoals; }
     public int awayGoals() { return awayGoals; }
     public int homeShots() { return homeShots; }
@@ -408,6 +658,7 @@ public final class MatchEngine {
         if (finished) return "APITO FINAL";
         if (halftime) return "INTERVALO";
         if (celebration>0) return "GOLO!";
+        if (restart != null) return restart.type().label.toUpperCase(java.util.Locale.ROOT);
         return halfResumed ? "2.ª PARTE" : "1.ª PARTE";
     }
 }

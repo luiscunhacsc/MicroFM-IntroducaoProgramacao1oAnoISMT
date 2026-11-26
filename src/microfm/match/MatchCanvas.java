@@ -86,12 +86,17 @@ public final class MatchCanvas extends JComponent {
             p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=.5*dt;p.life-=dt*.34;
         }
         particles.removeIf(p->p.life<=0 || p.y>1.3);
-        ArrayDeque<TrailPoint> aged=new ArrayDeque<>();
-        for(TrailPoint p:trail) if(p.age+dt<.32) aged.add(new TrailPoint(p.x,p.y,p.z,p.age+dt));
-        trail.clear();trail.addAll(aged);
-        MatchEngine.Ball b=engine.ball();
-        if(!engine.halftime() && !engine.finished()) trail.add(new TrailPoint(b.x(),b.y(),b.height(),0));
-        while(trail.size()>18) trail.removeFirst();
+        if (engine.ballInPlay()) {
+            ArrayDeque<TrailPoint> aged = new ArrayDeque<>();
+            for (TrailPoint p : trail) if (p.age + dt < .32) aged.add(new TrailPoint(p.x, p.y, p.z, p.age + dt));
+            trail.clear();
+            trail.addAll(aged);
+            MatchEngine.Ball ball = engine.ball();
+            trail.add(new TrailPoint(ball.x(), ball.y(), ball.height(), 0));
+            while (trail.size() > 18) trail.removeFirst();
+        } else {
+            trail.clear();
+        }
         repaint();
     }
 
@@ -260,7 +265,7 @@ public final class MatchCanvas extends JComponent {
                 g.fillRoundRect((int)a.x,(int)a.y,(int)(b.x-a.x),height,2,2);
                 g.setColor(i%2==0?new Color(111,214,180,170):new Color(150,177,205,160));
                 g.setFont(new Font("SansSerif",Font.BOLD,Math.max(5,height-3)));
-                String text=i%3==0?"O TEU CLUBE. A TUA HISTÓRIA.":i%3==1?"MICROFM":"LIGA MONDEGO";
+                String text=i%3==0?"O TEU CLUBE. A TUA HISTÓRIA.":i%3==1?"MICROFM":"TOUCHLINE";
                 FontMetrics fm=g.getFontMetrics();
                 if(fm.stringWidth(text)<b.x-a.x-4)g.drawString(text,(float)(a.x+(b.x-a.x-fm.stringWidth(text))/2),(float)(a.y+height-2));
             }
@@ -344,12 +349,13 @@ public final class MatchCanvas extends JComponent {
         MatchEngine.Footballer f=engine.owner();
         if(!showNames || f==null || engine.celebrationRemaining()>0)return;
         Point2D.Double p=point(f.x(),f.y());
-        String name=f.name();int space=name.lastIndexOf(' ');name=name.substring(space+1).toUpperCase();
+        String name=f.name();
         g.setFont(new Font("SansSerif",Font.BOLD,Math.max(9,Math.min(11,getWidth()/94))));
-        FontMetrics fm=g.getFontMetrics();int labelW=fm.stringWidth(name)+14;
-        double y=p.y+17;
-        g.setColor(new Color(7,19,28,190));g.fillRoundRect((int)p.x-labelW/2,(int)y,labelW,19,7,7);
-        g.setColor(WHITE);g.drawString(name,(float)(p.x-fm.stringWidth(name)/2.0),(float)(y+13));
+        int labelWidth=g.getFontMetrics().stringWidth(name)+14;
+        int x=Math.max(0,Math.min((int)p.x-labelWidth/2,getWidth()-labelWidth));
+        int y=(int)p.y+17;
+        g.setColor(new Color(7,19,28,190));g.fillRoundRect(x,y,labelWidth,19,7,7);
+        g.setColor(WHITE);g.drawString(name,x+7,y+13);
     }
 
     private void paintCameraCaption(Graphics2D g) {

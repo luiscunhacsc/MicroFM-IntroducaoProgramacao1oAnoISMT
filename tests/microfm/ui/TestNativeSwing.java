@@ -2,6 +2,7 @@ package microfm.ui;
 
 import microfm.model.Career;
 import microfm.model.CareerStore;
+import microfm.model.League;
 import microfm.model.Position;
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -21,6 +22,7 @@ import java.util.function.Predicate;
 public final class TestNativeSwing {
     private static int checks;
     private static final Path SAVE = Path.of("carreira-swing.microfm");
+    private static final Path PRIMEIRA_LIGA_SAVE = Path.of("carreira-primeira-liga-2026-27.microfm");
     private static final AtomicReference<Throwable> asyncFailure = new AtomicReference<>();
 
     public static void main(String[] args) throws Exception {
@@ -29,16 +31,19 @@ public final class TestNativeSwing {
         if (GraphicsEnvironment.isHeadless()) throw new IllegalStateException("Este teste precisa de um ambiente gráfico.");
         String cwd = Path.of("").toAbsolutePath().normalize().toString().replace('\\', '/');
         if (!cwd.contains("/build/native-smoke")) throw new IllegalStateException("Pasta de execução deve estar dentro de build/native-smoke.");
-        if (Files.exists(SAVE)) throw new IllegalStateException("A pasta já contém uma carreira; não será alterada.");
+        if (Files.exists(SAVE) || Files.exists(PRIMEIRA_LIGA_SAVE))
+            throw new IllegalStateException("A pasta já contém uma carreira; não será alterada.");
         Thread.setDefaultUncaughtExceptionHandler((thread, error) -> asyncFailure.compareAndSet(null, error));
         try {
-            GameWindow.launch(new String[0]);
+            GameWindow.launch(new String[]{"--demo"});
             await(() -> frame() != null, "A janela inicial não abriu");
             JFrame first = edt(TestNativeSwing::frame);
+            checkFullScreen(first);
             cancelDemo(first);
-            check(!Files.exists(SAVE), "Interromper a demonstração criou uma gravação");
+            check(!Files.exists(SAVE) && !Files.exists(PRIMEIRA_LIGA_SAVE), "Interromper a demonstração criou uma gravação");
             edt(() -> {
                 GameWindow app = (GameWindow) first.getContentPane();
+                find(app, JComboBox.class).setSelectedItem(League.FICTIONAL.label());
                 find(app, JTextField.class).setText("Inês · Teste nativo");
                 click(app, t -> t.startsWith("Começar carreira"));
                 click(app, t -> t.strip().endsWith("Jogo ao vivo"));
@@ -68,7 +73,12 @@ public final class TestNativeSwing {
             GameWindow.launch(new String[0]);
             await(() -> frame() != null, "Segunda janela não abriu");
             JFrame second = edt(TestNativeSwing::frame);
-            edt(() -> { click((Container) second.getContentPane(), t -> t.equals("Continuar carreira")); return null; });
+            edt(() -> {
+                Container app = second.getContentPane();
+                find(app, JComboBox.class).setSelectedItem(League.FICTIONAL.label());
+                click(app, t -> t.equals("Continuar carreira"));
+                return null;
+            });
             await(() -> texts((Container) second.getContentPane()).contains("Bem-vindo de volta"), "Carregamento assíncrono não terminou");
             edt(() -> {
                 Container app = (Container) second.getContentPane();
@@ -112,11 +122,30 @@ public final class TestNativeSwing {
         }
     }
 
+    private static void checkFullScreen(JFrame frame) throws Exception {
+        edt(() -> {
+            Container app = frame.getContentPane();
+            MatchPanel match = find(app, MatchPanel.class);
+            Rectangle screen = frame.getGraphicsConfiguration().getBounds();
+            check(frame.isUndecorated() && frame.getBounds().equals(screen), "O arranque não preencheu o ecrã");
+            JRootPane root = frame.getRootPane();
+            InputMap keys = root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+            for (int key : new int[]{java.awt.event.KeyEvent.VK_ESCAPE, java.awt.event.KeyEvent.VK_F11}) {
+                Object action = keys.get(KeyStroke.getKeyStroke(key, 0));
+                root.getActionMap().get(action).actionPerformed(null);
+                check(frame.isUndecorated() == (key == java.awt.event.KeyEvent.VK_F11), "O atalho de ecrã inteiro falhou");
+                check(find(app, MatchPanel.class) == match, "Mudar o modo de ecrã reiniciou o encontro");
+            }
+            return null;
+        });
+    }
+
     private static void cancelDemo(JFrame frame) throws Exception {
         Container app = edt(frame::getContentPane);
         MatchPanel match = edt(() -> {
-            click(app, t -> t.startsWith("Ver demonstração"));
             MatchPanel demo = find(app, MatchPanel.class);
+            check(demo.engine().homeClub().name().equals("FC Porto") && demo.engine().awayClub().name().equals("FC Alverca"),
+                "O argumento --demo não abriu o encontro da Primeira Liga");
             for (int i = 0; !demo.engine().halftime() && i < 100; i++) demo.engine().update(5);
             demo.tick(0);
             check(demo.engine().halftime(), "A demonstração não chegou ao intervalo");

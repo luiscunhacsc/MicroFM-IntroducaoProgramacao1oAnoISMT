@@ -19,13 +19,13 @@ final class MatchPanel extends JPanel {
     private final JLabel score=heading("0  :  0",38),clock=label("00:00",15,GREEN),phase=label("1.ª PARTE",10,MUTED);
     private final JLabel possession=label("50%    POSSE DE BOLA    50%",11,MUTED),shots=label("0    REMATES    0",11,MUTED);
     private final JLabel latest=label("O árbitro apita. Começa a tua história.",12,TEXT),subCount=label("0 / 5 substituições",11,MUTED);
-    private final JButton pause,advance;
+    private final JButton pause,advance,audio;
     private final JComboBox<String> speed,formation,mentality;
     private final JPanel commentary=column(0);
     private final Set<Integer> participants=new LinkedHashSet<>(),departed=new HashSet<>();
     private final SoundFx sound=new SoundFx();
     private boolean paused,wasHalf,wasFull;
-    private int seenEvents=-1,seenGoals;
+    private int seenEvents=-1,heardEvents;
     private double halfWait,refresh;
     private final JComponent possessionBar;
 
@@ -64,8 +64,9 @@ final class MatchPanel extends JPanel {
         speed=combo(new String[]{"1×  Normal","2×  Rápido","4×  Muito rápido","8×  Expresso"});speed.setToolTipText("Velocidade da simulação; a animação mantém os quadros por segundo.");buttons.add(speed);
         JButton names=button("Nomes: sim",()->{});
         names.addActionListener(e->{boolean hide=!Boolean.TRUE.equals(canvas.getClientProperty("hideNames"));canvas.putClientProperty("hideNames",hide);canvas.setShowNames(!hide);names.setText(hide?"Nomes: não":"Nomes: sim");});buttons.add(names);
-        JButton audio=button("Som: não",()->{});audio.addActionListener(e->{sound.setEnabled(!sound.enabled());audio.setText(sound.enabled()?"Som: sim":"Som: não");});buttons.add(audio);
-        advance=button("Encontro em curso",true,()->{if(engine.finished())app.finishMatch();else if(engine.halftime()){engine.resumeHalf();paused=false;pause.setText("Ⅱ  Pausar");sound.whistle();}});advance.setEnabled(false);
+        audio=button(app.soundEnabled()?"Som: sim":"Som: não",this::toggleSound);
+        audio.setToolTipText("Som das bancadas, apitos e festejos");buttons.add(audio);
+        advance=button("Encontro em curso",true,()->{if(engine.finished())app.finishMatch();else if(engine.halftime()){engine.resumeHalf();paused=false;pause.setText("Ⅱ  Pausar");}});advance.setEnabled(false);
         JPanel liveStatus=panel(new BorderLayout(12,0));
         liveStatus.add(latest,BorderLayout.CENTER);
         liveStatus.add(button("Interromper jogo",app::interruptMatch),BorderLayout.EAST);
@@ -73,14 +74,28 @@ final class MatchPanel extends JPanel {
         updateReadout();
     }
     private JComponent team(Club club,boolean home){
-        JPanel p=panel(new BorderLayout(12,0));JPanel info=column(0);JLabel name=heading(club.shortName(),23);JLabel descriptor=label(home?"CASA  /  "+club.city():"FORA  /  "+club.city(),10,MUTED);
+        JPanel p=panel(new BorderLayout(12,0));JPanel info=column(0);JLabel name=heading(club.name(),20);JLabel descriptor=label(home?"CASA  /  "+club.city():"FORA  /  "+club.city(),10,MUTED);
         name.setAlignmentX(home?LEFT_ALIGNMENT:RIGHT_ALIGNMENT);descriptor.setAlignmentX(home?LEFT_ALIGNMENT:RIGHT_ALIGNMENT);info.add(name);info.add(Box.createVerticalStrut(5));info.add(descriptor);
-        JLabel crest=new JLabel(PitchArt.crest(club,56));p.add(crest,home?BorderLayout.WEST:BorderLayout.EAST);p.add(info);p.setPreferredSize(new Dimension(215,70));return p;
+        JLabel crest=new JLabel(PitchArt.crest(club,56));p.add(crest,home?BorderLayout.WEST:BorderLayout.EAST);p.add(info);p.setPreferredSize(new Dimension(Math.max(215,p.getPreferredSize().width),70));return p;
     }
     MatchEngine engine(){return engine;}
     Set<Integer> participants(){return Set.copyOf(participants);}
     Formation formation(){return Formation.values()[formation.getSelectedIndex()];}
     Mentality mentality(){return Mentality.values()[mentality.getSelectedIndex()];}
+    @Override public void addNotify() {
+        super.addNotify();
+        sound.setEnabled(app.soundEnabled());
+    }
+    @Override public void removeNotify() {
+        sound.setEnabled(false);
+        super.removeNotify();
+    }
+    private void toggleSound() {
+        boolean enabled = !app.soundEnabled();
+        app.setSoundEnabled(enabled);
+        sound.setEnabled(enabled && isDisplayable());
+        audio.setText(enabled ? "Som: sim" : "Som: não");
+    }
     void dispose(){sound.close();canvas.dispose();}
     boolean pauseForDialog(){boolean previous=paused;paused=true;return previous;}
     void restorePause(boolean previous){paused=previous;pause.setText(paused?"▶  Retomar":"Ⅱ  Pausar");}
@@ -90,21 +105,49 @@ final class MatchPanel extends JPanel {
     void tick(double dt){
         if(!paused&&!engine.finished()&&!engine.halftime())engine.update(dt*(1<<speed.getSelectedIndex()));
         canvas.updateVisuals(paused?0:dt);refresh+=dt;
-        if(seenGoals!=engine.goalSerial()){seenGoals=engine.goalSerial();sound.goal();}
-        if(engine.halftime()&&!wasHalf){wasHalf=true;advance.setEnabled(true);advance.setText("Jogar a 2.ª parte  →");pause.setEnabled(false);sound.whistle();}
+        if(engine.halftime()&&!wasHalf){wasHalf=true;advance.setEnabled(true);advance.setText("Jogar a 2.ª parte  →");pause.setEnabled(false);}
         if(wasHalf&&!engine.halftime()&&!engine.finished()){advance.setEnabled(false);advance.setText("Encontro em curso");pause.setEnabled(true);}
         if(demo&&!paused&&engine.halftime()){halfWait+=dt;if(halfWait>3)engine.resumeHalf();}
-        if(engine.finished()&&!wasFull){wasFull=true;advance.setText(demo?"Voltar ao início  →":"Concluir jornada  →");advance.setEnabled(true);pause.setEnabled(false);formation.setEnabled(false);mentality.setEnabled(false);sound.whistle();}
+        if(engine.finished()&&!wasFull){wasFull=true;advance.setText(demo?"Voltar ao início  →":"Concluir jornada  →");advance.setEnabled(true);pause.setEnabled(false);formation.setEnabled(false);mentality.setEnabled(false);}
+        sound.setExcitement(engine.halftime() || engine.finished() ? 0 : engine.excitement());
+        playNewEvents();
         if(refresh>.1||dt==0){refresh=0;updateReadout();}
     }
+
+    private void playNewEvents() {
+        List<MatchEvent> events = engine.events();
+        while (heardEvents < events.size()) {
+            switch (events.get(heardEvents++).kind()) {
+                case "kickoff", "penalty_kick" -> sound.whistle();
+                case "half" -> sound.periodWhistle();
+                case "full" -> sound.finalWhistle();
+                case "goal" -> sound.goal();
+                case "foul", "offside" -> {
+                    sound.whistle();
+                    sound.crowd(SoundFx.Crowd.PROTEST);
+                }
+                case "shot", "penalty" -> sound.crowd(SoundFx.Crowd.CHANCE);
+                case "save", "miss" -> sound.crowd(SoundFx.Crowd.RELIEF);
+                case "corner", "throw_in", "goal_kick" -> sound.crowd(SoundFx.Crowd.RESTART);
+            }
+        }
+    }
+
     private void updateReadout(){
         score.setText(engine.homeGoals()+"  :  "+engine.awayGoals());int m=(int)engine.minute(),s=(int)((engine.minute()-m)*60);
-        clock.setText(String.format("%02d:%02d",m,s));phase.setText(paused?"EM PAUSA":engine.phaseLabel());
+        int additional = engine.stoppageSeconds();
+        String time = String.format("%02d:%02d", m, s);
+        if (additional > 0) time += String.format(" +%02d:%02d", additional / 60, additional % 60);
+        clock.setText(time);phase.setText(paused?"EM PAUSA":engine.phaseLabel());
         int possessionHome=(int)Math.round(engine.homePossession()*100);possession.setText(possessionHome+"%    POSSE DE BOLA    "+(100-possessionHome)+"%");
         shots.setText(engine.homeShots()+"    REMATES    "+engine.awayShots());possessionBar.repaint();subCount.setText(engine.substitutions()+" / 5 substituições");
         List<MatchEvent> events=engine.events();if(events.size()!=seenEvents){seenEvents=events.size();commentary.removeAll();int shown=0;
             for(int i=events.size()-1;i>=0&&shown<6;i--){MatchEvent event=events.get(i);if(event.kind().equals("pass"))continue;
-                Color color=event.kind().equals("goal")?GREEN:event.kind().equals("shot")?ORANGE:MUTED;
+                Color color = switch (event.kind()) {
+                    case "goal" -> GREEN;
+                    case "shot", "penalty", "foul", "offside" -> ORANGE;
+                    default -> MUTED;
+                };
                 JLabel l=label("<html><b>"+(int)event.minute()+"′</b>  "+event.text()+"</html>",12,color);l.setMaximumSize(new Dimension(190,60));commentary.add(l);commentary.add(Box.createVerticalStrut(12));shown++;
             }
             commentary.revalidate();commentary.repaint();if(!events.isEmpty()){MatchEvent e=events.get(events.size()-1);latest.setText((int)e.minute()+"′   "+e.text());}

@@ -3,6 +3,7 @@ package microfm.ui;
 import microfm.match.MatchCanvas;
 import microfm.match.MatchEngine;
 import microfm.model.Career;
+import microfm.model.League;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractButton;
@@ -63,6 +64,7 @@ public final class TestSwing {
         GameWindow app = new GameWindow();
         app.setSize(1440, 920);
         check(labels(app).contains("Nova carreira"), "Ecrã inicial em falta");
+        choose(app, League.FICTIONAL.label());
         first(app, JTextField.class).setText("Inês de teste");
         click(app, text -> text.startsWith("Começar carreira"));
         check(labels(app).contains("Inês de teste"), "Nome do treinador não chegou à carreira");
@@ -140,10 +142,16 @@ public final class TestSwing {
     private static void demoFlow() {
         GameWindow app = new GameWindow();
         app.setSize(1200, 800);
+        choose(app, League.FICTIONAL.label());
         click(app, text -> text.startsWith("Ver demonstração"));
         MatchPanel match = first(app, MatchPanel.class);
+        click(app, text -> text.equals("Som: sim"));
+        check(button(app, text -> text.equals("Som: não")).isEnabled(), "Não foi possível silenciar a demonstração");
         check(button(app, text -> text.startsWith("Substituição")).isEnabled() == false, "Demonstração permite substituir jogadores");
         MatchEngine engine = match.engine();
+        check(engine.homeClub().name().equals("FC Porto") && engine.awayClub().name().equals("FC Alverca"),
+            "Demonstração não abriu o encontro da Primeira Liga");
+        verifyImportedLineups(engine);
         for (int i = 0; !engine.halftime() && !engine.finished() && i < 100; i++) engine.update(5);
         check(engine.halftime(), "Demo não chegou ao intervalo");
         match.tick(3.2);
@@ -154,13 +162,18 @@ public final class TestSwing {
         match.dispose();
         click(app, text -> text.startsWith("Voltar ao início"));
         check(labels(app).contains("Nova carreira"), "Demo não regressou ao ecrã inicial");
+        click(app, text -> text.startsWith("Ver demonstração"));
+        click(app, text -> text.equals("Som: não"));
+        check(button(app, text -> text.equals("Som: sim")).isEnabled(), "O silêncio não foi conservado ou o som não retomou");
+        first(app, MatchPanel.class).dispose();
         System.out.println("  PASSOU · demonstração automática e regresso ao início sem gravação");
     }
 
     private static void primeiraLigaFlow() {
         GameWindow app = new GameWindow();
         app.setSize(1100, 740);
-        choose(app, "Primeira Liga 2026/27");
+        check(League.PRIMEIRA_LIGA_2026_27.label().equals(first(app, JComboBox.class).getSelectedItem()),
+            "A Primeira Liga não está selecionada ao abrir o jogo");
         check(labels(app).contains("18 clubes") && labels(app).contains("34 jornadas"), "Resumo da Primeira Liga em falta");
         descendants(app, JToggleButton.class).stream().filter(b -> b.getText().equals("SL Benfica"))
             .findFirst().orElseThrow().doClick(0);
@@ -177,7 +190,24 @@ public final class TestSwing {
         check(first(app, JTable.class).getRowCount() == 18, "Classificação sem 18 clubes");
         navigate(app, "Calendário");
         check(first(app, JTable.class).getRowCount() == 306, "Calendário sem os 306 jogos");
+        navigate(app, "Jogo ao vivo");
+        MatchPanel match = first(app, MatchPanel.class);
+        MatchEngine engine = match.engine();
+        check(engine.homeClub().name().equals("SL Benfica") && engine.awayClub().name().equals("Académico de Viseu"),
+            "A carreira não abriu o encontro oficial do clube escolhido");
+        verifyImportedLineups(engine);
+        match.dispose();
         System.out.println("  PASSOU · seleção de clube e ecrãs da Primeira Liga 2026/27");
+    }
+
+    private static void verifyImportedLineups(MatchEngine engine) {
+        League league = League.PRIMEIRA_LIGA_2026_27;
+        Career home = Career.create("Teste", engine.homeClub().id(), 9, league);
+        Career away = Career.create("Teste", engine.awayClub().id(), 9, league);
+        check(engine.footballers().size() == 22 && engine.footballers().stream().allMatch(footballer ->
+            (footballer.home() ? home : away).squad().stream().anyMatch(player ->
+                player.id() == footballer.playerId() && player.name().equals(footballer.name()))),
+            "O jogo ao vivo apresentou jogadores fora dos dois plantéis importados");
     }
 
     private static void responsiveCanvas() {

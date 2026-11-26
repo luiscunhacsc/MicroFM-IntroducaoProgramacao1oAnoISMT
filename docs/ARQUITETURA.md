@@ -80,18 +80,19 @@ Para começar a leitura, seguir `Career.create`, uma ação como `Career.train`,
 
 ## Teste opcional com janela real
 
-`tests/TestNativeSwing.java` complementa os testes sem monitor. Abre duas janelas sucessivas, verifica o temporizador real, fecha um encontro terminado antes da confirmação da jornada e confirma que o resultado foi guardado. Depois recupera a carreira, treina e verifica que guardar de forma assíncrona mantém as sessões já gastas indisponíveis. O teste só aceita uma pasta nova dentro de `build/native-smoke` e recusa qualquer pasta que já contenha uma carreira.
+`tests/microfm/ui/TestNativeSwing.java` complementa os testes sem monitor. Abre duas janelas sucessivas, verifica o temporizador real, fecha um encontro terminado antes da confirmação da jornada e confirma que o resultado foi guardado. Depois recupera a carreira, treina e verifica que guardar de forma assíncrona mantém as sessões já gastas indisponíveis. O teste só aceita uma pasta nova dentro de `build/native-smoke` e recusa qualquer pasta que já contenha uma carreira.
 
 Para o executar explicitamente no Windows, a partir da raiz do projeto:
 
 ```powershell
 New-Item -ItemType Directory -Force build/native-smoke/classes | Out-Null
 $nativeSources = (Get-ChildItem src -Filter '*.java' -Recurse).FullName
-javac -encoding UTF-8 --release 17 -d build/native-smoke/classes $nativeSources tests/TestNativeSwing.java
+javac -encoding UTF-8 --release 17 -d build/native-smoke/classes $nativeSources tests/microfm/ui/TestNativeSwing.java
+$nativeResources = (Resolve-Path src).Path
 $nativeFolder = Join-Path (Resolve-Path build/native-smoke).Path ('run-' + [guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $nativeFolder | Out-Null
 Push-Location -LiteralPath $nativeFolder
-try { java -cp ../classes microfm.ui.TestNativeSwing --native } finally { Pop-Location }
+try { java -cp "../classes;$nativeResources" microfm.ui.TestNativeSwing --native } finally { Pop-Location }
 ```
 
 Este teste não faz parte da execução normal de `tests/testar.py`. Os ficheiros e capturas ficam na pasta isolada criada para a execução.

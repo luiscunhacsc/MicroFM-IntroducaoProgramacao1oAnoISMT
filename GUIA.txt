@@ -12,7 +12,9 @@ COME?AR
 1. Extrai o ZIP para uma pasta tua. N?o executes dentro do ZIP.
 2. ? necess?rio Java 17 ou superior. Java 25 tamb?m funciona.
 3. No Windows, abre Jogar.cmd. O MicroFM.jar j? est? compilado.
-4. Escolhe a liga e o clube, escreve o teu nome e clica Começar carreira.
+4. A Primeira Liga 2026/27 já está selecionada. Escolhe o clube, escreve o
+   teu nome e clica Começar carreira. Para jogar com clubes fictícios,
+   seleciona Liga MicroFM.
 
 Tamb?m podes executar num terminal, na pasta do jogo:
 
@@ -22,11 +24,12 @@ Em caso de erro no arranque, esse comando apresenta a mensagem completa.
 Para instalar o Java, procura uma distribui??o de JDK 17 ou superior.
 Um JRE 17+ basta para jogar; um JDK ? necess?rio para alterar e compilar.
 
-A op??o Ver demonstra??o inicia diretamente um encontro autom?tico.
-A demonstra??o n?o cria nem substitui a tua carreira guardada.
+A opção Ver demonstração inicia um FC Porto – FC Alverca com os jogadores
+dos dois plantéis. A demonstração corre separadamente da carreira guardada.
 Tamb?m existe: java -jar MicroFM.jar --demo
 
-A janela ajusta-se ao espa?o dispon?vel. Recomenda-se pelo menos 1100?740.
+O jogo arranca em ecrã inteiro. Usa Esc para voltar à janela e F11 para
+alternar entre os dois modos. Recomenda-se pelo menos 1100 × 740.
 
 GERIR O CLUBE
 
@@ -63,13 +66,20 @@ Controlos:
 - Pausar/Retomar, ou Espa?o quando o foco n?o est? noutro controlo.
 - Velocidade 1?, 2?, 4? ou 8?. A velocidade acelera o tempo da partida.
 - Nomes: mostra ou oculta o nome do portador da bola.
-- Som: ativa apitos e festejos sintetizados. Est? desligado inicialmente.
+- Usa o botão Som para ligar ou desligar o murmúrio das bancadas, os apitos
+  e os festejos. O som está ligado por defeito e a escolha aplica-se aos
+  jogos da sessão.
 - Interromper jogo: disponível até confirmares a jornada e durante a
   demonstração. Na carreira, regressas ao centro do treinador e podes
   jogar a mesma jornada desde o início. Na demonstração, voltas ao menu inicial.
 - Forma??o e mentalidade: mudan?as imediatas durante a partida.
 - Substitui??o: at? cinco jogadores por encontro. Um substitu?do n?o reentra.
   O guarda-redes s? pode ser trocado por outro guarda-redes.
+
+O árbitro assinala faltas e foras de jogo. Os jogadores executam livres,
+penáltis, lançamentos laterais, cantos e pontapés de baliza consoante a
+decisão. O público reage aos lances. Se houver perigo no fim do período,
+os segundos de compensação aparecem junto ao relógio.
 
 O intervalo aguarda a tua decis?o: clica Jogar a 2.? parte.
 A demonstra??o retoma automaticamente depois de uma pequena pausa.

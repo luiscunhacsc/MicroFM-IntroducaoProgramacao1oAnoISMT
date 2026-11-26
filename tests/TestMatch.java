@@ -20,6 +20,8 @@ public final class TestMatch {
         realRosters();
         determinism();
         lifecycleAndBounds();
+        offsidePosition();
+        dangerousPeriodEnd();
         substitutions();
         tacticalEffects();
         continuity();
@@ -91,6 +93,7 @@ public final class TestMatch {
 
     private static void lifecycleAndBounds() {
         int totalGoals = 0, totalShots = 0;
+        Set<String> decisions = new HashSet<>();
         for (int seed = 0; seed < 24; seed++) {
             MatchEngine e = new MatchEngine(career(seed % 8, seed + 100), 4_000L + seed);
             double before = e.minute();
@@ -98,10 +101,15 @@ public final class TestMatch {
             check(e.minute() == before, "Intervalo temporal inválido fez avançar o encontro");
             boolean interval = false;
             double previousMinute = 0;
+            int previousStoppage = 0;
             for (int step = 0; !e.finished() && step < 2_000; step++) {
                 e.update(.2);
                 check(e.minute() >= previousMinute && e.minute() <= 90, "Relógio fora dos limites");
                 previousMinute = e.minute();
+                check(e.stoppageSeconds() >= previousStoppage, "O tempo de compensação recuou durante a parte");
+                check(e.stoppageSeconds() == 0 || e.minute() == 45 || e.minute() == 90,
+                    "A compensação começou antes do fim do tempo regulamentar");
+                previousStoppage = e.stoppageSeconds();
                 check(e.homePossession() >= 0 && e.homePossession() <= 1, "Posse fora dos limites");
                 check(e.footballers().size() == 22, "Número de jogadores alterado");
                 for (MatchEngine.Footballer p : e.footballers()) {
@@ -116,10 +124,13 @@ public final class TestMatch {
                     check(!interval && e.minute() == 45 && !e.finished(), "Intervalo repetido ou fora dos 45 minutos");
                     interval = true;
                     double x = e.ball().x(), y = e.ball().y();
+                    int stoppage = e.stoppageSeconds();
                     e.update(4);
-                    check(e.minute() == 45 && e.ball().x() == x && e.ball().y() == y, "Encontro avançou durante o intervalo");
+                    check(e.minute() == 45 && e.stoppageSeconds() == stoppage && e.ball().x() == x && e.ball().y() == y,
+                        "Encontro avançou durante o intervalo");
                     e.resumeHalf();
-                    check(!e.halftime(), "Retoma não terminou o intervalo");
+                    check(!e.halftime() && e.stoppageSeconds() == 0, "A retoma não iniciou o relógio da segunda parte");
+                    previousStoppage = 0;
                 }
             }
             check(e.finished() && interval && e.minute() == 90, "O encontro não chegou ao apito final");
@@ -131,13 +142,163 @@ public final class TestMatch {
                 "Relato de golos não corresponde ao marcador");
             check(e.events().stream().filter(event -> event.kind().equals("half")).count() == 1, "Evento de intervalo duplicado");
             check(e.events().stream().filter(event -> event.kind().equals("full")).count() == 1, "Evento de final duplicado");
+            verifyRefereeDecisions(e.events());
             int events = e.events().size();
+            int stoppage = e.stoppageSeconds();
+            e.events().forEach(event -> decisions.add(event.kind()));
             e.update(20); e.resumeHalf();
-            check(e.minute() == 90 && e.events().size() == events && e.finished(), "Encontro concluído voltou a avançar");
+            check(e.minute() == 90 && e.stoppageSeconds() == stoppage && e.events().size() == events && e.finished(),
+                "Encontro concluído voltou a avançar");
             totalGoals += e.homeGoals() + e.awayGoals(); totalShots += e.homeShots() + e.awayShots();
         }
         check(totalGoals > 0 && totalShots > totalGoals, "Conjunto de encontros sem oportunidades ou golos");
+        Set<String> missing = new HashSet<>(Set.of("foul", "offside", "free_kick", "penalty", "penalty_kick", "throw_in",
+            "corner", "goal_kick", "restart"));
+        missing.removeAll(decisions);
+        check(missing.isEmpty(), "Decisões ou reinícios em falta: " + missing);
         System.out.println("  PASSOU · 24 encontros completos, intervalo, posições e marcadores (" + totalGoals + " golos / " + totalShots + " remates)");
+    }
+
+    private static void verifyRefereeDecisions(List<MatchEvent> events) {
+        for (int i = 0; i < events.size(); i++) {
+            String kind = events.get(i).kind();
+            if (!kind.equals("foul") && !kind.equals("offside")) continue;
+            check(i + 1 < events.size(), "A infração ficou sem decisão");
+            MatchEvent decision = events.get(i + 1);
+            if (kind.equals("offside")) {
+                check(decision.kind().equals("free_kick") && decision.text().startsWith("Livre indireto"),
+                    "O fora de jogo não deu origem a um livre indireto");
+            } else {
+                check(decision.kind().equals("penalty") || decision.text().startsWith("Livre direto"),
+                    "A falta não deu origem a um livre direto ou a um penálti");
+            }
+        }
+    }
+
+    private static void offsidePosition() {
+        MatchEngine e = new MatchEngine(career(0, 12), 18);
+        for (boolean home : new boolean[] {true, false}) {
+            MatchEngine.Footballer attacker = e.footballers().get(home ? 8 : 19);
+            MatchEngine.Footballer goalkeeper = e.footballers().get(home ? 11 : 0);
+            MatchEngine.Footballer lastDefender = e.footballers().get(home ? 12 : 1);
+            for (MatchEngine.Footballer player : e.footballers()) {
+                if (player.home() != home) setNumber(player, "x", forDirection(.61, home));
+            }
+            setNumber(goalkeeper, "x", forDirection(.96, home));
+            setNumber(lastDefender, "x", forDirection(.78, home));
+            setNumber(attacker, "x", forDirection(.84, home));
+            check(isOffside(e, attacker, forDirection(.72, home)), "Atacante adiantado sem fora de jogo");
+            check(!isOffside(e, attacker, forDirection(.86, home)), "Atacante atrás da bola em fora de jogo");
+            setNumber(attacker, "x", forDirection(.78, home));
+            check(!isOffside(e, attacker, forDirection(.72, home)), "Atacante em linha com o penúltimo adversário em fora de jogo");
+            for (MatchEngine.Footballer player : e.footballers()) {
+                if (player.home() != home) setNumber(player, "x", forDirection(.34, home));
+            }
+            setNumber(goalkeeper, "x", forDirection(.42, home));
+            setNumber(attacker, "x", forDirection(.48, home));
+            check(!isOffside(e, attacker, forDirection(.40, home)), "Fora de jogo no próprio meio-campo");
+        }
+        System.out.println("  PASSOU · posição de fora de jogo nos dois sentidos do campo");
+    }
+
+    private static boolean isOffside(MatchEngine engine, MatchEngine.Footballer attacker, double ballX) {
+        return (boolean) call(engine, "isOffside", new Class<?>[] {MatchEngine.Footballer.class, double.class}, attacker, ballX);
+    }
+
+    private static double forDirection(double position, boolean toRight) {
+        return toRight ? position : 1 - position;
+    }
+
+    private static void dangerousPeriodEnd() {
+        MatchEngine quiet = atPeriodDeadline(90);
+        quiet.update(.05);
+        check(quiet.finished() && quiet.stoppageSeconds() == 0, "Foi dada compensação com a bola no meio-campo");
+
+        MatchEngine attack = atPeriodDeadline(90);
+        MatchEngine.Footballer striker = attack.owner();
+        putBallWith(attack, striker, forDirection(.91, !striker.home()), .50);
+        attack.update(.05);
+        check(!attack.finished() && attack.minute() == 90, "O apito interrompeu um atacante com a bola na área");
+        putBallWith(attack, striker, .50, .50);
+        attack.update(.05);
+        check(attack.finished(), "O apito ficou adiado depois de a ameaça terminar");
+
+        for (double deadline : new double[] {45, 90}) {
+            MatchEngine e = atPeriodDeadline(deadline);
+            int start = e.events().size();
+            MatchEngine.Footballer shooter = e.owner();
+            boolean toRight = deadline == 45 ? shooter.home() : !shooter.home();
+            putBallWith(e, shooter, forDirection(.89, toRight), .50);
+            call(e, "shoot", new Class<?>[] {MatchEngine.Footballer.class}, shooter);
+            checkPeriodEndsAfterShot(e, deadline, start, "shot");
+        }
+
+        MatchEngine e = atPeriodDeadline(90);
+        MatchEngine.Footballer attacker = e.footballers().get(8);
+        MatchEngine.Footballer defender = e.footballers().get(12);
+        setNumber(attacker, "x", .10);
+        setNumber(attacker, "y", .50);
+        int start = e.events().size();
+        call(e, "foul", new Class<?>[] {MatchEngine.Footballer.class, MatchEngine.Footballer.class}, attacker, defender);
+        List<MatchEvent> decision = e.events().subList(start, e.events().size());
+        check(decision.stream().anyMatch(event -> event.kind().equals("penalty")) && !e.ballInPlay(),
+            "Falta na área não deixou um penálti pendente");
+        check(e.ball().x() > 0 && e.ball().x() < .16 && e.ball().y() == .50, "Penálti colocado fora da marca");
+        checkPeriodEndsAfterShot(e, 90, start, "penalty_kick");
+        System.out.println("  PASSOU · remates e penálti resolvidos antes do intervalo ou apito final");
+    }
+
+    private static void putBallWith(MatchEngine e, MatchEngine.Footballer footballer, double x, double y) {
+        setNumber(footballer, "x", x);
+        setNumber(footballer, "y", y);
+        setNumber(e, "ballX", x);
+        setNumber(e, "ballY", y);
+    }
+
+    private static MatchEngine atPeriodDeadline(double deadline) {
+        MatchEngine e = new MatchEngine(career(0, 90), 82);
+        if (deadline == 90) {
+            for (int step = 0; !e.halftime() && step < 100; step++) e.update(5);
+            check(e.halftime(), "A primeira parte não terminou");
+            e.resumeHalf();
+        }
+        // Salta apenas o relógio para provocar a colisão entre remate e apito.
+        setNumber(e, "minute", deadline - .001);
+        return e;
+    }
+
+    private static void checkPeriodEndsAfterShot(MatchEngine e, double deadline, int start, String shot) {
+        e.update(.05);
+        check(e.minute() == deadline && !e.finished() && !e.halftime(), "O árbitro interrompeu uma situação de golo");
+        for (int step = 0; !e.finished() && !e.halftime() && step < 200; step++) e.update(.05);
+        check((deadline == 45 ? e.halftime() : e.finished()) && e.stoppageSeconds() > 0,
+            "A parte não terminou após a compensação");
+        List<String> kinds = e.events().subList(start, e.events().size()).stream().map(MatchEvent::kind).toList();
+        int attempt = kinds.indexOf(shot);
+        boolean resolved = attempt >= 0 && kinds.subList(attempt + 1, kinds.size()).stream()
+            .anyMatch(kind -> kind.equals("goal") || kind.equals("save") || kind.equals("miss") || kind.equals("corner"));
+        check(kinds.contains("stoppage") && resolved && kinds.get(kinds.size() - 1).equals(deadline == 45 ? "half" : "full"),
+            "A jogada não foi resolvida antes do apito: " + kinds);
+    }
+
+    private static void setNumber(Object target, String name, double number) {
+        try {
+            var field = target.getClass().getDeclaredField(name);
+            field.setAccessible(true);
+            field.setDouble(target, number);
+        } catch (ReflectiveOperationException error) {
+            throw new AssertionError(error);
+        }
+    }
+
+    private static Object call(MatchEngine engine, String name, Class<?>[] types, Object... arguments) {
+        try {
+            var method = MatchEngine.class.getDeclaredMethod(name, types);
+            method.setAccessible(true);
+            return method.invoke(engine, arguments);
+        } catch (ReflectiveOperationException error) {
+            throw new AssertionError(error);
+        }
     }
 
     private static void substitutions() {
@@ -199,10 +360,10 @@ public final class TestMatch {
             for (int step = 0; !e.finished() && step < 20_000; step++) {
                 if (e.halftime()) { e.resumeHalf(); continue; }
                 MatchEngine.Ball before = e.ball();
-                double celebration = e.celebrationRemaining();
+                boolean wasInPlay = e.ballInPlay();
                 e.update(1.0 / 60);
-                // A reposição no centro depois de um golo é uma transição explícita de jogo.
-                if (celebration > 0 && e.celebrationRemaining() == 0) continue;
+                // A colocação da bola para um reinício é uma transição explícita de jogo.
+                if (!wasInPlay || !e.ballInPlay()) continue;
                 MatchEngine.Ball after = e.ball();
                 double distance = Math.hypot(before.x() - after.x(), before.y() - after.y());
                 largest = Math.max(largest, distance);

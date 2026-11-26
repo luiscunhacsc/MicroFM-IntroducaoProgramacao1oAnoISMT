@@ -17,6 +17,8 @@ import static microfm.ui.Theme.*;
 public final class GameWindow extends JPanel {
     private static final Path SAVE = Path.of("carreira-swing.microfm");
     private static final Path PRIMEIRA_LIGA_SAVE = Path.of("carreira-primeira-liga-2026-27.microfm");
+    private static final League DEFAULT_LEAGUE = League.PRIMEIRA_LIGA_2026_27;
+    private static final int PORTO_CLUB_ID = 11;
     private Career career;
     private JPanel screen, body;
     private JLabel pageTitle, status;
@@ -24,6 +26,7 @@ public final class GameWindow extends JPanel {
     private MatchPanel match;
     private String page="Início";
     private boolean demo, saving, loading;
+    private boolean soundEnabled = true;
     private long previousNanos;
     private final javax.swing.Timer timer;
 
@@ -54,14 +57,58 @@ public final class GameWindow extends JPanel {
             BufferedImage icon=new BufferedImage(64,64,BufferedImage.TYPE_INT_ARGB);Graphics2D ig=icon.createGraphics();quality(ig);
             ig.setColor(SIDE);ig.fillRoundRect(0,0,64,64,16,16);ig.setColor(GREEN);ig.setFont(bold(27));ig.drawString("MF",10,42);ig.dispose();frame.setIconImage(icon);
             frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-            frame.setContentPane(app); frame.setMinimumSize(new Dimension(1100,740));
-            Rectangle usable=GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-            frame.setSize(Math.min(1440,usable.width),Math.min(920,usable.height));frame.setLocationRelativeTo(null);
+            frame.setContentPane(app);
             frame.addWindowListener(new WindowAdapter(){@Override public void windowClosing(WindowEvent e){app.close(frame);}});
-            frame.setVisible(true);
+            installFullScreenControls(frame);
             if(Arrays.asList(args).contains("--demo")) app.startDemo();
         });
     }
+    private static void installFullScreenControls(JFrame frame) {
+        Rectangle windowedBounds = new Rectangle();
+        JRootPane root = frame.getRootPane();
+        InputMap keys = root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        keys.put(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0), "toggleFullScreen");
+        keys.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "leaveFullScreen");
+        root.getActionMap().put("toggleFullScreen", new AbstractAction() {
+            @Override public void actionPerformed(ActionEvent event) {
+                setFullScreen(frame, !frame.isUndecorated(), windowedBounds);
+            }
+        });
+        root.getActionMap().put("leaveFullScreen", new AbstractAction() {
+            @Override public void actionPerformed(ActionEvent event) {
+                if (frame.isUndecorated()) setFullScreen(frame, false, windowedBounds);
+            }
+        });
+        setFullScreen(frame, true, windowedBounds);
+    }
+
+    private static void setFullScreen(JFrame frame, boolean fullScreen, Rectangle windowedBounds) {
+        GraphicsConfiguration monitor = frame.getGraphicsConfiguration();
+        Rectangle bounds = monitor.getBounds();
+        if (fullScreen && frame.isVisible()) windowedBounds.setBounds(frame.getBounds());
+
+        // O Swing só permite alterar a decoração depois de fechar a janela nativa.
+        if (frame.isDisplayable()) frame.dispose();
+        frame.setExtendedState(Frame.NORMAL);
+        frame.setUndecorated(fullScreen);
+        frame.setResizable(!fullScreen);
+        if (fullScreen) {
+            frame.setMinimumSize(null);
+        } else {
+            Insets insets = Toolkit.getDefaultToolkit().getScreenInsets(monitor);
+            Rectangle usable = new Rectangle(bounds.x + insets.left, bounds.y + insets.top,
+                bounds.width - insets.left - insets.right, bounds.height - insets.top - insets.bottom);
+            frame.setMinimumSize(new Dimension(Math.min(1100, usable.width), Math.min(740, usable.height)));
+            int width = Math.min(1440, usable.width);
+            int height = Math.min(920, usable.height);
+            bounds = windowedBounds.isEmpty()
+                ? new Rectangle(usable.x + (usable.width - width) / 2, usable.y + (usable.height - height) / 2, width, height)
+                : windowedBounds;
+        }
+        frame.setBounds(bounds);
+        frame.setVisible(true);
+    }
+
     private void close(JFrame frame){
         if(saving){toast("A guardar a carreira… aguarda um instante.");return;}
         if(match!=null&&!demo&&!match.engine().finished()){
@@ -97,7 +144,7 @@ public final class GameWindow extends JPanel {
         caption.add(captionText,BorderLayout.WEST);
         League[] leagues = League.values();
         JComboBox<String> leagueChoice = combo(Arrays.stream(leagues).map(League::label).toArray(String[]::new));
-        leagueChoice.setSelectedItem(League.FICTIONAL.label());
+        leagueChoice.setSelectedItem(DEFAULT_LEAGUE.label());
         JLabel leagueLabel = label("LIGA",11,MUTED);
         leagueLabel.setLabelFor(leagueChoice);
         leagueChoice.getAccessibleContext().setAccessibleName("Liga da nova carreira");
@@ -266,7 +313,15 @@ public final class GameWindow extends JPanel {
     void act(Runnable action,String success){try{action.run();navigate(page);toast(success);}catch(RuntimeException ex){error(ex);}}
     void error(Exception ex){JOptionPane.showMessageDialog(this,ex.getMessage()==null?ex.toString():ex.getMessage(),"Não foi possível concluir",JOptionPane.WARNING_MESSAGE);}
     void toast(String text){if(status!=null){status.setText("●  "+text);status.setToolTipText(text);}}
-    private void startDemo(){if(loading)return;career=Career.create("Visitante",0,20261126L);demo=true;buildShell();startMatch();}
+    boolean soundEnabled() { return soundEnabled; }
+    void setSoundEnabled(boolean enabled) { soundEnabled = enabled; }
+    private void startDemo() {
+        if (loading) return;
+        career = Career.create("Visitante", PORTO_CLUB_ID, 20261126L, DEFAULT_LEAGUE);
+        demo = true;
+        buildShell();
+        startMatch();
+    }
     private void startMatch(){
         if(career.nextFixture()==null){navigate("Início");toast("A época terminou. Inicia uma nova época.");return;}
         match=new MatchPanel(this,career,demo);navigate("Jogo ao vivo");toast(demo?"Demonstração automática":"Espaço para pausar  ·  Decide a partir do banco");
@@ -352,7 +407,7 @@ public final class GameWindow extends JPanel {
     private static void setTreeEnabled(Component c,boolean enabled){c.setEnabled(enabled);if(c instanceof Container p)for(Component child:p.getComponents())setTreeEnabled(child,enabled);}
     public static void renderPreviews(Path directory) throws Exception {
         install();Files.createDirectories(directory);GameWindow app=new GameWindow();app.setSize(1440,920);
-        snapshot(app,directory.resolve("01-boas-vindas.png"));app.career=Career.create("Inês Costa",0,20261126L);app.buildShell();
+        snapshot(app,directory.resolve("01-boas-vindas.png"));app.career=Career.create("Inês Costa",PORTO_CLUB_ID,20261126L,DEFAULT_LEAGUE);app.buildShell();
         String[] pages={"Início","Plantel","Tática","Treino","Mercado","Liga","Calendário"};int i=2;
         for(String p:pages){app.navigate(p);snapshot(app,directory.resolve(String.format("%02d-%s.png",i++,p)));}
         app.startMatch();for(int t=0;t<2200;t++)app.match.engine().update(.02);
