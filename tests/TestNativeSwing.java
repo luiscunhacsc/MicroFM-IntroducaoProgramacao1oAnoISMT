@@ -2,6 +2,7 @@ package microfm.ui;
 
 import microfm.model.Career;
 import microfm.model.CareerStore;
+import microfm.model.Position;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -10,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BooleanSupplier;
@@ -33,6 +35,8 @@ public final class TestNativeSwing {
             GameWindow.launch(new String[0]);
             await(() -> frame() != null, "A janela inicial não abriu");
             JFrame first = edt(TestNativeSwing::frame);
+            cancelDemo(first);
+            check(!Files.exists(SAVE), "Interromper a demonstração criou uma gravação");
             edt(() -> {
                 GameWindow app = (GameWindow) first.getContentPane();
                 find(app, JTextField.class).setText("Inês · Teste nativo");
@@ -46,12 +50,7 @@ public final class TestNativeSwing {
             check(edt(first::isShowing), "Janela não está visível");
             screenshot(first, "live.png");
             int[] result = edt(() -> {
-                for (int i = 0; !match.engine().finished() && i < 100; i++) {
-                    match.engine().update(5);
-                    if (match.engine().halftime()) match.engine().resumeHalf();
-                }
-                match.tick(0);
-                check(match.engine().finished(), "Encontro não terminou");
+                finish(match);
                 int[] goals = {match.engine().homeGoals(), match.engine().awayGoals()};
                 // O fecho precisa de aplicar o resultado, mesmo sem clicar em Concluir jornada.
                 first.dispatchEvent(new WindowEvent(first, WindowEvent.WINDOW_CLOSING));
@@ -93,6 +92,7 @@ public final class TestNativeSwing {
             });
             check(CareerStore.load(SAVE).trained(), "Gravação assíncrona perdeu o treino");
             screenshot(second, "loaded.png");
+            cancelCareerMatch(second);
             edt(() -> { second.dispatchEvent(new WindowEvent(second, WindowEvent.WINDOW_CLOSING)); return null; });
             await(() -> frame() == null, "Segunda janela não fechou");
             check(asyncFailure.get() == null, "Exceção assíncrona: " + asyncFailure.get());
@@ -110,6 +110,117 @@ public final class TestNativeSwing {
                 return null;
             });
         }
+    }
+
+    private static void cancelDemo(JFrame frame) throws Exception {
+        Container app = edt(frame::getContentPane);
+        MatchPanel match = edt(() -> {
+            click(app, t -> t.startsWith("Ver demonstração"));
+            MatchPanel demo = find(app, MatchPanel.class);
+            for (int i = 0; !demo.engine().halftime() && i < 100; i++) demo.engine().update(5);
+            demo.tick(0);
+            check(demo.engine().halftime(), "A demonstração não chegou ao intervalo");
+            return demo;
+        });
+        JOptionPane confirmation = openDialog(frame, "Interromper jogo", () -> click(match, t -> t.equals("Interromper jogo")));
+        edt(() -> {
+            match.tick(3.2);
+            check(match.engine().halftime(), "A demonstração retomou enquanto a confirmação estava aberta");
+            click(confirmation, t -> t.equals("Interromper jogo"));
+            return null;
+        });
+        await(() -> texts(app).contains("Nova carreira"), "Interromper a demonstração não regressou à entrada");
+    }
+
+    private static void cancelCareerMatch(JFrame frame) throws Exception {
+        Container app = edt(frame::getContentPane);
+        Properties before = savedData();
+        MatchPanel match = edt(() -> {
+            click(app, t -> t.strip().endsWith("Jogo ao vivo"));
+            return find(app, MatchPanel.class);
+        });
+        JOptionPane substitution = openDialog(frame, "Substituição", () -> click(match, t -> t.startsWith("Substituição")));
+        edt(() -> {
+            var players = descendants(substitution, JComboBox.class);
+            players.get(0).setSelectedIndex(1);
+            JComboBox<?> reserves = players.get(1);
+            int firstOutfield = reserves.getItemAt(0).toString().startsWith(Position.GOALKEEPER.label() + " / ") ? 1 : 0;
+            reserves.setSelectedIndex(firstOutfield);
+            substitution.setValue(JOptionPane.OK_OPTION);
+            return null;
+        });
+        await(() -> match.engine().substitutions() == 1, "A substituição não foi aplicada no encontro");
+
+        JOptionPane confirmation = openDialog(frame, "Interromper jogo", () -> click(match, t -> t.equals("Interromper jogo")));
+        double pausedAt = edt(() -> {
+            double minute = match.engine().minute();
+            match.tick(.5);
+            check(match.engine().minute() == minute, "O jogo avançou durante a confirmação");
+            click(confirmation, t -> t.equals("Continuar jogo"));
+            return minute;
+        });
+        await(() -> match.engine().minute() > pausedAt, "Recusar a interrupção não retomou o encontro");
+        edt(() -> {
+            JComboBox<?> formation = descendants(match, JComboBox.class).stream()
+                .filter(combo -> match.formation().label().equals(combo.getSelectedItem())).findFirst().orElseThrow();
+            formation.setSelectedIndex((formation.getSelectedIndex() + 1) % formation.getItemCount());
+            finish(match);
+            return null;
+        });
+
+        JOptionPane afterFullTime = openDialog(frame, "Interromper jogo", () -> click(match, t -> t.equals("Interromper jogo")));
+        edt(() -> { click(afterFullTime, t -> t.equals("Interromper jogo")); return null; });
+        await(() -> texts(app).contains("Centro do treinador"), "Interromper o jogo não regressou à gestão");
+        check(before.equals(savedData()), "Interromper o jogo alterou a gravação existente");
+        edt(() -> { click(app, t -> t.equals("Guardar carreira")); return null; });
+        await(() -> texts(app).contains("Carreira guardada"), "Guardar após interromper não terminou");
+        check(before.equals(savedData()), "O jogo interrompido deixou alterações na carreira");
+
+        MatchPanel replay = edt(() -> {
+            click(app, t -> t.strip().endsWith("Jogo ao vivo"));
+            MatchPanel next = find(app, MatchPanel.class);
+            check(next != match && next.engine().minute() == 0 && next.engine().homeGoals() == 0
+                && next.engine().awayGoals() == 0 && next.engine().substitutions() == 0, "O jogo reaberto recuperou a simulação interrompida");
+            check(next.engine().homeClub().equals(match.engine().homeClub()) && next.engine().awayClub().equals(match.engine().awayClub()),
+                "A interrupção mudou os clubes do próximo jogo");
+            check(next.formation().name().equals(before.getProperty("formation")), "A formação do jogo interrompido passou para o jogo seguinte");
+            click(next, t -> t.contains("Pausar"));
+            return next;
+        });
+        JOptionPane retryConfirmation = openDialog(frame, "Interromper jogo", () -> click(replay, t -> t.equals("Interromper jogo")));
+        edt(() -> { click(retryConfirmation, t -> t.equals("Interromper jogo")); return null; });
+        await(() -> texts(app).contains("Centro do treinador"), "O jogo reaberto não pôde ser interrompido");
+        System.out.println("  PASSOU · interromper a demonstração e a carreira, retomar e repetir sem alterar a gravação");
+    }
+
+    private static void finish(MatchPanel match) {
+        for (int i = 0; !match.engine().finished() && i < 100; i++) {
+            match.engine().update(5);
+            if (match.engine().halftime()) match.engine().resumeHalf();
+        }
+        match.tick(0);
+        check(match.engine().finished(), "Encontro não terminou");
+    }
+
+    private static Properties savedData() throws Exception {
+        Properties data = new Properties();
+        try (var reader = Files.newBufferedReader(SAVE)) { data.load(reader); }
+        return data;
+    }
+
+    private static JOptionPane openDialog(JFrame frame, String title, Runnable action) throws Exception {
+        SwingUtilities.invokeLater(action);
+        AtomicReference<JOptionPane> pane = new AtomicReference<>();
+        await(() -> {
+            for (Window window : frame.getOwnedWindows()) {
+                if (window instanceof JDialog dialog && dialog.isShowing() && dialog.getTitle().startsWith(title)) {
+                    pane.set(find(dialog, JOptionPane.class));
+                    return true;
+                }
+            }
+            return false;
+        }, "O diálogo não abriu: " + title);
+        return pane.get();
     }
 
     private static void check(boolean success, String message) { checks++; if (!success) throw new AssertionError(message); }

@@ -66,7 +66,10 @@ final class MatchPanel extends JPanel {
         names.addActionListener(e->{boolean hide=!Boolean.TRUE.equals(canvas.getClientProperty("hideNames"));canvas.putClientProperty("hideNames",hide);canvas.setShowNames(!hide);names.setText(hide?"Nomes: não":"Nomes: sim");});buttons.add(names);
         JButton audio=button("Som: não",()->{});audio.addActionListener(e->{sound.setEnabled(!sound.enabled());audio.setText(sound.enabled()?"Som: sim":"Som: não");});buttons.add(audio);
         advance=button("Encontro em curso",true,()->{if(engine.finished())app.finishMatch();else if(engine.halftime()){engine.resumeHalf();paused=false;pause.setText("Ⅱ  Pausar");sound.whistle();}});advance.setEnabled(false);
-        controls.add(buttons,BorderLayout.WEST);controls.add(advance,BorderLayout.EAST);controls.add(latest,BorderLayout.SOUTH);add(controls,BorderLayout.SOUTH);
+        JPanel liveStatus=panel(new BorderLayout(12,0));
+        liveStatus.add(latest,BorderLayout.CENTER);
+        liveStatus.add(button("Interromper jogo",app::interruptMatch),BorderLayout.EAST);
+        controls.add(buttons,BorderLayout.WEST);controls.add(advance,BorderLayout.EAST);controls.add(liveStatus,BorderLayout.SOUTH);add(controls,BorderLayout.SOUTH);
         updateReadout();
     }
     private JComponent team(Club club,boolean home){
@@ -90,7 +93,7 @@ final class MatchPanel extends JPanel {
         if(seenGoals!=engine.goalSerial()){seenGoals=engine.goalSerial();sound.goal();}
         if(engine.halftime()&&!wasHalf){wasHalf=true;advance.setEnabled(true);advance.setText("Jogar a 2.ª parte  →");pause.setEnabled(false);sound.whistle();}
         if(wasHalf&&!engine.halftime()&&!engine.finished()){advance.setEnabled(false);advance.setText("Encontro em curso");pause.setEnabled(true);}
-        if(demo&&engine.halftime()){halfWait+=dt;if(halfWait>3)engine.resumeHalf();}
+        if(demo&&!paused&&engine.halftime()){halfWait+=dt;if(halfWait>3)engine.resumeHalf();}
         if(engine.finished()&&!wasFull){wasFull=true;advance.setText(demo?"Voltar ao início  →":"Concluir jornada  →");advance.setEnabled(true);pause.setEnabled(false);formation.setEnabled(false);mentality.setEnabled(false);sound.whistle();}
         if(refresh>.1||dt==0){refresh=0;updateReadout();}
     }

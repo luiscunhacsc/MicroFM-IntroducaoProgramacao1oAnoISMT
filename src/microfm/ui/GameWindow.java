@@ -71,10 +71,11 @@ public final class GameWindow extends JPanel {
         }
         if(match!=null&&!demo&&match.engine().finished())try{applyMatchResult();}catch(RuntimeException ex){error(ex);return;}
         if(career!=null&&!demo) try{CareerStore.save(career,savePath(career.league()));}catch(Exception ex){error(ex);return;}
-        if(match!=null)match.dispose();timer.stop();frame.dispose();
+        if(match!=null)clearMatch();timer.stop();frame.dispose();
     }
     private void showWelcome(){
-        removeAll();match=null;career=null;demo=false;navigation.clear();
+        removeAll();career=null;demo=false;page="Início";navigation.clear();
+        screen=null;body=null;pageTitle=null;status=null;
         JPanel outer=panel(new BorderLayout(0,22));outer.setBorder(new EmptyBorder(32,46,30,46));
         JPanel top=panel(new BorderLayout());top.add(wordmark(),BorderLayout.WEST);
         top.add(label("TOUCHLINE EDITION     /     JAVA + SWING",11,MUTED),BorderLayout.EAST);outer.add(top,BorderLayout.NORTH);
@@ -210,7 +211,7 @@ public final class GameWindow extends JPanel {
     }
     void navigate(String destination){
         if(saving)return;
-        if(match!=null&&!destination.equals("Jogo ao vivo")){toast("Termina o encontro para voltares à gestão do clube.");return;}
+        if(match!=null&&!destination.equals("Jogo ao vivo")){toast("Conclui ou interrompe o encontro para voltares à gestão do clube.");return;}
         if(destination.equals("Jogo ao vivo")&&match==null){startMatch();return;}
         page=destination;for(var entry:navigation.entrySet())entry.getValue().setForeground(entry.getKey().equals(page)?GREEN:MUTED);
         pageTitle.setText(switch(page){case "Início"->"Centro do treinador";case "Jogo ao vivo"->demo?"Demonstração / Matchday":"Matchday / Jornada "+(career.round()+1);default->page;});
@@ -270,17 +271,43 @@ public final class GameWindow extends JPanel {
         if(career.nextFixture()==null){navigate("Início");toast("A época terminou. Inicia uma nova época.");return;}
         match=new MatchPanel(this,career,demo);navigate("Jogo ao vivo");toast(demo?"Demonstração automática":"Espaço para pausar  ·  Decide a partir do banco");
     }
+    void interruptMatch() {
+        if (match == null) return;
+        boolean previousPause = match.pauseForDialog();
+        String message = demo ? "Queres interromper a demonstração?"
+            : "Queres descartar o resultado e as alterações feitas durante o encontro?";
+        String[] options = {"Continuar jogo", "Interromper jogo"};
+        int answer = JOptionPane.showOptionDialog(this, message, "Interromper jogo", JOptionPane.DEFAULT_OPTION,
+            JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        if (answer != 1) {
+            match.restorePause(previousPause);
+            return;
+        }
+
+        clearMatch();
+        if (demo) {
+            showWelcome();
+            return;
+        }
+        navigate("Início");
+        toast("Encontro interrompido. Podes voltar a jogá-lo desde o início.");
+    }
     void finishMatch(){
+        if(match==null)return;
         MatchEngine engine=match.engine();
         if(!engine.finished())return;
-        if(demo){match.dispose();showWelcome();return;}
+        if(demo){clearMatch();showWelcome();return;}
         try{applyMatchResult();navigate("Início");saveCareer();}
         catch(RuntimeException ex){error(ex);}
     }
     private void applyMatchResult(){
         MatchEngine engine=match.engine();
         career.finishMatch(engine.homeGoals(),engine.awayGoals(),engine.scorerGoals(),match.participants());
-        career.setFormation(match.formation());career.setMentality(match.mentality());match.dispose();match=null;
+        career.setFormation(match.formation());career.setMentality(match.mentality());clearMatch();
+    }
+    private void clearMatch() {
+        match.dispose();
+        match = null;
     }
     private void saveCareer(){
         if(career==null||demo||saving)return;

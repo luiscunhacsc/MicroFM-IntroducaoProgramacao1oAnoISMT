@@ -64,6 +64,9 @@ Controlos:
 - Velocidade 1?, 2?, 4? ou 8?. A velocidade acelera o tempo da partida.
 - Nomes: mostra ou oculta o nome do portador da bola.
 - Som: ativa apitos e festejos sintetizados. Est? desligado inicialmente.
+- Interromper jogo: disponível até confirmares a jornada e durante a
+  demonstração. Na carreira, regressas ao centro do treinador e podes
+  jogar a mesma jornada desde o início. Na demonstração, voltas ao menu inicial.
 - Forma??o e mentalidade: mudan?as imediatas durante a partida.
 - Substitui??o: at? cinco jogadores por encontro. Um substitu?do n?o reentra.
   O guarda-redes s? pode ser trocado por outro guarda-redes.

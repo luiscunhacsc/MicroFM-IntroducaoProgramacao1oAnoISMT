@@ -10,6 +10,8 @@ java -jar MicroFM.jar
 
 Na entrada, escolhe a liga, o clube e o nome do treinador ou experimenta **Ver demonstração**. O encontro é representado num estádio com 22 jogadores, bola com trajetória e rasto, iluminação, sombras, público, redes e celebrações com partículas. Os controlos permitem pausar, acelerar até 8×, alterar táticas e fazer cinco substituições. O som sintetizado é opcional.
 
+Usa **Interromper jogo** para descartar o encontro e voltar à gestão do clube. A mesma jornada fica disponível para jogar de novo. Na demonstração, o botão leva-te de volta ao ecrã inicial.
+
 ![Encontro no estádio Java2D](docs/imagens/jogo.png)
 
 **Primeira Liga 2026/27** inclui 18 clubes, 34 jornadas e plantéis com 577 jogadores das fichas da 11.ª jornada, incluindo os adversários dos jogos ao vivo. A primeira época segue os emparelhamentos do calendário oficial. O jogo simula resultados, notas de qualidade, orçamentos, mercado e épocas seguintes. Os dados estão incluídos no JAR para jogar offline. [Calendário oficial](https://www.ligaportugal.pt/news/28156/os-calendarios-dos-campeonatos-profissionais-202627) · [Fichas dos plantéis](https://www.ligaportugal.pt/news/29039/media-kits-jornada-11-da-liga-portugal-betclic)
