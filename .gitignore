@@ -1,0 +1,12 @@
+build/
+dist/
+*.log
+carreira-swing.microfm
+carreira-swing.microfm.tmp
+carreira-primeira-liga-2026-27.microfm
+course-review/engenharia-software/
+tests/__pycache__/
+.qa-career/
+.qa-match-classes/
+.qa-match-canvas.png
+

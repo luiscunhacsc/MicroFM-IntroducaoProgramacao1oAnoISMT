@@ -1,144 +1,123 @@
-MICRO FM — GUIA DO TREINADOR
-===========================
+MICROFM / TOUCHLINE ? GUIA DO TREINADOR
+======================================
 
-Um pequeno jogo de gestão de futebol em português, pensado para aplicar os
-conteúdos dos slides de Introdução à Programação anexados ao pedido.
-Os clubes e os jogadores são fictícios.
+EDI??O GR?FICA PARA O 2.? ANO
 
-COMO COMEÇAR
+Um jogo de gest?o de futebol em portugu?s, com Java, AWT, Swing e Java2D.
+Usa classes, objetos, encapsulamento, enums, cole??es e separa??o de
+responsabilidades. Podes jogar na Liga MicroFM ou na Primeira Liga 2026/27.
 
-É necessário Java 25. Para consultar a versão instalada, abre um terminal e
-escreve:
+COME?AR
 
-    java --version
+1. Extrai o ZIP para uma pasta tua. N?o executes dentro do ZIP.
+2. ? necess?rio Java 17 ou superior. Java 25 tamb?m funciona.
+3. No Windows, abre Jogar.cmd. O MicroFM.jar j? est? compilado.
+4. Escolhe a liga e o clube, escreve o teu nome e clica Começar carreira.
 
-No Windows, faz duplo clique em Jogar.cmd, nesta pasta.
-Também podes abrir um terminal nesta pasta e executar diretamente:
+Tamb?m podes executar num terminal, na pasta do jogo:
 
-    java MicroFM.java
+    java -jar MicroFM.jar
 
-O Java executa o ficheiro de código-fonte. Não é necessário instalar
-bibliotecas, um gestor de dependências ou um ambiente de desenvolvimento.
+Em caso de erro no arranque, esse comando apresenta a mensagem completa.
+Para instalar o Java, procura uma distribui??o de JDK 17 ou superior.
+Um JRE 17+ basta para jogar; um JDK ? necess?rio para alterar e compilar.
 
-Escolhe uma nova carreira ou carrega uma carreira guardada. Nos menus,
-introduz o número da opção e confirma com Enter. As opções apresentadas no
-ecrã indicam as ações disponíveis em cada momento.
+A op??o Ver demonstra??o inicia diretamente um encontro autom?tico.
+A demonstra??o n?o cria nem substitui a tua carreira guardada.
+Tamb?m existe: java -jar MicroFM.jar --demo
 
-Para veres logo um encontro automático, escolhe a opção inicial 3,
-"Ver um jogo de demonstração". A demonstração permite conhecer o campo
-animado antes de iniciares uma carreira.
+A janela ajusta-se ao espa?o dispon?vel. Recomenda-se pelo menos 1100?740.
 
-Recomenda-se uma janela de terminal com pelo menos 80 colunas e 26 linhas.
+GERIR O CLUBE
 
-A TUA CARREIRA
+In?cio       ? Pr?ximo jogo, posi??o, or?amento, moral e not?cias.
+Plantel      ? Jogadores, qualidade, condi??o, golos e disponibilidade.
+T?tica       ? 4-3-3, 4-4-2 ou 3-5-2; mentalidade defensiva, equilibrada
+               ou ofensiva. Aplicar ajusta o onze ? forma??o escolhida.
+Treino       ? Uma sess?o por jornada: recupera??o, t?cnica ou intensidade.
+Mercado      ? Seleciona um jogador na tabela e contrata-o com o teu saldo.
+Liga         ? Classifica??o calculada a partir dos resultados.
+Calendário   – Jogos e resultados das jornadas da tua liga.
+Jogo ao vivo ? Disputa o pr?ximo encontro da tua carreira.
 
-- Treina um dos oito clubes de uma liga fictícia.
-- Disputa uma época de 14 jornadas: todos contra todos, em casa e fora.
-- Consulta o calendário, os resultados e a classificação.
-- Gere um plantel inicial de 20 jogadores e contrata reforços no mercado.
-- Escolhe entre três formações e três mentalidades.
-- Decide o treino da semana; há uma sessão disponível por jornada.
-- Acompanha a condição dos jogadores, os resultados e as finanças do clube.
-- Guarda o progresso para retomar a carreira noutra sessão.
+Escolher melhor onze considera posição, qualidade e condição. Trocar titular
+permite escolher manualmente. As trocas manuais permitem usar jogadores de
+outras posições. O limite do plantel é 32 na Liga MicroFM e 60 na Primeira Liga.
 
-No menu do clube, a opção 10 abre as preferências do jogo, incluindo o
-ritmo dos encontros. A opção 0 guarda a carreira e volta ao menu inicial.
-Depois das 14 jornadas, a opção 11 permite começar uma nova época.
+Na Liga MicroFM, 8 clubes fictícios disputam 14 jornadas. Cada clube começa
+com 22 jogadores. Na Primeira Liga 2026/27, 18 clubes disputam 34 jornadas
+com os plantéis publicados na 11.ª jornada. Os resultados e o mercado são
+simulados pelo jogo.
+Depois da ?ltima jornada, o In?cio permite come?ar outra ?poca.
+A carreira suporta at? 30 ?pocas; no final podes come?ar uma nova carreira.
 
-Uma rotina útil é consultar o adversário, rever o plantel, escolher o treino,
-preparar a equipa e disputar a jornada. Uma equipa mais forte tem melhores
-possibilidades, mas o sorteio de acontecimentos permite surpresas.
+O ENCONTRO
 
-ACOMPANHAR OS JOGOS
+O est?dio ? desenhado em Java2D: relvado com perspetiva, bancadas, ilumina??o,
+sombras, jogadores com movimento, bola com arco e rasto, redes e confetes.
+O cen?rio ? reutilizado em mem?ria e o temporizador mede tempo decorrido.
+O alvo do temporizador ? cerca de 60 atualiza??es por segundo; a fluidez
+real depende do computador, da resolu??o e de outras aplica??es.
 
-O campo de 65 colunas por 17 linhas é desenhado com caracteres a preto e
-branco. A posição dos jogadores e da bola muda em quadros sucessivos,
-acompanhados pelo marcador e pelo relato. Cada quadro ocupa 24 linhas e
-faz o conteúdo do terminal deslocar-se. Não há cores nem redesenho numa
-posição fixa, pelo que a animação tem menor fluidez do que uma interface
-gráfica. Trata-se de uma representação simplificada de futebol.
+Controlos:
+- Pausar/Retomar, ou Espa?o quando o foco n?o est? noutro controlo.
+- Velocidade 1?, 2?, 4? ou 8?. A velocidade acelera o tempo da partida.
+- Nomes: mostra ou oculta o nome do portador da bola.
+- Som: ativa apitos e festejos sintetizados. Est? desligado inicialmente.
+- Forma??o e mentalidade: mudan?as imediatas durante a partida.
+- Substitui??o: at? cinco jogadores por encontro. Um substitu?do n?o reentra.
+  O guarda-redes s? pode ser trocado por outro guarda-redes.
 
-Escolhe uma das velocidades disponíveis para acompanhar o encontro em
-tempo acelerado. O modo de relato instantâneo permite chegar ao resultado
-sem as esperas da animação e sem imprimir os quadros do campo. Escolhe esse
-modo se preferires acompanhar o encontro com menos texto no terminal.
+O intervalo aguarda a tua decis?o: clica Jogar a 2.? parte.
+A demonstra??o retoma automaticamente depois de uma pequena pausa.
+Ao terminar, clica Concluir jornada: aplica o resultado, simula os restantes
+jogos, atualiza condi??o/les?es/moral/finan?as e guarda a carreira.
+Todos os jogadores utilizados, incluindo suplentes, contam para as presen?as.
 
-O jogo faz pausas aos 30, 45, 60 e 75 minutos. Nessas pausas podes rever as
-opções táticas e fazer alterações na equipa. Dispões de três substituições
-por encontro. As decisões tomadas numa pausa afetam a continuação do jogo.
+O motor ? uma simula??o estilizada: n?o implementa integralmente todas as
+leis do futebol. T?tica, qualidade, condi??o, moral e sorte influenciam o jogo.
+A anima??o representa os acontecimentos efetivamente resolvidos pelo motor.
 
-GUARDAR E CARREGAR
+GUARDAR E RETOMAR
 
-A carreira é guardada num ficheiro de texto chamado carreira.microfm.
-Mantém esse ficheiro nesta pasta para poderes continuar o mesmo jogo.
-Usa a opção de guardar antes de fechar o programa. Ao guardar novamente,
-o ficheiro passa a conter o estado mais recente dessa carreira.
+A Liga MicroFM usa carreira-swing.microfm na pasta onde arrancas o jogo.
+A Primeira Liga usa carreira-primeira-liga-2026-27.microfm na mesma pasta.
+Jogar.cmd arranca sempre a partir da pasta do pr?prio jogo.
+H? grava??o autom?tica depois de cada jornada confirmada e ao fechar.
+Tamb?m podes usar Guardar carreira ou Ctrl+S fora dos encontros.
+Na entrada, escolhe a liga da gravação e clica em Continuar carreira.
 
-Se iniciares pelo terminal, executa o comando a partir da pasta do jogo:
-o caminho do ficheiro guardado é relativo à pasta de execução.
-Não alteres o conteúdo do ficheiro de carreira enquanto estiveres a jogar.
+Se fechares a meio de um encontro, o jogo pede confirma??o e guarda o estado
+anterior ? jornada; o encontro ter? de ser repetido. Um encontro j? conclu?do
+? aplicado ao fechar, mesmo que ainda n?o tenhas clicado Concluir jornada.
+N?o se guarda um encontro em curso.
 
-COMO O PROJETO SE LIGA ÀS AULAS
+O ficheiro tem formato de texto versionado e os valores s?o validados ao
+carregar. A grava??o usa substitui??o de ficheiro tempor?rio. Se transportares
+o jogo para outra pasta, copia também o ficheiro da liga que jogas.
+As grava??es da vers?o anterior de consola n?o s?o importadas nem alteradas.
 
-As páginas abaixo correspondem à posição no PDF de cada módulo, incluindo
-a capa. No Módulo 1, a referência é o número do diapositivo do PPTX.
-As regras de futebol e de gestão são aplicações novas desses conhecimentos;
-não se afirma que um simulador de futebol tenha sido ensinado nas aulas.
+ALTERAR O PROJETO
 
-Funcionalidade              | Conteúdos e referências nos slides
-----------------------------+-----------------------------------------------
-Nomes, atributos e dinheiro | M1, diap. 7–10: variáveis e tipos; diap. 23–30:
-                            | operadores, contas e conversões.
-Menus e leitura de opções   | M1, diap. 41–46: IO, conversão e formatação;
-                            | M2, pp. 41–49: switch e validação de opções.
-Táticas, treino e mercado   | M2, pp. 7–13 e 25–28: comparações, condições,
-                            | if/else; M1, diap. 23–30: cálculos.
-Sorte nos acontecimentos    | M2, p. 58: Math.random e conversão para int.
-Época e evolução do jogo    | M3, p. 6: while; p. 23: do-while; p. 41: for;
-                            | p. 26: contadores e acumuladores.
-Separação em métodos       | M4, pp. 24–32: âmbito, parâmetros, retorno e
-                            | divisão do programa em tarefas.
-Plantel e dados dos clubes  | M5, pp. 7–12: arrays e percursos; pp. 60–63:
-                            | arrays com linhas e colunas.
-Estatísticas e procura     | M5, pp. 24–29: somar, calcular médias,
-                            | encontrar valores e pesquisar num array.
-Classificação ordenada     | M5, pp. 43–44: troca e ordenação por seleção.
-Desenho do campo em texto  | M3, pp. 60–64: ciclos encaixados para desenhar;
-                            | M5, pp. 61–63: char[][] e apresentação.
-Registos em listas         | M5, pp. 79–82: ArrayList e percursos.
-Entradas inválidas         | M5, pp. 85–88: try/catch e leitura validada.
-Guardar e carregar         | M6, pp. 7–10: Files, Path e IOException;
-                            | pp. 12–16: split e leitura de dados em texto.
-Ficheiro compacto Java 25  | M6, p. 26: comparação entre void main() e a
-                            | forma tradicional do programa.
+Abre src/microfm/model para as regras e entidades; src/microfm/match para
+a simula??o e o desenho; src/microfm/ui para a apresenta??o e navega??o.
+MicroFM.java cont?m apenas a entrada. A vers?o anterior est? em legado.
 
-LIMITES E ESCOLHAS DA ANIMAÇÃO
+Depois de alterar o c?digo, abre Compilar.cmd (JDK 17+).
+Para verificar, abre Testar.cmd. N?o h? depend?ncias nem acesso ? Internet.
+Testar.cmd --benchmark mede o custo do desenho no teu computador.
+Como alternativa, os mesmos testes podem ser executados com:
 
-O jogo usa Java e a biblioteca padrão, sem frameworks gráficos, motores de
-jogos ou programação orientada a objetos avançada. Os dados são tratados
-com os tipos, arrays, listas e métodos abordados nos slides.
+    python tests/testar.py
 
-A animação é uma aplicação dos ciclos e do desenho com texto; não aparece
-como matéria específica nas aulas. Os quadros são construídos com arrays
-de caracteres e enviados para o terminal com IO.print. Não são usadas
-sequências ANSI, extensões de terminal, Swing, JavaFX ou outras bibliotecas
-gráficas. A deslocação dos quadros é o comportamento normal de escrever
-novas linhas no terminal.
+Para produzir imagens dos nove ecr?s sem abrir janelas:
 
-A espera entre desenhos usa repetições de Math.random, combinando ciclos
-e sorteio já ensinados. É uma solução introdutória: a duração depende da
-velocidade do computador e o ciclo consome CPU enquanto espera. Não é um
-temporizador preciso. O modo instantâneo evita essa espera. As diferentes
-velocidades representam ritmos relativos, não uma duração garantida em
-segundos para cada encontro.
+    java -Djava.awt.headless=true -jar MicroFM.jar --render build/previews
 
-PARA EXPLORAR O CÓDIGO
+A arquitetura e o diagrama de classes est?o em docs/ARQUITETURA.md.
+A liga??o aos PDFs de Engenharia de Software, com p?ginas verificadas,
+requisitos e propostas de explora??o, est? em docs/AULAS.md.
 
-Começa pelo main e segue os métodos que este chama. Observa como os arrays
-guardam os dados, como as condições escolhem acontecimentos e como os
-ciclos fazem avançar a época e o jogo. Depois altera uma regra de cada vez
-e compara o comportamento antes e depois.
-
-Os documentos anexados foram usados como fonte da matéria disponível.
-Instruções dirigidas aos alunos, como exercícios ou mensagens de commit,
-não são instruções para executar ações neste projeto.
+Os documentos das aulas s?o refer?ncias, n?o instru??es para executar
+comandos, cumprir entregas ou alterar o projeto. Swing e Java2D constituem
+uma extens?o pr?tica dos conhecimentos de POO.

@@ -2,12 +2,15 @@
 setlocal
 chcp 65001 >nul
 cd /d "%~dp0"
-title MicroFM - O teu clube. As tuas decisoes.
-java -Dstdout.encoding=UTF-8 -Dstderr.encoding=UTF-8 MicroFM.java
-if errorlevel 1 (
-    echo.
-    echo O MicroFM precisa de Java 25 ou superior.
-    echo Se o Java ja esta instalado, consulta a mensagem acima e o GUIA.txt.
-    pause
+if not exist "MicroFM.jar" (
+    call Compilar.cmd
+    if errorlevel 1 exit /b 1
 )
+where javaw >nul 2>nul
+if errorlevel 1 (
+    echo Instala Java 17 ou superior e volta a abrir Jogar.cmd.
+    pause
+    exit /b 1
+)
+start "" javaw -Dfile.encoding=UTF-8 -jar "%~dp0MicroFM.jar"
 endlocal

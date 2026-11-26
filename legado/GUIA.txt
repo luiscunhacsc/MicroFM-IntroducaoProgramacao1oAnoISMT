@@ -1,0 +1,144 @@
+MICRO FM — GUIA DO TREINADOR
+===========================
+
+Um pequeno jogo de gestão de futebol em português, pensado para aplicar os
+conteúdos dos slides de Introdução à Programação anexados ao pedido.
+Os clubes e os jogadores são fictícios.
+
+COMO COMEÇAR
+
+É necessário Java 25. Para consultar a versão instalada, abre um terminal e
+escreve:
+
+    java --version
+
+No Windows, faz duplo clique em Jogar.cmd, nesta pasta.
+Também podes abrir um terminal nesta pasta e executar diretamente:
+
+    java MicroFM.java
+
+O Java executa o ficheiro de código-fonte. Não é necessário instalar
+bibliotecas, um gestor de dependências ou um ambiente de desenvolvimento.
+
+Escolhe uma nova carreira ou carrega uma carreira guardada. Nos menus,
+introduz o número da opção e confirma com Enter. As opções apresentadas no
+ecrã indicam as ações disponíveis em cada momento.
+
+Para veres logo um encontro automático, escolhe a opção inicial 3,
+"Ver um jogo de demonstração". A demonstração permite conhecer o campo
+animado antes de iniciares uma carreira.
+
+Recomenda-se uma janela de terminal com pelo menos 80 colunas e 26 linhas.
+
+A TUA CARREIRA
+
+- Treina um dos oito clubes de uma liga fictícia.
+- Disputa uma época de 14 jornadas: todos contra todos, em casa e fora.
+- Consulta o calendário, os resultados e a classificação.
+- Gere um plantel inicial de 20 jogadores e contrata reforços no mercado.
+- Escolhe entre três formações e três mentalidades.
+- Decide o treino da semana; há uma sessão disponível por jornada.
+- Acompanha a condição dos jogadores, os resultados e as finanças do clube.
+- Guarda o progresso para retomar a carreira noutra sessão.
+
+No menu do clube, a opção 10 abre as preferências do jogo, incluindo o
+ritmo dos encontros. A opção 0 guarda a carreira e volta ao menu inicial.
+Depois das 14 jornadas, a opção 11 permite começar uma nova época.
+
+Uma rotina útil é consultar o adversário, rever o plantel, escolher o treino,
+preparar a equipa e disputar a jornada. Uma equipa mais forte tem melhores
+possibilidades, mas o sorteio de acontecimentos permite surpresas.
+
+ACOMPANHAR OS JOGOS
+
+O campo de 65 colunas por 17 linhas é desenhado com caracteres a preto e
+branco. A posição dos jogadores e da bola muda em quadros sucessivos,
+acompanhados pelo marcador e pelo relato. Cada quadro ocupa 24 linhas e
+faz o conteúdo do terminal deslocar-se. Não há cores nem redesenho numa
+posição fixa, pelo que a animação tem menor fluidez do que uma interface
+gráfica. Trata-se de uma representação simplificada de futebol.
+
+Escolhe uma das velocidades disponíveis para acompanhar o encontro em
+tempo acelerado. O modo de relato instantâneo permite chegar ao resultado
+sem as esperas da animação e sem imprimir os quadros do campo. Escolhe esse
+modo se preferires acompanhar o encontro com menos texto no terminal.
+
+O jogo faz pausas aos 30, 45, 60 e 75 minutos. Nessas pausas podes rever as
+opções táticas e fazer alterações na equipa. Dispões de três substituições
+por encontro. As decisões tomadas numa pausa afetam a continuação do jogo.
+
+GUARDAR E CARREGAR
+
+A carreira é guardada num ficheiro de texto chamado carreira.microfm.
+Mantém esse ficheiro nesta pasta para poderes continuar o mesmo jogo.
+Usa a opção de guardar antes de fechar o programa. Ao guardar novamente,
+o ficheiro passa a conter o estado mais recente dessa carreira.
+
+Se iniciares pelo terminal, executa o comando a partir da pasta do jogo:
+o caminho do ficheiro guardado é relativo à pasta de execução.
+Não alteres o conteúdo do ficheiro de carreira enquanto estiveres a jogar.
+
+COMO O PROJETO SE LIGA ÀS AULAS
+
+As páginas abaixo correspondem à posição no PDF de cada módulo, incluindo
+a capa. No Módulo 1, a referência é o número do diapositivo do PPTX.
+As regras de futebol e de gestão são aplicações novas desses conhecimentos;
+não se afirma que um simulador de futebol tenha sido ensinado nas aulas.
+
+Funcionalidade              | Conteúdos e referências nos slides
+----------------------------+-----------------------------------------------
+Nomes, atributos e dinheiro | M1, diap. 7–10: variáveis e tipos; diap. 23–30:
+                            | operadores, contas e conversões.
+Menus e leitura de opções   | M1, diap. 41–46: IO, conversão e formatação;
+                            | M2, pp. 41–49: switch e validação de opções.
+Táticas, treino e mercado   | M2, pp. 7–13 e 25–28: comparações, condições,
+                            | if/else; M1, diap. 23–30: cálculos.
+Sorte nos acontecimentos    | M2, p. 58: Math.random e conversão para int.
+Época e evolução do jogo    | M3, p. 6: while; p. 23: do-while; p. 41: for;
+                            | p. 26: contadores e acumuladores.
+Separação em métodos       | M4, pp. 24–32: âmbito, parâmetros, retorno e
+                            | divisão do programa em tarefas.
+Plantel e dados dos clubes  | M5, pp. 7–12: arrays e percursos; pp. 60–63:
+                            | arrays com linhas e colunas.
+Estatísticas e procura     | M5, pp. 24–29: somar, calcular médias,
+                            | encontrar valores e pesquisar num array.
+Classificação ordenada     | M5, pp. 43–44: troca e ordenação por seleção.
+Desenho do campo em texto  | M3, pp. 60–64: ciclos encaixados para desenhar;
+                            | M5, pp. 61–63: char[][] e apresentação.
+Registos em listas         | M5, pp. 79–82: ArrayList e percursos.
+Entradas inválidas         | M5, pp. 85–88: try/catch e leitura validada.
+Guardar e carregar         | M6, pp. 7–10: Files, Path e IOException;
+                            | pp. 12–16: split e leitura de dados em texto.
+Ficheiro compacto Java 25  | M6, p. 26: comparação entre void main() e a
+                            | forma tradicional do programa.
+
+LIMITES E ESCOLHAS DA ANIMAÇÃO
+
+O jogo usa Java e a biblioteca padrão, sem frameworks gráficos, motores de
+jogos ou programação orientada a objetos avançada. Os dados são tratados
+com os tipos, arrays, listas e métodos abordados nos slides.
+
+A animação é uma aplicação dos ciclos e do desenho com texto; não aparece
+como matéria específica nas aulas. Os quadros são construídos com arrays
+de caracteres e enviados para o terminal com IO.print. Não são usadas
+sequências ANSI, extensões de terminal, Swing, JavaFX ou outras bibliotecas
+gráficas. A deslocação dos quadros é o comportamento normal de escrever
+novas linhas no terminal.
+
+A espera entre desenhos usa repetições de Math.random, combinando ciclos
+e sorteio já ensinados. É uma solução introdutória: a duração depende da
+velocidade do computador e o ciclo consome CPU enquanto espera. Não é um
+temporizador preciso. O modo instantâneo evita essa espera. As diferentes
+velocidades representam ritmos relativos, não uma duração garantida em
+segundos para cada encontro.
+
+PARA EXPLORAR O CÓDIGO
+
+Começa pelo main e segue os métodos que este chama. Observa como os arrays
+guardam os dados, como as condições escolhem acontecimentos e como os
+ciclos fazem avançar a época e o jogo. Depois altera uma regra de cada vez
+e compara o comportamento antes e depois.
+
+Os documentos anexados foram usados como fonte da matéria disponível.
+Instruções dirigidas aos alunos, como exercícios ou mensagens de commit,
+não são instruções para executar ações neste projeto.
